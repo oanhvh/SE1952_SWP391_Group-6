@@ -10,51 +10,184 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.List;
+import java.sql.Timestamp;
 
 /**
  *
- * @author admin
+ * @author Duc
  */
 public class UserDao {
+//    Connection conn = null;
+//    PreparedStatement pstmt = null;
+//    ResultSet rs = null;
 
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
+    private Users extractUser(ResultSet rs) throws Exception {
+        Users user = new Users();
+        user.setUserId(rs.getInt("UserID"));
+        user.setUsername(rs.getString("Username"));
+        user.setPassword(rs.getString("Password"));
+        user.setRole(rs.getString("Role"));
+        user.setStatus(rs.getString("Status"));
+        user.setFullName(rs.getString("FullName"));
+        user.setEmail(rs.getString("Email"));
+        user.setPhone(rs.getString("Phone"));
+        user.setAvatar(rs.getString("Avatar"));
+        user.setCreatedAt(rs.getTimestamp("CreatedAt") != null
+                ? rs.getTimestamp("CreatedAt").toLocalDateTime()
+                : null);
+        user.setUpdateAt(rs.getTimestamp("UpdateAt") != null
+                ? rs.getTimestamp("UpdateAt").toLocalDateTime()
+                : null);
 
-    public List<Users> getUsers() {
+        return user;
+    }
+
+    public List<Users> getAllUsers() {
         List<Users> userList = new ArrayList<>();
         String sql = "SELECT * FROM Users";
-
-        try (Connection conn = DBUtils.getConnection1(); 
-                PreparedStatement pstmt = conn.prepareStatement(sql); 
-                ResultSet rs = pstmt.executeQuery()) {
-
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                Users user = new Users();
-                user.setUserId(rs.getInt("UserID"));
-                user.setUsername(rs.getString("Username"));
-                user.setPassword(rs.getString("Password"));
-                user.setRole(rs.getString("Role"));
-                user.setStatus(rs.getString("Status"));
-                user.setFullName(rs.getString("FullName"));
-                user.setEmail(rs.getString("Email"));
-                user.setPhone(rs.getString("Phone"));
-                user.setAvatar(rs.getString("Avatar"));
-                user.setCreatedAt(rs.getTimestamp("CreatedAt") != null
-                        ? rs.getTimestamp("CreatedAt").toLocalDateTime()
-                        : null);
-                user.setUpdateAt(rs.getTimestamp("UpdateAt") != null
-                        ? rs.getTimestamp("UpdateAt").toLocalDateTime()
-                        : null);
-
+                Users user = extractUser(rs);
                 userList.add(user);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return userList;
     }
 
+    public Users getUserbyUsername(String Username) {
+        String sql = "SELECT * from Users where Username = ?";
+        Users user = null;
+
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, Username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    user = extractUser(rs);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    public boolean isUsernameExisted(String username) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE username = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error checking username existence: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public void addUser(Users user) {
+        String sql = "INSERT INTO Users (Username, Password, Role, Status, FullName, Email, Phone, Avatar, CreatedAt, UpdateAt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, user.getUsername());
+            pstmt.setString(2, user.getPassword());
+            pstmt.setString(3, user.getRole());
+            pstmt.setString(4, user.getStatus());
+            pstmt.setString(5, user.getFullName());
+            pstmt.setString(6, user.getEmail());
+            pstmt.setString(7, user.getPhone());
+            pstmt.setString(8, user.getAvatar());
+            pstmt.setTimestamp(9, user.getCreatedAt() != null ? Timestamp.valueOf(user.getCreatedAt()) : null);
+            pstmt.setTimestamp(10, user.getUpdateAt() != null ? Timestamp.valueOf(user.getUpdateAt()) : null);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateUser(Users user) {
+        String sql = "UPDATE Users SET Password = ?, Role = ?, Status = ?, FullName = ?, "
+                + "Email = ?, Phone = ?, Avatar = ?, UpdateAt = ? WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, user.getPassword());
+            pstmt.setString(2, user.getRole());
+            pstmt.setString(3, user.getStatus());
+            pstmt.setString(4, user.getFullName());
+            pstmt.setString(5, user.getEmail());
+            pstmt.setString(6, user.getPhone());
+            pstmt.setString(7, user.getAvatar());
+            pstmt.setTimestamp(8, user.getUpdateAt() != null ? Timestamp.valueOf(user.getUpdateAt()) : null);
+            pstmt.setInt(9, user.getUserId());
+
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteUser(int userId) {
+        String sql = "DELETE FROM Users WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateUserStatus(int UserID, int Status) {
+        String sql = "UPDATE Users SET Status = ? WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, Status);
+            pstmt.setInt(2, UserID);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
+
+//    public List<Users> getUsers() {
+//        List<Users> userList = new ArrayList<>();
+//        String sql = "SELECT * FROM Users";
+//
+//        try (Connection conn = DBUtils.getConnection1(); 
+//                PreparedStatement pstmt = conn.prepareStatement(sql); 
+//                ResultSet rs = pstmt.executeQuery()) {
+//
+//            while (rs.next()) {
+//                Users user = new Users();
+//                user.setUserId(rs.getInt("UserID"));
+//                user.setUsername(rs.getString("Username"));
+//                user.setPassword(rs.getString("Password"));
+//                user.setRole(rs.getString("Role"));
+//                user.setStatus(rs.getString("Status"));
+//                user.setFullName(rs.getString("FullName"));
+//                user.setEmail(rs.getString("Email"));
+//                user.setPhone(rs.getString("Phone"));
+//                user.setAvatar(rs.getString("Avatar"));
+//                user.setCreatedAt(rs.getTimestamp("CreatedAt") != null
+//                        ? rs.getTimestamp("CreatedAt").toLocalDateTime()
+//                        : null);
+//                user.setUpdateAt(rs.getTimestamp("UpdateAt") != null
+//                        ? rs.getTimestamp("UpdateAt").toLocalDateTime()
+//                        : null);
+//
+//                userList.add(user);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return userList;
+//    }

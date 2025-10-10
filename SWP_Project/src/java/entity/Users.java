@@ -13,23 +13,14 @@ import java.time.LocalDateTime;
 public class Users {
 
     private Integer userId;
-
     private String username;
-
     private String password;
-
     private String role;
-
     private String status;
-
     private String fullName;
-
     private String email;
-
     private String phone;
-
     private String avatar;
-
     private LocalDateTime createdAt;
 
     public LocalDateTime getUpdateAt() {
