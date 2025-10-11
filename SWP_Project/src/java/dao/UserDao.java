@@ -17,7 +17,7 @@ import java.sql.Timestamp;
  *
  * @author Duc
  */
-public class UserDao {
+public class UserDao extends DBUtils{
 //    Connection conn = null;
 //    PreparedStatement pstmt = null;
 //    ResultSet rs = null;

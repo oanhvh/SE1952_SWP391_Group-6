@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author NHThanh
  */
-public class Event {
+public class Events {
 
     private int eventID;
     private int orgID;
@@ -23,10 +23,10 @@ public class Event {
     private int capacity;
     private String keywords;
 
-    public Event() {
+    public Events() {
     }
 
-    public Event(int eventID, int orgID, String eventName, String description, String location,
+    public Events(int eventID, int orgID, String eventName, String description, String location,
             Date startDate, Date endDate, String status, int capacity, String keywords) {
         this.eventID = eventID;
         this.orgID = orgID;

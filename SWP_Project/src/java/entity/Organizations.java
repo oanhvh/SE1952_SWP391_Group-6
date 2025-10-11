@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author NHThanh
  */
-public class Organization {
+public class Organizations {
 
     private int orgID;
     private String orgName;
@@ -19,10 +19,10 @@ public class Organization {
     private String address;
     private Date registrationDate;
 
-    public Organization() {
+    public Organizations() {
     }
 
-    public Organization(int orgID, String orgName, String description, String contactInfo,
+    public Organizations(int orgID, String orgName, String description, String contactInfo,
             String address, Date registrationDate) {
         this.orgID = orgID;
         this.orgName = orgName;

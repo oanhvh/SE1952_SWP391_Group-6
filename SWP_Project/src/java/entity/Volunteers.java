@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author NHThanh
  */
-public class Volunteer {
+public class Volunteers {
 
     private int volunteerID;
     private int userID;
@@ -19,10 +19,10 @@ public class Volunteer {
     private String status;
     private String availability;
 
-    public Volunteer() {
+    public Volunteers() {
     }
 
-    public Volunteer(int volunteerID, int userID, String profileInfo, Date joinDate,
+    public Volunteers(int volunteerID, int userID, String profileInfo, Date joinDate,
             String status, String availability) {
         this.volunteerID = volunteerID;
         this.userID = userID;
