@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 
 /**
  *
- * @author admin
+ * @author NHThanh
  */
 public class Users {
 
-    private Integer userId;
+    private int userID;
     private String username;
-    private String password;
+    private String passwordHash;
     private String role;
     private String status;
     private String fullName;
@@ -22,20 +22,16 @@ public class Users {
     private String phone;
     private String avatar;
     private LocalDateTime createdAt;
-
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
-    }
-
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 
     public Users() {
     }
 
-    public Users(String username, String password, String role, String status, String fullName,
-            String email, String phone, String avatar, LocalDateTime createdAt, LocalDateTime updateAt) {
+    public Users(int userID, String username, String passwordHash, String role, String status, String fullName,
+            String email, String phone, String avatar, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.userID = userID;
         this.username = username;
-        this.password = password;
+        this.passwordHash = passwordHash;
         this.role = role;
         this.status = status;
         this.fullName = fullName;
@@ -43,20 +39,15 @@ public class Users {
         this.phone = phone;
         this.avatar = avatar;
         this.createdAt = createdAt;
-        this.updateAt = updateAt;
+        this.updatedAt = updatedAt;
     }
 
-    public void setUpdateAt(LocalDateTime updateAt) {
-        this.updateAt = updateAt;
+    public int getUserID() {
+        return userID;
     }
 
-    // ===== Getters and Setters =====
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
     public String getUsername() {
@@ -67,12 +58,12 @@ public class Users {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public String getRole() {
@@ -129,5 +120,13 @@ public class Users {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

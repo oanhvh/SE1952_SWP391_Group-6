@@ -1,10 +1,10 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbsp://nbSystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbsp://nbSystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -13,17 +13,17 @@ import java.util.Date;
 public class Feedbacks {
 
     private int feedbackID;
-    private int userID;
+    private Users user;
     private String details;
-    private Date feedbackDate;
+    private LocalDateTime feedbackDate;
     private String status;
 
     public Feedbacks() {
     }
 
-    public Feedbacks(int feedbackID, int userID, String details, Date feedbackDate, String status) {
+    public Feedbacks(int feedbackID, Users user, String details, LocalDateTime feedbackDate, String status) {
         this.feedbackID = feedbackID;
-        this.userID = userID;
+        this.user = user;
         this.details = details;
         this.feedbackDate = feedbackDate;
         this.status = status;
@@ -33,40 +33,39 @@ public class Feedbacks {
         return feedbackID;
     }
 
-    public int getUserID() {
-        return userID;
+    public void setFeedbackID(int feedbackID) {
+        this.feedbackID = feedbackID;
+    }
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
     }
 
     public String getDetails() {
         return details;
     }
 
-    public Date getFeedbackDate() {
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public LocalDateTime getFeedbackDate() {
         return feedbackDate;
+    }
+
+    public void setFeedbackDate(LocalDateTime feedbackDate) {
+        this.feedbackDate = feedbackDate;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setFeedbackID(int feedbackID) {
-        this.feedbackID = feedbackID;
-    }
-
-    public void setUserID(int userID) {
-        this.userID = userID;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
-    public void setFeedbackDate(Date feedbackDate) {
-        this.feedbackDate = feedbackDate;
-    }
-
     public void setStatus(String status) {
         this.status = status;
     }
-
 }

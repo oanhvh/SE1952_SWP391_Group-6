@@ -1,10 +1,10 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbsp://nbSystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbsp://nbSystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -12,72 +12,92 @@ import java.util.Date;
  */
 public class VolunteerApplications {
 
-    private int participationID;
-    private int volunteerID;
-    private int eventID;
+    private int applicationID;
+    private Volunteer volunteer;
+    private Event event;
     private String status;
-    private Date applicationDate;
-    private Date approvalDate;
+    private LocalDateTime applicationDate;
+    private LocalDateTime approvalDate;
+    private OrgStaff approvedByStaff;
+    private String notes;
 
     public VolunteerApplications() {
     }
 
-    public VolunteerApplications(int participationID, int volunteerID, int eventID,
-            String status, Date applicationDate, Date approvalDate) {
-        this.participationID = participationID;
-        this.volunteerID = volunteerID;
-        this.eventID = eventID;
+    public VolunteerApplications(int applicationID, Volunteer volunteer, Event event, String status,
+            LocalDateTime applicationDate, LocalDateTime approvalDate,
+            OrgStaff approvedByStaff, String notes) {
+        this.applicationID = applicationID;
+        this.volunteer = volunteer;
+        this.event = event;
         this.status = status;
         this.applicationDate = applicationDate;
         this.approvalDate = approvalDate;
+        this.approvedByStaff = approvedByStaff;
+        this.notes = notes;
     }
 
-    public int getParticipationID() {
-        return participationID;
+    public int getApplicationID() {
+        return applicationID;
     }
 
-    public int getVolunteerID() {
-        return volunteerID;
+    public void setApplicationID(int applicationID) {
+        this.applicationID = applicationID;
     }
 
-    public int getEventID() {
-        return eventID;
+    public Volunteer getVolunteer() {
+        return volunteer;
+    }
+
+    public void setVolunteer(Volunteer volunteer) {
+        this.volunteer = volunteer;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public Date getApplicationDate() {
-        return applicationDate;
-    }
-
-    public Date getApprovalDate() {
-        return approvalDate;
-    }
-
-    public void setParticipationID(int participationID) {
-        this.participationID = participationID;
-    }
-
-    public void setVolunteerID(int volunteerID) {
-        this.volunteerID = volunteerID;
-    }
-
-    public void setEventID(int eventID) {
-        this.eventID = eventID;
-    }
-
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public void setApplicationDate(Date applicationDate) {
+    public LocalDateTime getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(LocalDateTime applicationDate) {
         this.applicationDate = applicationDate;
     }
 
-    public void setApprovalDate(Date approvalDate) {
+    public LocalDateTime getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(LocalDateTime approvalDate) {
         this.approvalDate = approvalDate;
     }
 
+    public OrgStaff getApprovedByStaff() {
+        return approvedByStaff;
+    }
+
+    public void setApprovedByStaff(OrgStaff approvedByStaff) {
+        this.approvedByStaff = approvedByStaff;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }

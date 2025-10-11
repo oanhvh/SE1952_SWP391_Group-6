@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbsp://nbSystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbsp://nbSystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package entity;
 
@@ -11,17 +11,17 @@ package entity;
 public class VolunteerSkills {
 
     private int volunteerSkillID;
-    private int volunteerID;
-    private int skillID;
+    private Volunteer volunteer;
+    private Skills skill;
     private String proficiencyLevel;
 
     public VolunteerSkills() {
     }
 
-    public VolunteerSkills(int volunteerSkillID, int volunteerID, int skillID, String proficiencyLevel) {
+    public VolunteerSkills(int volunteerSkillID, Volunteer volunteer, Skills skill, String proficiencyLevel) {
         this.volunteerSkillID = volunteerSkillID;
-        this.volunteerID = volunteerID;
-        this.skillID = skillID;
+        this.volunteer = volunteer;
+        this.skill = skill;
         this.proficiencyLevel = proficiencyLevel;
     }
 
@@ -29,32 +29,31 @@ public class VolunteerSkills {
         return volunteerSkillID;
     }
 
-    public int getVolunteerID() {
-        return volunteerID;
+    public void setVolunteerSkillID(int volunteerSkillID) {
+        this.volunteerSkillID = volunteerSkillID;
     }
 
-    public int getSkillID() {
-        return skillID;
+    public Volunteer getVolunteer() {
+        return volunteer;
+    }
+
+    public void setVolunteer(Volunteer volunteer) {
+        this.volunteer = volunteer;
+    }
+
+    public Skills getSkill() {
+        return skill;
+    }
+
+    public void setSkill(Skills skill) {
+        this.skill = skill;
     }
 
     public String getProficiencyLevel() {
         return proficiencyLevel;
     }
 
-    public void setVolunteerSkillID(int volunteerSkillID) {
-        this.volunteerSkillID = volunteerSkillID;
-    }
-
-    public void setVolunteerID(int volunteerID) {
-        this.volunteerID = volunteerID;
-    }
-
-    public void setSkillID(int skillID) {
-        this.skillID = skillID;
-    }
-
     public void setProficiencyLevel(String proficiencyLevel) {
         this.proficiencyLevel = proficiencyLevel;
     }
-
 }
