@@ -17,16 +17,16 @@ import java.sql.Timestamp;
  *
  * @author Duc
  */
-public class UserDao extends DBUtils{
+public class UserDao extends DBUtils {
 //    Connection conn = null;
 //    PreparedStatement pstmt = null;
 //    ResultSet rs = null;
 
     private Users extractUser(ResultSet rs) throws Exception {
         Users user = new Users();
-        user.setUserId(rs.getInt("UserID"));
+        user.setUserID(rs.getInt("UserID"));
         user.setUsername(rs.getString("Username"));
-        user.setPassword(rs.getString("Password"));
+        user.setPasswordHash(rs.getString("PasswordHash"));
         user.setRole(rs.getString("Role"));
         user.setStatus(rs.getString("Status"));
         user.setFullName(rs.getString("FullName"));
@@ -36,10 +36,9 @@ public class UserDao extends DBUtils{
         user.setCreatedAt(rs.getTimestamp("CreatedAt") != null
                 ? rs.getTimestamp("CreatedAt").toLocalDateTime()
                 : null);
-        user.setUpdateAt(rs.getTimestamp("UpdateAt") != null
-                ? rs.getTimestamp("UpdateAt").toLocalDateTime()
+        user.setUpdatedAt(rs.getTimestamp("UpdatedAt") != null
+                ? rs.getTimestamp("UpdatedAt").toLocalDateTime()
                 : null);
-
         return user;
     }
 
@@ -57,12 +56,11 @@ public class UserDao extends DBUtils{
         return userList;
     }
 
-    public Users getUserbyUsername(String Username) {
-        String sql = "SELECT * from Users where Username = ?";
+    public Users getUserByUsername(String username) {
+        String sql = "SELECT * FROM Users WHERE Username = ?";
         Users user = null;
-
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, Username);
+            pstmt.setString(1, username);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     user = extractUser(rs);
@@ -75,14 +73,12 @@ public class UserDao extends DBUtils{
     }
 
     public boolean isUsernameExisted(String username) {
-        String sql = "SELECT COUNT(*) FROM Users WHERE username = ?";
+        String sql = "SELECT COUNT(*) FROM Users WHERE Username = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
-
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    int count = rs.getInt(1);
-                    return count > 0;
+                    return rs.getInt(1) > 0;
                 }
             }
         } catch (Exception e) {
@@ -93,11 +89,11 @@ public class UserDao extends DBUtils{
     }
 
     public void addUser(Users user) {
-        String sql = "INSERT INTO Users (Username, Password, Role, Status, FullName, Email, Phone, Avatar, CreatedAt, UpdateAt) "
+        String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, Phone, Avatar, CreatedAt, UpdatedAt) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getPassword());
+            pstmt.setString(2, user.getPasswordHash());
             pstmt.setString(3, user.getRole());
             pstmt.setString(4, user.getStatus());
             pstmt.setString(5, user.getFullName());
@@ -105,7 +101,7 @@ public class UserDao extends DBUtils{
             pstmt.setString(7, user.getPhone());
             pstmt.setString(8, user.getAvatar());
             pstmt.setTimestamp(9, user.getCreatedAt() != null ? Timestamp.valueOf(user.getCreatedAt()) : null);
-            pstmt.setTimestamp(10, user.getUpdateAt() != null ? Timestamp.valueOf(user.getUpdateAt()) : null);
+            pstmt.setTimestamp(10, user.getUpdatedAt() != null ? Timestamp.valueOf(user.getUpdatedAt()) : null);
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,42 +109,39 @@ public class UserDao extends DBUtils{
     }
 
     public void updateUser(Users user) {
-        String sql = "UPDATE Users SET Password = ?, Role = ?, Status = ?, FullName = ?, "
-                + "Email = ?, Phone = ?, Avatar = ?, UpdateAt = ? WHERE UserID = ?";
+        String sql = "UPDATE Users SET PasswordHash = ?, Role = ?, Status = ?, FullName = ?, "
+                + "Email = ?, Phone = ?, Avatar = ?, UpdatedAt = ? WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, user.getPassword());
+            pstmt.setString(1, user.getPasswordHash());
             pstmt.setString(2, user.getRole());
             pstmt.setString(3, user.getStatus());
             pstmt.setString(4, user.getFullName());
             pstmt.setString(5, user.getEmail());
             pstmt.setString(6, user.getPhone());
             pstmt.setString(7, user.getAvatar());
-            pstmt.setTimestamp(8, user.getUpdateAt() != null ? Timestamp.valueOf(user.getUpdateAt()) : null);
-            pstmt.setInt(9, user.getUserId());
-
+            pstmt.setTimestamp(8, user.getUpdatedAt() != null ? Timestamp.valueOf(user.getUpdatedAt()) : null);
+            pstmt.setInt(9, user.getUserID());
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteUser(int userId) {
+    public void deleteUser(int userID) {
         String sql = "DELETE FROM Users WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, userId);
+            pstmt.setInt(1, userID);
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void updateUserStatus(int UserID, int Status) {
+    public void updateUserStatus(int userID, String status) {
         String sql = "UPDATE Users SET Status = ? WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, Status);
-            pstmt.setInt(2, UserID);
+            pstmt.setString(1, status);
+            pstmt.setInt(2, userID);
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
