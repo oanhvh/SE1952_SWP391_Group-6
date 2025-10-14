@@ -5,13 +5,13 @@
 package dao;
 
 import entity.Users;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.List;
-import java.sql.Timestamp;
 
 /**
  *
@@ -24,9 +24,9 @@ public class UserDao extends DBUtils{
 
     private Users extractUser(ResultSet rs) throws Exception {
         Users user = new Users();
-        user.setUserId(rs.getInt("UserID"));
+        user.setUserID(rs.getInt("UserID"));
         user.setUsername(rs.getString("Username"));
-        user.setPassword(rs.getString("Password"));
+        user.setPasswordHash(rs.getString("Password"));
         user.setRole(rs.getString("Role"));
         user.setStatus(rs.getString("Status"));
         user.setFullName(rs.getString("FullName"));
@@ -36,7 +36,7 @@ public class UserDao extends DBUtils{
         user.setCreatedAt(rs.getTimestamp("CreatedAt") != null
                 ? rs.getTimestamp("CreatedAt").toLocalDateTime()
                 : null);
-        user.setUpdateAt(rs.getTimestamp("UpdateAt") != null
+        user.setUpdatedAt(rs.getTimestamp("UpdateAt") != null
                 ? rs.getTimestamp("UpdateAt").toLocalDateTime()
                 : null);
 
@@ -92,12 +92,12 @@ public class UserDao extends DBUtils{
         return false;
     }
 
-    public void addUser(Users user) {
-        String sql = "INSERT INTO Users (Username, Password, Role, Status, FullName, Email, Phone, Avatar, CreatedAt, UpdateAt) "
+    public int addUser(Users user) {
+        String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, Phone, Avatar, CreatedAt, UpdatedAt) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getPassword());
+            pstmt.setString(2, user.getPasswordHash());
             pstmt.setString(3, user.getRole());
             pstmt.setString(4, user.getStatus());
             pstmt.setString(5, user.getFullName());
@@ -105,10 +105,11 @@ public class UserDao extends DBUtils{
             pstmt.setString(7, user.getPhone());
             pstmt.setString(8, user.getAvatar());
             pstmt.setTimestamp(9, user.getCreatedAt() != null ? Timestamp.valueOf(user.getCreatedAt()) : null);
-            pstmt.setTimestamp(10, user.getUpdateAt() != null ? Timestamp.valueOf(user.getUpdateAt()) : null);
-            pstmt.executeUpdate();
+            pstmt.setTimestamp(10, user.getUpdatedAt() != null ? Timestamp.valueOf(user.getUpdatedAt()) : null);
+            return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+            return -1;
         }
     }
 
@@ -117,15 +118,15 @@ public class UserDao extends DBUtils{
                 + "Email = ?, Phone = ?, Avatar = ?, UpdateAt = ? WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, user.getPassword());
+            pstmt.setString(1, user.getPasswordHash());
             pstmt.setString(2, user.getRole());
             pstmt.setString(3, user.getStatus());
             pstmt.setString(4, user.getFullName());
             pstmt.setString(5, user.getEmail());
             pstmt.setString(6, user.getPhone());
             pstmt.setString(7, user.getAvatar());
-            pstmt.setTimestamp(8, user.getUpdateAt() != null ? Timestamp.valueOf(user.getUpdateAt()) : null);
-            pstmt.setInt(9, user.getUserId());
+            pstmt.setTimestamp(8, user.getUpdatedAt() != null ? Timestamp.valueOf(user.getUpdatedAt()) : null);
+            pstmt.setInt(9, user.getUserID());
 
             pstmt.executeUpdate();
         } catch (Exception e) {
