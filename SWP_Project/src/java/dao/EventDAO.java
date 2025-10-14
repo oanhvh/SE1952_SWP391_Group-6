@@ -4,13 +4,16 @@
  */
 package dao;
 
-import entity.Events;
+import entity.Event;
+import entity.OrgStaff;
+import entity.Organization;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
+import java.sql.Timestamp;
 
 /**
  *
@@ -18,28 +21,37 @@ import java.util.List;
  */
 public class EventDAO extends DBUtils {
 
-    private Events extractEvent(ResultSet rs) throws Exception {
-        Events event = new Events();
-        event.setOrgID(rs.getInt("EventID"));
-        event.setOrgID(rs.getInt("OrgID"));
+    private Event extractEvent(ResultSet rs) throws Exception {
+        Event event = new Event();
+        event.setEventID(rs.getInt("EventID"));
+
+        Organization org = new Organization();
+        org.setOrgID(rs.getInt("OrgID"));
+        event.setOrg(org);
+
+        OrgStaff staff = new OrgStaff();
+        staff.setStaffID(rs.getInt("CreatedByStaffID"));
+        event.setCreatedByStaff(staff);
+
         event.setEventName(rs.getString("EventName"));
         event.setDescription(rs.getString("Description"));
         event.setLocation(rs.getString("Location"));
-        event.setStartDate(rs.getDate("StartDate"));
-        event.setEndDate(rs.getDate("EndDate"));
+        event.setStartDate(rs.getTimestamp("StartDate").toLocalDateTime());
+        event.setEndDate(rs.getTimestamp("EndDate").toLocalDateTime());
         event.setStatus(rs.getString("Status"));
         event.setCapacity(rs.getInt("Capacity"));
         event.setKeywords(rs.getString("Keywords"));
+        event.setCreatedAt(rs.getTimestamp("CreatedAt").toLocalDateTime());
 
         return event;
     }
 
-    public List<Events> getAllEvents() {
-        List<Events> eventList = new ArrayList<>();
+    public List<Event> getAllEvents() {
+        List<Event> eventList = new ArrayList<>();
         String sql = "SELECT * FROM Event";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                Events event = extractEvent(rs);
+                Event event = extractEvent(rs);
                 eventList.add(event);
             }
         } catch (Exception e) {
@@ -48,9 +60,9 @@ public class EventDAO extends DBUtils {
         return eventList;
     }
 
-    public Events getEventByID(int eventID) {
+    public Event getEventByID(int eventID) {
         String sql = "SELECT * FROM Event WHERE EventID = ?";
-        Events event = null;
+        Event event = null;
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, eventID);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -64,40 +76,42 @@ public class EventDAO extends DBUtils {
         return event;
     }
 
-    public void addEvent(Events event) {
-        String sql = "INSERT INTO Event (OrgID, EventName, Description, Location, StartDate, EndDate, Status, Capacity, Keywords) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public void addEvent(Event event) {
+        String sql = "INSERT INTO Event (OrgID, CreatedByStaffID, EventName, Description, Location, StartDate, EndDate, Status, Capacity, Keywords, CreatedAt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, event.getOrgID());
-            pstmt.setString(2, event.getEventName());
-            pstmt.setString(3, event.getDescription());
-            pstmt.setString(4, event.getLocation());
-            pstmt.setDate(5, (Date) event.getStartDate());
-            pstmt.setDate(6, (Date) event.getEndDate());
-            pstmt.setString(7, event.getStatus());
-            pstmt.setInt(8, event.getCapacity());
-            pstmt.setString(9, event.getKeywords());
+            pstmt.setInt(1, event.getOrg().getOrgID());
+            pstmt.setInt(2, event.getCreatedByStaff().getStaffID());
+            pstmt.setString(3, event.getEventName());
+            pstmt.setString(4, event.getDescription());
+            pstmt.setString(5, event.getLocation());
+            pstmt.setTimestamp(6, Timestamp.valueOf(event.getStartDate()));
+            pstmt.setTimestamp(7, Timestamp.valueOf(event.getEndDate()));
+            pstmt.setString(8, event.getStatus());
+            pstmt.setInt(9, event.getCapacity());
+            pstmt.setString(10, event.getKeywords());
+            pstmt.setTimestamp(11, Timestamp.valueOf(event.getCreatedAt()));
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void updateEvent(Events event) {
-        String sql = "UPDATE Event SET OrgID = ?, EventName = ?, Description = ?, Location = ?, "
-                + "StartDate = ?, EndDate = ?, Status = ?, Capacity = ?, Keywords = ? "
-                + "WHERE EventID = ?";
+    public void updateEvent(Event event) {
+        String sql = "UPDATE Event SET OrgID = ?, CreatedByStaffID = ?, EventName = ?, Description = ?, Location = ?, "
+                + "StartDate = ?, EndDate = ?, Status = ?, Capacity = ?, Keywords = ? WHERE EventID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, event.getOrgID());
-            pstmt.setString(2, event.getEventName());
-            pstmt.setString(3, event.getDescription());
-            pstmt.setString(4, event.getLocation());
-            pstmt.setDate(5, (Date) event.getStartDate());
-            pstmt.setDate(6, (Date) event.getEndDate());
-            pstmt.setString(7, event.getStatus());
-            pstmt.setInt(8, event.getCapacity());
-            pstmt.setString(9, event.getKeywords());
-            pstmt.setInt(10, event.getEventID());
+            pstmt.setInt(1, event.getOrg().getOrgID());
+            pstmt.setInt(2, event.getCreatedByStaff().getStaffID());
+            pstmt.setString(3, event.getEventName());
+            pstmt.setString(4, event.getDescription());
+            pstmt.setString(5, event.getLocation());
+            pstmt.setTimestamp(6, Timestamp.valueOf(event.getStartDate()));
+            pstmt.setTimestamp(7, Timestamp.valueOf(event.getEndDate()));
+            pstmt.setString(8, event.getStatus());
+            pstmt.setInt(9, event.getCapacity());
+            pstmt.setString(10, event.getKeywords());
+            pstmt.setInt(11, event.getEventID());
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,4 +138,34 @@ public class EventDAO extends DBUtils {
             e.printStackTrace();
         }
     }
+
+    public List<Event> getActiveEvents() {
+        List<Event> eventList = new ArrayList<>();
+        String sql = "SELECT * FROM Event WHERE Status = 'Active'";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Event event = extractEvent(rs);
+                eventList.add(event);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return eventList;
+    }
+
+    public List<Event> getPendingEvents() {
+        List<Event> eventList = new ArrayList<>();
+        String sql = "SELECT * FROM Event WHERE Status = 'Pending'";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Event event = extractEvent(rs);
+                eventList.add(event);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return eventList;
+    }
+    
+    
 }
