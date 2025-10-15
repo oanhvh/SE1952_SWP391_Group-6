@@ -26,7 +26,7 @@ public class UserDao extends DBUtils{
         Users user = new Users();
         user.setUserID(rs.getInt("UserID"));
         user.setUsername(rs.getString("Username"));
-        user.setPasswordHash(rs.getString("Password"));
+        user.setPasswordHash(rs.getString("passwordHash"));
         user.setRole(rs.getString("Role"));
         user.setStatus(rs.getString("Status"));
         user.setFullName(rs.getString("FullName"));
@@ -36,8 +36,8 @@ public class UserDao extends DBUtils{
         user.setCreatedAt(rs.getTimestamp("CreatedAt") != null
                 ? rs.getTimestamp("CreatedAt").toLocalDateTime()
                 : null);
-        user.setUpdatedAt(rs.getTimestamp("UpdateAt") != null
-                ? rs.getTimestamp("UpdateAt").toLocalDateTime()
+        user.setUpdatedAt(rs.getTimestamp("UpdatedAt") != null
+                ? rs.getTimestamp("UpdatedAt").toLocalDateTime()
                 : null);
 
         return user;
@@ -46,7 +46,9 @@ public class UserDao extends DBUtils{
     public List<Users> getAllUsers() {
         List<Users> userList = new ArrayList<>();
         String sql = "SELECT * FROM Users";
-        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 Users user = extractUser(rs);
                 userList.add(user);
@@ -154,6 +156,51 @@ public class UserDao extends DBUtils{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Users> searchUser(String name, String role, String phone) {
+        List<Users> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM Users WHERE 1=1");
+
+        if (name != null && !name.trim().isEmpty()) {
+            sql.append(" AND fullName LIKE ?");
+        }
+        if (role != null && !role.trim().isEmpty()) {
+            sql.append(" AND role LIKE ?");
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            sql.append(" AND phone LIKE ?");
+        }
+
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            if (name != null && !name.trim().isEmpty()) {
+                ps.setString(++index, "%" + name + "%");
+            }
+            if (role != null && !role.trim().isEmpty()) {
+                ps.setString(++index, "%" + role + "%");
+            }
+            if (phone != null && !phone.trim().isEmpty()) {
+                ps.setString(++index, "%" + phone + "%");
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Users u = new Users();
+                u.setUserID(rs.getInt("userID"));
+                u.setFullName(rs.getString("fullName"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setRole(rs.getString("role"));
+                u.setStatus(rs.getString("status"));
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
 
