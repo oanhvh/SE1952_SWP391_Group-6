@@ -22,15 +22,14 @@ public class Event {
     private LocalDateTime endDate;
     private String status;
     private int capacity;
-    private String keywords;
+    private String image;
+    private String category;
     private LocalDateTime createdAt;
 
     public Event() {
     }
 
-    public Event(int eventID, Organization org, OrgStaff createdByStaff, String eventName, String description,
-            String location, LocalDateTime startDate, LocalDateTime endDate, String status,
-            int capacity, String keywords, LocalDateTime createdAt) {
+    public Event(int eventID, Organization org, OrgStaff createdByStaff, String eventName, String description, String location, LocalDateTime startDate, LocalDateTime endDate, String status, int capacity, String image, String category, LocalDateTime createdAt) {
         this.eventID = eventID;
         this.org = org;
         this.createdByStaff = createdByStaff;
@@ -41,7 +40,8 @@ public class Event {
         this.endDate = endDate;
         this.status = status;
         this.capacity = capacity;
-        this.keywords = keywords;
+        this.image = image;
+        this.category = category;
         this.createdAt = createdAt;
     }
 
@@ -125,14 +125,6 @@ public class Event {
         this.capacity = capacity;
     }
 
-    public String getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -140,4 +132,22 @@ public class Event {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    
+    
 }

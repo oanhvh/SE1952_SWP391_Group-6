@@ -40,7 +40,8 @@ public class EventDAO extends DBUtils {
         event.setEndDate(rs.getTimestamp("EndDate").toLocalDateTime());
         event.setStatus(rs.getString("Status"));
         event.setCapacity(rs.getInt("Capacity"));
-        event.setKeywords(rs.getString("Keywords"));
+        event.setImage(rs.getString("Image"));
+        event.setCategory(rs.getString("Category"));
         event.setCreatedAt(rs.getTimestamp("CreatedAt").toLocalDateTime());
 
         return event;
@@ -77,8 +78,8 @@ public class EventDAO extends DBUtils {
     }
 
     public void addEvent(Event event) {
-        String sql = "INSERT INTO Event (OrgID, CreatedByStaffID, EventName, Description, Location, StartDate, EndDate, Status, Capacity, Keywords, CreatedAt) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Event (OrgID, CreatedByStaffID, EventName, Description, Location, StartDate, EndDate, Status, Capacity, Image, Category, CreatedAt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, event.getOrg().getOrgID());
             pstmt.setInt(2, event.getCreatedByStaff().getStaffID());
@@ -89,8 +90,9 @@ public class EventDAO extends DBUtils {
             pstmt.setTimestamp(7, Timestamp.valueOf(event.getEndDate()));
             pstmt.setString(8, event.getStatus());
             pstmt.setInt(9, event.getCapacity());
-            pstmt.setString(10, event.getKeywords());
-            pstmt.setTimestamp(11, Timestamp.valueOf(event.getCreatedAt()));
+            pstmt.setString(10, event.getImage());
+            pstmt.setString(11, event.getCategory());
+            pstmt.setTimestamp(12, Timestamp.valueOf(event.getCreatedAt()));
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,7 +101,7 @@ public class EventDAO extends DBUtils {
 
     public void updateEvent(Event event) {
         String sql = "UPDATE Event SET OrgID = ?, CreatedByStaffID = ?, EventName = ?, Description = ?, Location = ?, "
-                + "StartDate = ?, EndDate = ?, Status = ?, Capacity = ?, Keywords = ? WHERE EventID = ?";
+                + "StartDate = ?, EndDate = ?, Status = ?, Capacity = ?, Image = ?, Category = ? WHERE EventID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, event.getOrg().getOrgID());
             pstmt.setInt(2, event.getCreatedByStaff().getStaffID());
@@ -110,8 +112,9 @@ public class EventDAO extends DBUtils {
             pstmt.setTimestamp(7, Timestamp.valueOf(event.getEndDate()));
             pstmt.setString(8, event.getStatus());
             pstmt.setInt(9, event.getCapacity());
-            pstmt.setString(10, event.getKeywords());
-            pstmt.setInt(11, event.getEventID());
+            pstmt.setString(10, event.getImage());
+            pstmt.setString(11, event.getCategory());
+            pstmt.setInt(12, event.getEventID());
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,13 +142,16 @@ public class EventDAO extends DBUtils {
         }
     }
 
-    public List<Event> getActiveEvents() {
+    public List<Event> getEventsByStatus(String status) {
         List<Event> eventList = new ArrayList<>();
-        String sql = "SELECT * FROM Event WHERE Status = 'Active'";
-        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                Event event = extractEvent(rs);
-                eventList.add(event);
+        String sql = "SELECT * FROM Event WHERE Status = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Event event = extractEvent(rs);
+                    eventList.add(event);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,19 +159,4 @@ public class EventDAO extends DBUtils {
         return eventList;
     }
 
-    public List<Event> getPendingEvents() {
-        List<Event> eventList = new ArrayList<>();
-        String sql = "SELECT * FROM Event WHERE Status = 'Pending'";
-        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                Event event = extractEvent(rs);
-                eventList.add(event);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return eventList;
-    }
-    
-    
 }
