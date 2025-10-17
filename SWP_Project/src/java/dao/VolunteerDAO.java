@@ -13,5 +13,11 @@ import java.sql.ResultSet;
  * @author Admin
  */
 public class VolunteerDAO {
-    
+    public void createVolunteer(Connection conn, int userId) throws Exception {
+        String sql = "INSERT INTO Volunteer(UserID, Status) VALUES(?, 'Pending')";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        }
+    }
 }
