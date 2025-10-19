@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class UserService {
@@ -47,7 +48,61 @@ public class UserService {
         request.getRequestDispatcher("viewAccountDetail.jsp").forward(request, response);
     }
 
-    public int addUser(Users user) {
-        return userDao.addUser(user);
+    public void displayEditInformation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String username = request.getParameter("username");
+        if (username == null || username.trim().isEmpty()) {
+            request.setAttribute("error", "Invalid username.");
+            request.getRequestDispatcher("editProfile.jsp").forward(request, response);
+            return;
+        }
+
+        UserDao userDao = new UserDao();
+        Users user = userDao.getUserbyUsername(username);
+
+        if (user == null) {
+            request.setAttribute("error", "User not found.");
+        } else {
+            request.setAttribute("user", user);
+        }
+
+        request.getRequestDispatcher("editProfile.jsp").forward(request, response);
+    }
+
+    public void editInformation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String username = request.getParameter("username");
+        String fullName = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+
+        UserDao userDao = new UserDao();
+        Users user = userDao.getUserbyUsername(username);
+
+        if (user == null) {
+            request.setAttribute("error", "User not found.");
+            request.getRequestDispatcher("editProfile.jsp").forward(request, response);
+            return;
+        }
+
+        user.setFullName(fullName);
+        user.setEmail(email);
+        user.setPhone(phone);
+        user.setUpdatedAt(LocalDateTime.now());
+
+        boolean success = userDao.updateProfileByUsername(user);
+
+        if (success) {
+            // Reload user info after update
+            Users updatedUser = userDao.getUserbyUsername(username);
+            request.setAttribute("user", updatedUser);
+            request.setAttribute("success", "Update profile success.");
+        } else {
+            request.setAttribute("user", user);
+            request.setAttribute("error", "There are something wrong when update profile. Please try again later.");
+        }
+
+        request.getRequestDispatcher("editProfile.jsp").forward(request, response);
+
     }
 }

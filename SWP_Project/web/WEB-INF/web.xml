@@ -35,4 +35,13 @@
         <servlet-name>ViewAccountDetailController</servlet-name>
         <url-pattern>/viewAccountDetail</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditProfileController</servlet-name>
+        <servlet-class>controller.EditProfileController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditProfileController</servlet-name>
+        <url-pattern>/EditProfileController</url-pattern>
+    </servlet-mapping>
 </web-app>

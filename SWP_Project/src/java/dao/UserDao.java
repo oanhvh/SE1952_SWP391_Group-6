@@ -219,40 +219,23 @@ public class UserDao extends DBUtils{
         }
         return user;
     }
-}
+    public boolean updateProfileByUsername(Users user) {
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, UpdatedAt = ? WHERE Username = ?";
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-//    public List<Users> getUsers() {
-//        List<Users> userList = new ArrayList<>();
-//        String sql = "SELECT * FROM Users";
-//
-//        try (Connection conn = DBUtils.getConnection1(); 
-//                PreparedStatement pstmt = conn.prepareStatement(sql); 
-//                ResultSet rs = pstmt.executeQuery()) {
-//
-//            while (rs.next()) {
-//                Users user = new Users();
-//                user.setUserId(rs.getInt("UserID"));
-//                user.setUsername(rs.getString("Username"));
-//                user.setPassword(rs.getString("Password"));
-//                user.setRole(rs.getString("Role"));
-//                user.setStatus(rs.getString("Status"));
-//                user.setFullName(rs.getString("FullName"));
-//                user.setEmail(rs.getString("Email"));
-//                user.setPhone(rs.getString("Phone"));
-//                user.setAvatar(rs.getString("Avatar"));
-//                user.setCreatedAt(rs.getTimestamp("CreatedAt") != null
-//                        ? rs.getTimestamp("CreatedAt").toLocalDateTime()
-//                        : null);
-//                user.setUpdateAt(rs.getTimestamp("UpdateAt") != null
-//                        ? rs.getTimestamp("UpdateAt").toLocalDateTime()
-//                        : null);
-//
-//                userList.add(user);
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        return userList;
-//    }
+            ps.setString(1, user.getFullName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPhone());
+            ps.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
+            ps.setString(5, user.getUsername());
+
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+}
