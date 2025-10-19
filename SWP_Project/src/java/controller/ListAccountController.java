@@ -1,6 +1,5 @@
 package controller;
 
-import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import service.UserService;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author admin
