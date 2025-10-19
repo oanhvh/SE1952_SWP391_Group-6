@@ -1,6 +1,5 @@
 package controller;
 
-import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,12 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import service.UserService;
 
 import java.io.IOException;
-import java.util.List;
 
-/**
- * @author admin
- */
-public class ListAccountController extends HttpServlet {
+public class ViewAccountDetailController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,9 +37,8 @@ public class ListAccountController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserService userService = new UserService();
-        userService.getAllUsers(request, response);
-    }
+        processRequest(request, response);
+        }
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -57,9 +51,9 @@ public class ListAccountController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Forward POST to GET for simplicity
-        doGet(request, response);
-    }
+        UserService userService = new UserService();
+        userService.getUserById(request, response);
+        }
 
     /**
      * Returns a short description of the servlet.

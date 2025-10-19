@@ -88,7 +88,7 @@
                             </c:choose>
                         </td>
                         <td>
-                            <form action="ViewAccountDetailController" method="get" class="m-0">
+                            <form action="viewAccountDetail" method="post" class="m-0">
                                 <input type="hidden" name="userId" value="${u.userID}">
                                 <button type="submit" class="btn btn-view btn-sm">View Detail</button>
                             </form>

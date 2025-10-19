@@ -17,4 +17,22 @@
         <servlet-name>UserRegister</servlet-name>
         <url-pattern>/register</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ListAccount</servlet-name>
+        <servlet-class>controller.ListAccountController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ListAccount</servlet-name>
+        <url-pattern>/ListAccount</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ViewAccountDetailController</servlet-name>
+        <servlet-class>controller.ViewAccountDetailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewAccountDetailController</servlet-name>
+        <url-pattern>/viewAccountDetail</url-pattern>
+    </servlet-mapping>
 </web-app>

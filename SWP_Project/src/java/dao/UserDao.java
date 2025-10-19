@@ -177,13 +177,13 @@ public class UserDao extends DBUtils{
 
             int index = 1;
             if (name != null && !name.trim().isEmpty()) {
-                ps.setString(++index, "%" + name + "%");
+                ps.setString(index++, "%" + name + "%");
             }
             if (role != null && !role.trim().isEmpty()) {
-                ps.setString(++index, "%" + role + "%");
+                ps.setString(index++, "%" + role + "%");
             }
             if (phone != null && !phone.trim().isEmpty()) {
-                ps.setString(++index, "%" + phone + "%");
+                ps.setString(index, "%" + phone + "%");
             }
 
             ResultSet rs = ps.executeQuery();
@@ -201,6 +201,23 @@ public class UserDao extends DBUtils{
             e.printStackTrace();
         }
         return list;
+    }
+
+    public Users getUserById(int userId) {
+        String sql = "SELECT * FROM Users WHERE UserID = ?";
+        Users user = null;
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    user = extractUser(rs);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
     }
 }
 
