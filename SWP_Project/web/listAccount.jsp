@@ -77,7 +77,6 @@
                         <td>${u.phone}</td>
                         <td>${u.role}</td>
                         <td>
-                        <td>
                             <c:choose>
                                 <c:when test="${u.status eq 'active'}">
                                     <span class="badge bg-success">Active</span>
