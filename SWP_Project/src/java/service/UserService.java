@@ -5,6 +5,7 @@ import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -104,5 +105,56 @@ public class UserService {
 
         request.getRequestDispatcher("editProfile.jsp").forward(request, response);
 
+    }
+
+    public void addNewUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+        String status = request.getParameter("status");
+        String fullName = request.getParameter("fullName");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+
+        try {
+            UserDao userDao = new UserDao();
+
+            if (userDao.isUsernameExisted(username)) {
+                request.setAttribute("errorMessage", "Username already exists!");
+                request.getRequestDispatcher("AddAccount.jsp").forward(request, response);
+                return;
+            }
+
+            Users user = new Users();
+            user.setUsername(username);
+            user.setPasswordHash(BCrypt.hashpw(password, BCrypt.gensalt()));
+            user.setRole(role);
+            user.setStatus(status);
+            user.setFullName(fullName);
+            user.setEmail(email);
+            user.setPhone(phone);
+            user.setCreatedAt(LocalDateTime.now());
+            user.setUpdatedAt(LocalDateTime.now());
+
+            int result = userDao.addUser(user);
+
+            if (result > 0) {
+                request.setAttribute("successMessage", "Account created successfully!");
+            } else {
+                request.setAttribute("errorMessage", "Failed to create account. Please try again later.");
+            }
+
+            request.getRequestDispatcher("AddAccount.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "An error occurred while creating the account.");
+            request.getRequestDispatcher("AddAccount.jsp").forward(request, response);
+
+        }
     }
 }
