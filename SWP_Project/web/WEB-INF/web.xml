@@ -44,4 +44,14 @@
         <servlet-name>EditProfileController</servlet-name>
         <url-pattern>/EditProfileController</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddAccountController</servlet-name>
+        <servlet-class>controller.AddAccountController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddAccountController</servlet-name>
+        <url-pattern>/AddAccountController</url-pattern>
+    </servlet-mapping>
+
 </web-app>
