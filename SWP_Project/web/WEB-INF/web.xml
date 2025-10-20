@@ -8,7 +8,56 @@
         <servlet-name>BaseController</servlet-name>
         <url-pattern>/baseController</url-pattern>
     </servlet-mapping>
+<<<<<<< HEAD
     <welcome-file-list>
-        <welcome-file>index_0.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+=======
+
+    <servlet>
+        <servlet-name>UserRegister</servlet-name>
+        <servlet-class>controller.UserRegisterController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserRegister</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ListAccount</servlet-name>
+        <servlet-class>controller.ListAccountController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ListAccount</servlet-name>
+        <url-pattern>/ListAccount</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ViewAccountDetailController</servlet-name>
+        <servlet-class>controller.ViewAccountDetailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewAccountDetailController</servlet-name>
+        <url-pattern>/viewAccountDetail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditProfileController</servlet-name>
+        <servlet-class>controller.EditProfileController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditProfileController</servlet-name>
+        <url-pattern>/EditProfileController</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddAccountController</servlet-name>
+        <servlet-class>controller.AddAccountController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddAccountController</servlet-name>
+        <url-pattern>/AddAccountController</url-pattern>
+    </servlet-mapping>
+
+>>>>>>> 82ec0137172670a360d39c48fa11c3106a1d72fa
 </web-app>
