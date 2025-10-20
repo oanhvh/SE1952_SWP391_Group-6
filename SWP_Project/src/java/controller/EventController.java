@@ -169,5 +169,5 @@ public class EventController extends HttpServlet {
 
         eventService.updateEvent(event);
         response.sendRedirect("event?action=detail&id=" + id);
-    }
+    } 
 }

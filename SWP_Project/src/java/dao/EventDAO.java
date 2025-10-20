@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 
 /**
  *
- * @author Duc
+ * @author DucNM
  */
 public class EventDAO extends DBUtils {
 

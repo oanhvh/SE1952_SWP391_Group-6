@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author Duc
+ * @author DucNM
  */
 public class EventService {
     private EventDAO eventDAO;

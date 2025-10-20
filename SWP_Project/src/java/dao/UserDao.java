@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 
 /**
  *
- * @author Duc
+ * @author DucNM
  */
 public class UserDao extends DBUtils {
 //    Connection conn = null;
