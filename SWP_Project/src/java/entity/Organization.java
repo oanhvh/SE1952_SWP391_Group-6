@@ -13,19 +13,20 @@ import java.time.LocalDate;
 public class Organization {
 
     private int orgID;
-    private Users user;
+    private Users user;               // FK: UserID
     private String orgName;
     private String description;
     private String contactInfo;
     private String address;
     private LocalDate registrationDate;
-    private Users createdByUser;
+    private Users createdByUser;      // FK: CreatedByUserID
+    private String category;          // NEW COLUMN
 
     public Organization() {
     }
 
     public Organization(int orgID, Users user, String orgName, String description, String contactInfo,
-            String address, LocalDate registrationDate, Users createdByUser) {
+            String address, LocalDate registrationDate, Users createdByUser, String category) {
         this.orgID = orgID;
         this.user = user;
         this.orgName = orgName;
@@ -34,6 +35,7 @@ public class Organization {
         this.address = address;
         this.registrationDate = registrationDate;
         this.createdByUser = createdByUser;
+        this.category = category;
     }
 
     public int getOrgID() {
@@ -98,5 +100,13 @@ public class Organization {
 
     public void setCreatedByUser(Users createdByUser) {
         this.createdByUser = createdByUser;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
