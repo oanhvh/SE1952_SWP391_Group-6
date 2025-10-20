@@ -77,7 +77,7 @@ if (loginForm) {
 }
 */
 // ====== TẠO TÀI KHOẢN MẶC ĐỊNH ======
-const defaultUsers = [
+/*const defaultUsers = [
   {
     username: 'admin',
     password: '123456',
@@ -135,5 +135,5 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-
+*/
 
