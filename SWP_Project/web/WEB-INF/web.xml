@@ -8,4 +8,7 @@
         <servlet-name>BaseController</servlet-name>
         <url-pattern>/baseController</url-pattern>
     </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>index_0.html</welcome-file>
+    </welcome-file-list>
 </web-app>

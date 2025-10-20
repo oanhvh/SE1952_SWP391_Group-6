@@ -1,0 +1,54 @@
+/* Nút Toggle */
+.sidebar-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-size: 20px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* Sidebar chung */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 220px;
+  background-color: #343a40;
+  color: white;
+  padding-top: 60px;
+  transform: translateX(-100%); /* Mặc định ẩn */
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+/* Khi sidebar hiện */
+.sidebar.active {
+  transform: translateX(0);
+}
+
+/* Menu item */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 12px 20px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+}
+
+.sidebar ul li:hover {
+  background-color: #495057;
+}
