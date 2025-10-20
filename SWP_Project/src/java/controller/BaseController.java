@@ -34,49 +34,49 @@ public class BaseController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-//            // Get user list from DAO
-//            UserDao userDAO = new UserDao();
-//            List<Users> users = userDAO.getUsers();
-//
-//            out.println("<!DOCTYPE html>");
-//            out.println("<html>");
-//            out.println("<head>");
-//            out.println("<title>User List</title>");
-//            out.println("</head>");
-//            out.println("<body>");
-//            out.println("<h1>List of Users</h1>");
-//
-//            if (users != null && !users.isEmpty()) {
-//                out.println("<table border='1' cellpadding='5' cellspacing='0'>");
-//                out.println("<tr>");
-//                out.println("<th>UserID</th>");
-//                out.println("<th>Username</th>");
-//                out.println("<th>Full Name</th>");
-//                out.println("<th>Email</th>");
-//                out.println("<th>Role</th>");
-//                out.println("<th>Status</th>");
-//                out.println("</tr>");
-//
-//                for (Users user : users) {
-//                    out.println("<tr>");
-//                    out.println("<td>" + user.getUserId() + "</td>");
-//                    out.println("<td>" + user.getUsername() + "</td>");
-//                    out.println("<td>" + user.getFullName() + "</td>");
-//                    out.println("<td>" + user.getEmail() + "</td>");
-//                    out.println("<td>" + user.getRole() + "</td>");
-//                    out.println("<td>" + user.getStatus() + "</td>");
-//                    out.println("</tr>");
-//                }
-//
-//                out.println("</table>");
-//            } else {
-//                out.println("<p>No users found.</p>");
-//            }
-//
-//            out.println("</body>");
-//            out.println("</html>");
-//        } catch (Exception e) {
-//            e.printStackTrace();
+            // Get user list from DAO
+            UserDao userDAO = new UserDao();
+            List<Users> users = userDAO.getAllUsers();
+
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>User List</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>List of Users</h1>");
+
+            if (users != null && !users.isEmpty()) {
+                out.println("<table border='1' cellpadding='5' cellspacing='0'>");
+                out.println("<tr>");
+                out.println("<th>UserID</th>");
+                out.println("<th>Username</th>");
+                out.println("<th>Full Name</th>");
+                out.println("<th>Email</th>");
+                out.println("<th>Role</th>");
+                out.println("<th>Status</th>");
+                out.println("</tr>");
+
+                for (Users user : users) {
+                    out.println("<tr>");
+                    out.println("<td>" + user.getUserID() + "</td>");
+                    out.println("<td>" + user.getUsername() + "</td>");
+                    out.println("<td>" + user.getFullName() + "</td>");
+                    out.println("<td>" + user.getEmail() + "</td>");
+                    out.println("<td>" + user.getRole() + "</td>");
+                    out.println("<td>" + user.getStatus() + "</td>");
+                    out.println("</tr>");
+                }
+
+                out.println("</table>");
+            } else {
+                out.println("<p>No users found.</p>");
+            }
+
+            out.println("</body>");
+            out.println("</html>");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

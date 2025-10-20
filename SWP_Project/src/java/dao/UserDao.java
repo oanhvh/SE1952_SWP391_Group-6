@@ -117,7 +117,6 @@ public class UserDao extends DBUtils{
         String sql = "UPDATE Users SET Password = ?, Role = ?, Status = ?, FullName = ?, "
                 + "Email = ?, Phone = ?, Avatar = ?, UpdateAt = ? WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             pstmt.setString(1, user.getPasswordHash());
             pstmt.setString(2, user.getRole());
             pstmt.setString(3, user.getStatus());
