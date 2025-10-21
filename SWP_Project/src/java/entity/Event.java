@@ -23,13 +23,13 @@ public class Event {
     private String status;
     private int capacity;
     private String image;
-    private String category;
+    private int categoryID;
     private LocalDateTime createdAt;
 
     public Event() {
     }
 
-    public Event(int eventID, Organization org, OrgStaff createdByStaff, String eventName, String description, String location, LocalDateTime startDate, LocalDateTime endDate, String status, int capacity, String image, String category, LocalDateTime createdAt) {
+    public Event(int eventID, Organization org, OrgStaff createdByStaff, String eventName, String description, String location, LocalDateTime startDate, LocalDateTime endDate, String status, int capacity, String image, int categoryID, LocalDateTime createdAt) {
         this.eventID = eventID;
         this.org = org;
         this.createdByStaff = createdByStaff;
@@ -41,7 +41,7 @@ public class Event {
         this.status = status;
         this.capacity = capacity;
         this.image = image;
-        this.category = category;
+        this.categoryID = categoryID;
         this.createdAt = createdAt;
     }
 
@@ -141,13 +141,12 @@ public class Event {
         this.image = image;
     }
 
-    public String getCategory() {
-        return category;
+    public int getCategoryID() {
+        return categoryID;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
     }
-    
     
 }

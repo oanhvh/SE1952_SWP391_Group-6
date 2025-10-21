@@ -15,7 +15,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import service.EventService;
 
 /**
@@ -44,9 +47,11 @@ public class EventController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
         switch (action) {
             case "detail":
@@ -73,9 +78,11 @@ public class EventController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String action = request.getParameter("action");
-        if (action == null) action = "";
+        if (action == null) {
+            action = "";
+        }
 
         switch (action) {
             case "add":
@@ -105,7 +112,7 @@ public class EventController extends HttpServlet {
         request.setAttribute("events", events);
         request.getRequestDispatcher("listEvents.jsp").forward(request, response);
     }
-    
+
     private void showDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -113,7 +120,7 @@ public class EventController extends HttpServlet {
         request.setAttribute("event", event);
         request.getRequestDispatcher("viewEvent.jsp").forward(request, response);
     }
-    
+
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -123,7 +130,7 @@ public class EventController extends HttpServlet {
     }
 
     private void addEvent(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+            throws ServletException, IOException {
         Event event = new Event();
         event.setEventName(request.getParameter("eventName"));
         event.setDescription(request.getParameter("description"));
@@ -133,7 +140,7 @@ public class EventController extends HttpServlet {
         event.setStatus(request.getParameter("status"));
         event.setCapacity(Integer.parseInt(request.getParameter("capacity")));
         event.setImage(request.getParameter("image"));
-        event.setCategory(request.getParameter("category"));
+        event.setCategoryID(Integer.parseInt(request.getParameter("categoryID")));
         event.setCreatedAt(LocalDateTime.now());
 
         Organization org = new Organization();
@@ -144,12 +151,22 @@ public class EventController extends HttpServlet {
         staff.setStaffID(1);
         event.setCreatedByStaff(staff);
 
-        eventService.addEvent(event);
-        response.sendRedirect("event?action=list");
+        Map<String, String> errors = new HashMap<>();
+        boolean success = eventService.addEvent(event, errors);
+
+        if (success) {
+            response.sendRedirect("event?action=list");
+        } else {
+            request.setAttribute("errors", errors);
+            request.setAttribute("event", event);
+            request.getRequestDispatcher("createEvent.jsp").forward(request, response);
+        }
+//        eventService.addEvent(event);
+//        response.sendRedirect("event?action=list");
     }
 
     private void updateEvent(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+            throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("eventID"));
         Event event = eventService.getEventByID(id);
         if (event == null) {
@@ -165,9 +182,18 @@ public class EventController extends HttpServlet {
         event.setStatus(request.getParameter("status"));
         event.setCapacity(Integer.parseInt(request.getParameter("capacity")));
         event.setImage(request.getParameter("image"));
-        event.setCategory(request.getParameter("category"));
+        event.setCategoryID(Integer.parseInt(request.getParameter("categoryID")));
 
-        eventService.updateEvent(event);
-        response.sendRedirect("event?action=detail&id=" + id);
-    } 
+        Map<String, String> errors = new HashMap<>();
+        boolean success = eventService.updateEvent(event, errors);
+        if (success) {
+            response.sendRedirect("event?action=detail&id=" + id);
+        } else {
+            request.setAttribute("errors", errors);
+            request.setAttribute("event", event);
+            request.getRequestDispatcher("updateEvent.jsp").forward(request, response);
+        }
+//        eventService.updateEvent(event);
+//        response.sendRedirect("event?action=detail&id=" + id);
+    }
 }

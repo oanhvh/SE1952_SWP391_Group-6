@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -41,7 +42,7 @@ public class EventDAO extends DBUtils {
         event.setStatus(rs.getString("Status"));
         event.setCapacity(rs.getInt("Capacity"));
         event.setImage(rs.getString("Image"));
-        event.setCategory(rs.getString("Category"));
+        event.setCategoryID(rs.getInt("CategoryID"));
         event.setCreatedAt(rs.getTimestamp("CreatedAt").toLocalDateTime());
 
         return event;
@@ -91,7 +92,7 @@ public class EventDAO extends DBUtils {
             pstmt.setString(8, event.getStatus());
             pstmt.setInt(9, event.getCapacity());
             pstmt.setString(10, event.getImage());
-            pstmt.setString(11, event.getCategory());
+            pstmt.setInt(11, event.getCategoryID());
             pstmt.setTimestamp(12, Timestamp.valueOf(event.getCreatedAt()));
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -113,7 +114,7 @@ public class EventDAO extends DBUtils {
             pstmt.setString(8, event.getStatus());
             pstmt.setInt(9, event.getCapacity());
             pstmt.setString(10, event.getImage());
-            pstmt.setString(11, event.getCategory());
+            pstmt.setInt(11, event.getCategoryID());
             pstmt.setInt(12, event.getEventID());
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -158,5 +159,23 @@ public class EventDAO extends DBUtils {
         }
         return eventList;
     }
+
+    public Event getEventByNameAndDateAndLocation(String name, LocalDateTime startDate, String location) {
+    Event event = null;
+    String sql = "SELECT * FROM Event WHERE EventName = ? AND StartDate = ? AND Location = ?";
+    try (Connection conn = DBUtils.getConnection1();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setString(1, name);
+        pstmt.setTimestamp(2, Timestamp.valueOf(startDate)); // ✅ đổi từ LocalDateTime sang SQL Timestamp
+        pstmt.setString(3, location);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            event = extractEvent(rs);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return event;
+}
 
 }
