@@ -4,7 +4,7 @@
  */
 package service;
 
-import dao.OrgEmployeeCodesDAO;
+import dao.EmployeeCodesDAO;
 import java.sql.Connection;
 
 /**
@@ -12,9 +12,9 @@ import java.sql.Connection;
  * @author NHThanh
  */
 public class CodeValidatorService {
-    private final OrgEmployeeCodesDAO codesDAO = new OrgEmployeeCodesDAO();
+    private final EmployeeCodesDAO codesDAO = new EmployeeCodesDAO();
 
-    public OrgEmployeeCodesDAO.CodeInfo validateEmployeeCode(Connection conn, String employeeCode) throws Exception {
+    public EmployeeCodesDAO.CodeInfo validateEmployeeCode(Connection conn, String employeeCode) throws Exception {
         if (employeeCode == null || employeeCode.trim().isEmpty()) return null;
         return codesDAO.getValidCodeInfo(conn, employeeCode.trim());
     }
