@@ -11,7 +11,7 @@ package entity;
 public class VolunteerSponsorDetails {
 
     private int sponsorID;
-    private Volunteer volunteer;
+    private int volunteerID;
     private String sponsorsName;
     private String contactPerson;
     private String sponsorDescription;
@@ -19,11 +19,31 @@ public class VolunteerSponsorDetails {
     public VolunteerSponsorDetails() {
     }
 
-    public VolunteerSponsorDetails(int sponsorID, Volunteer volunteer, String sponsorsName, String contactPerson, String sponsorDescription) {
+    public VolunteerSponsorDetails(int sponsorID, int volunteerID, String sponsorsName, String contactPerson, String sponsorDescription) {
         this.sponsorID = sponsorID;
-        this.volunteer = volunteer;
+        this.volunteerID = volunteerID;
         this.sponsorsName = sponsorsName;
         this.contactPerson = contactPerson;
+        this.sponsorDescription = sponsorDescription;
+    }
+
+    public void setSponsorID(int sponsorID) {
+        this.sponsorID = sponsorID;
+    }
+
+    public void setVolunteerID(int volunteerID) {
+        this.volunteerID = volunteerID;
+    }
+
+    public void setSponsorsName(String sponsorsName) {
+        this.sponsorsName = sponsorsName;
+    }
+
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+
+    public void setSponsorDescription(String sponsorDescription) {
         this.sponsorDescription = sponsorDescription;
     }
 
@@ -31,39 +51,20 @@ public class VolunteerSponsorDetails {
         return sponsorID;
     }
 
-    public void setSponsorID(int sponsorID) {
-        this.sponsorID = sponsorID;
-    }
-
-    public Volunteer getVolunteer() {
-        return volunteer;
-    }
-
-    public void setVolunteer(Volunteer volunteer) {
-        this.volunteer = volunteer;
+    public int getVolunteerID() {
+        return volunteerID;
     }
 
     public String getSponsorsName() {
         return sponsorsName;
     }
 
-    public void setSponsorsName(String sponsorsName) {
-        this.sponsorsName = sponsorsName;
-    }
-
     public String getContactPerson() {
         return contactPerson;
-    }
-
-    public void setContactPerson(String contactPerson) {
-        this.contactPerson = contactPerson;
     }
 
     public String getSponsorDescription() {
         return sponsorDescription;
     }
 
-    public void setSponsorDescription(String sponsorDescription) {
-        this.sponsorDescription = sponsorDescription;
-    }
 }

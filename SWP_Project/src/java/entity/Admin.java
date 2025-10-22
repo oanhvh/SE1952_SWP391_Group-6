@@ -25,15 +25,16 @@ public class Admin {
         return adminID;
     }
 
-    public void setAdminID(int adminID) {
-        this.adminID = adminID;
-    }
-
     public Users getUser() {
         return user;
+    }
+
+    public void setAdminID(int adminID) {
+        this.adminID = adminID;
     }
 
     public void setUser(Users user) {
         this.user = user;
     }
+
 }
