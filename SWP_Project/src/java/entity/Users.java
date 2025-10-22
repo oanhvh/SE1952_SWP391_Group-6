@@ -4,6 +4,7 @@
  */
 package entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -19,6 +20,7 @@ public class Users {
     private String status;
     private String fullName;
     private String email;
+    private LocalDate dateOfBirth;
     private String phone;
     private String avatar;
     private LocalDateTime createdAt;
@@ -27,8 +29,9 @@ public class Users {
     public Users() {
     }
 
-    public Users(int userID, String username, String passwordHash, String role, String status, String fullName,
-            String email, String phone, String avatar, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Users(int userID, String username, String passwordHash, String role, String status,
+            String fullName, String email, LocalDate dateOfBirth, String phone,
+            String avatar, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.userID = userID;
         this.username = username;
         this.passwordHash = passwordHash;
@@ -36,6 +39,7 @@ public class Users {
         this.status = status;
         this.fullName = fullName;
         this.email = email;
+        this.dateOfBirth = dateOfBirth;
         this.phone = phone;
         this.avatar = avatar;
         this.createdAt = createdAt;
@@ -46,87 +50,96 @@ public class Users {
         return userID;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
-    }
-
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPasswordHash() {
         return passwordHash;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
     public String getRole() {
         return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getFullName() {
         return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
     public String getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public String getAvatar() {
         return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 }
