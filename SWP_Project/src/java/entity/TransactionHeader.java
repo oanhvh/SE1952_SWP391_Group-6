@@ -4,6 +4,7 @@
  */
 package entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -13,10 +14,10 @@ import java.time.LocalDateTime;
 public class TransactionHeader {
 
     private int transactionID;
-    private Users user;
-    private Organization org;
-    private Event event;
-    private double amount;
+    private Integer userID;
+    private Integer managerID;
+    private Integer eventID;
+    private BigDecimal amount;
     private LocalDateTime transactionDate;
     private String transactionType;
     private String status;
@@ -27,13 +28,11 @@ public class TransactionHeader {
     public TransactionHeader() {
     }
 
-    public TransactionHeader(int transactionID, Users user, Organization org, Event event, double amount,
-            LocalDateTime transactionDate, String transactionType, String status,
-            String paymentMethod, String referenceNumber, String currency) {
+    public TransactionHeader(int transactionID, Integer userID, Integer managerID, Integer eventID, BigDecimal amount, LocalDateTime transactionDate, String transactionType, String status, String paymentMethod, String referenceNumber, String currency) {
         this.transactionID = transactionID;
-        this.user = user;
-        this.org = org;
-        this.event = event;
+        this.userID = userID;
+        this.managerID = managerID;
+        this.eventID = eventID;
         this.amount = amount;
         this.transactionDate = transactionDate;
         this.transactionType = transactionType;
@@ -47,87 +46,88 @@ public class TransactionHeader {
         return transactionID;
     }
 
-    public void setTransactionID(int transactionID) {
-        this.transactionID = transactionID;
+    public Integer getUserID() {
+        return userID;
     }
 
-    public Users getUser() {
-        return user;
+    public Integer getManagerID() {
+        return managerID;
     }
 
-    public void setUser(Users user) {
-        this.user = user;
+    public Integer getEventID() {
+        return eventID;
     }
 
-    public Organization getOrg() {
-        return org;
-    }
-
-    public void setOrg(Organization org) {
-        this.org = org;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
-    }
-
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
     }
 
     public LocalDateTime getTransactionDate() {
         return transactionDate;
     }
 
-    public void setTransactionDate(LocalDateTime transactionDate) {
-        this.transactionDate = transactionDate;
-    }
-
     public String getTransactionType() {
         return transactionType;
-    }
-
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getPaymentMethod() {
         return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     public String getReferenceNumber() {
         return referenceNumber;
     }
 
-    public void setReferenceNumber(String referenceNumber) {
-        this.referenceNumber = referenceNumber;
-    }
-
     public String getCurrency() {
         return currency;
+    }
+
+    public void setTransactionID(int transactionID) {
+        this.transactionID = transactionID;
+    }
+
+    public void setUserID(Integer userID) {
+        this.userID = userID;
+    }
+
+    public void setManagerID(Integer managerID) {
+        this.managerID = managerID;
+    }
+
+    public void setEventID(Integer eventID) {
+        this.eventID = eventID;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public void setTransactionDate(LocalDateTime transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
     }
 
     public void setCurrency(String currency) {
         this.currency = currency;
     }
+
 }

@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 public class Event {
 
     private int eventID;
-    private Organization org;
-    private OrgStaff createdByStaff;
+    private int managerID;
+    private Integer createdByStaffID; // nullable
     private String eventName;
     private String description;
     private String location;
@@ -29,10 +29,10 @@ public class Event {
     public Event() {
     }
 
-    public Event(int eventID, Organization org, OrgStaff createdByStaff, String eventName, String description, String location, LocalDateTime startDate, LocalDateTime endDate, String status, int capacity, String image, int categoryID, LocalDateTime createdAt) {
+    public Event(int eventID, int managerID, Integer createdByStaffID, String eventName, String description, String location, LocalDateTime startDate, LocalDateTime endDate, String status, int capacity, String image, int categoryID, LocalDateTime createdAt) {
         this.eventID = eventID;
-        this.org = org;
-        this.createdByStaff = createdByStaff;
+        this.managerID = managerID;
+        this.createdByStaffID = createdByStaffID;
         this.eventName = eventName;
         this.description = description;
         this.location = location;
@@ -49,104 +49,104 @@ public class Event {
         return eventID;
     }
 
-    public void setEventID(int eventID) {
-        this.eventID = eventID;
+    public int getManagerID() {
+        return managerID;
     }
 
-    public Organization getOrg() {
-        return org;
-    }
-
-    public void setOrg(Organization org) {
-        this.org = org;
-    }
-
-    public OrgStaff getCreatedByStaff() {
-        return createdByStaff;
-    }
-
-    public void setCreatedByStaff(OrgStaff createdByStaff) {
-        this.createdByStaff = createdByStaff;
+    public Integer getCreatedByStaffID() {
+        return createdByStaffID;
     }
 
     public String getEventName() {
         return eventName;
     }
 
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public LocalDateTime getStartDate() {
         return startDate;
-    }
-
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate;
     }
 
     public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate;
-    }
-
     public String getStatus() {
         return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public int getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public String getImage() {
         return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public int getCategoryID() {
         return categoryID;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setEventID(int eventID) {
+        this.eventID = eventID;
+    }
+
+    public void setManagerID(int managerID) {
+        this.managerID = managerID;
+    }
+
+    public void setCreatedByStaffID(Integer createdByStaffID) {
+        this.createdByStaffID = createdByStaffID;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public void setCategoryID(int categoryID) {
         this.categoryID = categoryID;
     }
-    
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
 }
