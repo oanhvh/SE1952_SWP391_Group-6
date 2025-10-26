@@ -39,7 +39,7 @@ public class CategoryDAO extends DBUtils {
     }
 
     public void addCategory(Category category) {
-        String sql = "INSERT INTO Category (EventID, CategoryName) VALUES (?, ?)";
+        String sql = "INSERT INTO Category (CategoryName) VALUES (?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, category.getCategoryName());
             pstmt.executeUpdate();
@@ -49,7 +49,7 @@ public class CategoryDAO extends DBUtils {
     }
 
     public void updateCategory(Category category) {
-        String sql = "UPDATE Category SET EventID = ?, CategoryName = ? WHERE CategoryID = ?";
+        String sql = "UPDATE Category SET CategoryName = ? WHERE CategoryID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, category.getCategoryName());
             pstmt.setInt(2, category.getCategoryID());
