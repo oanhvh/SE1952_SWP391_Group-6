@@ -14,14 +14,13 @@ public class DBUtils {
         Connection conn = null;
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         DriverManager.setLoginTimeout(5);
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=" + DB+ ";encrypt=true;trustServerCertificate=true";
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=" + DB + ";encrypt=true;trustServerCertificate=true";
         conn = DriverManager.getConnection(url, USER_NAME, PASSWORD);
         System.out.println("Connected.");
         return conn;
     }
-    
+
 //    public static void main(String[] args) throws ClassNotFoundException, SQLException {
 //        System.out.println(getConnection1().toString());
 //    }
-
 }
