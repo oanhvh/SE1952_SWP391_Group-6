@@ -13,7 +13,7 @@ import java.security.MessageDigest;
  */
 public class PasswordValidatorService {
 
-    public boolean validatePassword(String storedHash, String submittedPlain) {
+    public boolean validatePassword(String storedHash, String submittedPlain) { //storeHash mk trong database
         if (storedHash == null || submittedPlain == null) {
             return false;
         }

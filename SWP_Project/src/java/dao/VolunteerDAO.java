@@ -8,11 +8,13 @@ import entity.Volunteer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 /**
  *
- * @author Admin
+ * @author NHThanh
  */
 public class VolunteerDAO {
+
     public void createVolunteer(Connection conn, int userId) throws Exception {
         String sql = "INSERT INTO Volunteer(UserID, Status) VALUES(?, 'Pending')";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
