@@ -23,7 +23,7 @@ import service.EventService;
 
 /**
  *
- * @author Duc
+ * @author DucNM
  */
 @WebServlet(name = "EventController", urlPatterns = {"/event"})
 public class EventController extends HttpServlet {
