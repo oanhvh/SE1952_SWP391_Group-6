@@ -19,10 +19,12 @@ import java.util.List;
  * @author Admin
  */
 public class VolunteerDAO {
+
     public List<Volunteer> getAllVolunteers() {
-        List<Volunteer> volunteers = new ArrayList<>();
-        String sql = "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, v.IsSponsor, v.Age, " +
-                "u.UserID, u.Username, u.FullName, u.Email, u.Phone, u.Role, u.Status AS UserStatus " +
+        List<Volunteer> list = new ArrayList<>();
+        String sql = "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, " +
+                "v.IsSponsor, v.Age, u.UserID, u.Username, u.FullName, u.Email, u.Phone, " +
+                "u.Role, u.Status AS UserStatus, u.Avatar " +
                 "FROM Volunteer v JOIN Users u ON v.UserID = u.UserID";
 
         try (Connection conn = DBUtils.getConnection1();
@@ -30,38 +32,84 @@ public class VolunteerDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Users user = new Users();
-                user.setUserID(rs.getInt("UserID"));
-                user.setUsername(rs.getString("Username"));
-                user.setFullName(rs.getString("FullName"));
-                user.setEmail(rs.getString("Email"));
-                user.setPhone(rs.getString("Phone"));
-                user.setRole(rs.getString("Role"));
-                user.setStatus(rs.getString("UserStatus"));
+                list.add(mapResultSetToVolunteer(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
-                Volunteer volunteer = new Volunteer();
-                volunteer.setVolunteerID(rs.getInt("VolunteerID"));
-                volunteer.setUser(user);
-                volunteer.setProfileInfo(rs.getString("ProfileInfo"));
+    public List<Volunteer> searchVolunteers(String name, String phone, String email, String status) {
+        List<Volunteer> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, " +
+                        "v.IsSponsor, v.Age, u.UserID, u.Username, u.FullName, u.Email, u.Phone, " +
+                        "u.Role, u.Status AS UserStatus, u.Avatar " +
+                        "FROM Volunteer v JOIN Users u ON v.UserID = u.UserID WHERE 1=1"
+        );
 
-                Date joinDate = rs.getDate("JoinDate");
-                if (joinDate != null) {
-                    volunteer.setJoinDate(joinDate.toLocalDate());
-                }
+        List<Object> params = new ArrayList<>();
 
-                volunteer.setStatus(rs.getString("Status"));
-                volunteer.setAvailability(rs.getString("Availability"));
-                volunteer.setSponsor(rs.getBoolean("IsSponsor"));
-                volunteer.setAge(rs.getInt("Age"));
+        if (name != null && !name.trim().isEmpty()) {
+            sql.append(" AND u.FullName LIKE ?");
+            params.add("%" + name + "%");
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            sql.append(" AND u.Phone LIKE ?");
+            params.add("%" + phone + "%");
+        }
+        if (email != null && !email.trim().isEmpty()) {
+            sql.append(" AND u.Email LIKE ?");
+            params.add("%" + email + "%");
+        }
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND v.Status = ?");
+            params.add(status);
+        }
 
-                volunteers.add(volunteer);
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
 
-        } catch (SQLException | ClassNotFoundException e) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapResultSetToVolunteer(rs));
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return volunteers;
+        return list;
+    }
+
+    private Volunteer mapResultSetToVolunteer(ResultSet rs) throws SQLException {
+        Users user = new Users();
+        user.setUserID(rs.getInt("UserID"));
+        user.setUsername(rs.getString("Username"));
+        user.setFullName(rs.getString("FullName"));
+        user.setEmail(rs.getString("Email"));
+        user.setPhone(rs.getString("Phone"));
+        user.setRole(rs.getString("Role"));
+        user.setStatus(rs.getString("UserStatus"));
+        user.setAvatar(rs.getString("Avatar"));
+
+        Volunteer v = new Volunteer();
+        v.setVolunteerID(rs.getInt("VolunteerID"));
+        v.setUser(user);
+        v.setProfileInfo(rs.getString("ProfileInfo"));
+        Date joinDate = rs.getDate("JoinDate");
+        if (joinDate != null)
+            v.setJoinDate(joinDate.toLocalDate());
+        v.setStatus(rs.getString("Status"));
+        v.setAvailability(rs.getString("Availability"));
+        v.setSponsor(rs.getBoolean("IsSponsor"));
+        v.setAge(rs.getInt("Age"));
+        return v;
     }
 
     public Volunteer getVolunteerById(int volunteerId) {
@@ -112,48 +160,17 @@ public class VolunteerDAO {
         return null;
     }
 
-    public List<Volunteer> searchVolunteers(String name, String status, String availability) {
-        List<Volunteer> list = new ArrayList<>();
-        String sql = "SELECT v.*, u.UserID, u.FullName, u.Email, u.Phone, u.Avatar " +
-                "FROM Volunteer v JOIN Users u ON v.UserID = u.UserID WHERE 1=1 ";
-
-        if (name != null && !name.trim().isEmpty()) sql += "AND u.FullName LIKE ? ";
-        if (status != null && !status.trim().isEmpty()) sql += "AND v.Status LIKE ? ";
-        if (availability != null && !availability.trim().isEmpty()) sql += "AND v.Availability LIKE ? ";
-
+    public boolean updateVolunteerStatus(int volunteerID, String status) {
+        String sql = "UPDATE Volunteer SET status = ? WHERE volunteerID = ?";
         try (Connection conn = DBUtils.getConnection1();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            int i = 1;
-            if (name != null && !name.trim().isEmpty()) ps.setString(i++, "%" + name + "%");
-            if (status != null && !status.trim().isEmpty()) ps.setString(i++, "%" + status + "%");
-            if (availability != null && !availability.trim().isEmpty()) ps.setString(i++, "%" + availability + "%");
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Volunteer v = new Volunteer();
-                v.setVolunteerID(rs.getInt("VolunteerID"));
-                v.setProfileInfo(rs.getString("ProfileInfo"));
-                v.setJoinDate(rs.getDate("JoinDate").toLocalDate());
-                v.setStatus(rs.getString("Status"));
-                v.setAvailability(rs.getString("Availability"));
-                v.setSponsor(rs.getBoolean("IsSponsor"));
-                v.setAge(rs.getInt("Age"));
-
-                Users u = new Users();
-                u.setUserID(rs.getInt("UserID"));
-                u.setFullName(rs.getString("FullName"));
-                u.setEmail(rs.getString("Email"));
-                u.setPhone(rs.getString("Phone"));
-                u.setAvatar(rs.getString("Avatar"));
-                v.setUser(u);
-
-                list.add(v);
-            }
-
+            ps.setString(1, status);
+            ps.setInt(2, volunteerID);
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return list;
+        return false;
     }
+
 }

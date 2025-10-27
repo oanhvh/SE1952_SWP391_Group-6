@@ -64,11 +64,20 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>ViewVolunteerDetailController</servlet-name>
-        <servlet-class>controller.ViewVolunteerDetailController</servlet-class>
-    </servlet>
+    <servlet-name>ViewVolunteerDetailController</servlet-name>
+    <servlet-class>controller.ViewVolunteerDetailController</servlet-class>
+</servlet>
     <servlet-mapping>
         <servlet-name>ViewVolunteerDetailController</servlet-name>
         <url-pattern>/viewVolunteerDetail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UpdateVolunteerStatusController</servlet-name>
+        <servlet-class>controller.UpdateVolunteerStatusController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateVolunteerStatusController</servlet-name>
+        <url-pattern>/UpdateVolunteerStatus</url-pattern>
     </servlet-mapping>
 </web-app>
