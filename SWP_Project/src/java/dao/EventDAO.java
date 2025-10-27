@@ -150,4 +150,18 @@ public class EventDAO extends DBUtils {
         return eventList;
     }
 
+    public Event getEventById(int eventID) {
+        String sql = "SELECT * FROM Event WHERE EventID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, eventID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractEvent(rs);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
