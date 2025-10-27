@@ -54,4 +54,21 @@
         <url-pattern>/AddAccountController</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ListVolunteerController</servlet-name>
+        <servlet-class>controller.ListVolunteerController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ListVolunteerController</servlet-name>
+        <url-pattern>/ListVolunteer</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ViewVolunteerDetailController</servlet-name>
+        <servlet-class>controller.ViewVolunteerDetailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewVolunteerDetailController</servlet-name>
+        <url-pattern>/viewVolunteerDetail</url-pattern>
+    </servlet-mapping>
 </web-app>
