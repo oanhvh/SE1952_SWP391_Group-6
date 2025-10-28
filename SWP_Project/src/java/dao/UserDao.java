@@ -85,9 +85,9 @@ public class UserDao extends DBUtils{
     }
 
     // dùng tạm để giữ cho code cũ tiếp tục chạy mà không bị crash do thay đổi tên phương thức
-    public Users getUserbyUsername(String username) {
-        return getUserByUsername(username);
-    }
+//    public Users getUserbyUsername(String username) {
+//        return getUserByUsername(username);
+//    }
 
     public boolean isUsernameExisted(String username) {
         String sql = "SELECT COUNT(*) FROM Users WHERE username = ?";
@@ -138,7 +138,7 @@ public class UserDao extends DBUtils{
         }
     }
 
-    public void addUser(Users user) {
+    public int addUser(Users user) {
         String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, DateOfBirth, Phone, Avatar, CreatedAt, UpdatedAt) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -153,9 +153,10 @@ public class UserDao extends DBUtils{
             pstmt.setString(9, user.getAvatar());
             pstmt.setTimestamp(10, user.getCreatedAt() != null ? Timestamp.valueOf(user.getCreatedAt()) : null);
             pstmt.setTimestamp(11, user.getUpdatedAt() != null ? Timestamp.valueOf(user.getUpdatedAt()) : null);
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+            return -1;
         }
     }
 
@@ -307,7 +308,7 @@ public class UserDao extends DBUtils{
         return null;
     }
 
-    private static String sha256(String input) throws Exception {
+    public static String sha256(String input) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
         StringBuilder hex = new StringBuilder();
@@ -316,7 +317,4 @@ public class UserDao extends DBUtils{
         }
         return hex.toString();
     }
-}
-
-
 }

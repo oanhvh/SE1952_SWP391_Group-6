@@ -5,16 +5,22 @@ import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static dao.UserDao.sha256;
+import static service.CodeValidatorService.isNotAdmin;
+
 public class UserService {
     private final UserDao userDao = new UserDao();
 
     public void getAllUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (isNotAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
+            return;
+        }
         String name = request.getParameter("name");
         String role = request.getParameter("role");
         String phone = request.getParameter("phone");
@@ -33,6 +39,10 @@ public class UserService {
     }
 
     public void getUserById(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (isNotAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
+            return;
+        }
         String userIdParam = request.getParameter("userId");
         if (userIdParam != null) {
             try {
@@ -50,7 +60,10 @@ public class UserService {
     }
 
     public void displayEditInformation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        if (isNotAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
+            return;
+        }
         String username = request.getParameter("username");
         if (username == null || username.trim().isEmpty()) {
             request.setAttribute("error", "Invalid username.");
@@ -71,7 +84,10 @@ public class UserService {
     }
 
     public void editInformation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        if (isNotAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
+            return;
+        }
         String username = request.getParameter("username");
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
@@ -108,7 +124,10 @@ public class UserService {
     }
 
     public void addNewUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        if (isNotAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
+            return;
+        }
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
@@ -128,10 +147,10 @@ public class UserService {
                 request.getRequestDispatcher("AddAccount.jsp").forward(request, response);
                 return;
             }
-
+            password = sha256(password);
             Users user = new Users();
             user.setUsername(username);
-            user.setPasswordHash(BCrypt.hashpw(password, BCrypt.gensalt()));
+            user.setPasswordHash(password);
             user.setRole(role);
             user.setStatus(status);
             user.setFullName(fullName);

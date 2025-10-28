@@ -5,7 +5,7 @@
 package dao;
 
 import entity.Users;
-import entity.Volunteer;
+import entity.VolunteerUser;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class VolunteerDAO {
 
-    public List<Volunteer> getAllVolunteers() {
-        List<Volunteer> list = new ArrayList<>();
+    public List<VolunteerUser> getAllVolunteers() {
+        List<VolunteerUser> list = new ArrayList<>();
         String sql = "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, " +
-                "v.IsSponsor, v.Age, u.UserID, u.Username, u.FullName, u.Email, u.Phone, " +
+                "v.IsSponsor, u.UserID, u.Username, u.FullName, u.Email, u.Phone, " +
                 "u.Role, u.Status AS UserStatus, u.Avatar " +
                 "FROM Volunteer v JOIN Users u ON v.UserID = u.UserID";
 
@@ -40,11 +40,11 @@ public class VolunteerDAO {
         return list;
     }
 
-    public List<Volunteer> searchVolunteers(String name, String phone, String email, String status) {
-        List<Volunteer> list = new ArrayList<>();
+    public List<VolunteerUser> searchVolunteers(String name, String phone, String email, String status) {
+        List<VolunteerUser> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
                 "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, " +
-                        "v.IsSponsor, v.Age, u.UserID, u.Username, u.FullName, u.Email, u.Phone, " +
+                        "v.IsSponsor, u.UserID, u.Username, u.FullName, u.Email, u.Phone, " +
                         "u.Role, u.Status AS UserStatus, u.Avatar " +
                         "FROM Volunteer v JOIN Users u ON v.UserID = u.UserID WHERE 1=1"
         );
@@ -87,7 +87,7 @@ public class VolunteerDAO {
         return list;
     }
 
-    private Volunteer mapResultSetToVolunteer(ResultSet rs) throws SQLException {
+    private VolunteerUser mapResultSetToVolunteer(ResultSet rs) throws SQLException {
         Users user = new Users();
         user.setUserID(rs.getInt("UserID"));
         user.setUsername(rs.getString("Username"));
@@ -98,7 +98,7 @@ public class VolunteerDAO {
         user.setStatus(rs.getString("UserStatus"));
         user.setAvatar(rs.getString("Avatar"));
 
-        Volunteer v = new Volunteer();
+        VolunteerUser v = new VolunteerUser();
         v.setVolunteerID(rs.getInt("VolunteerID"));
         v.setUser(user);
         v.setProfileInfo(rs.getString("ProfileInfo"));
@@ -108,13 +108,12 @@ public class VolunteerDAO {
         v.setStatus(rs.getString("Status"));
         v.setAvailability(rs.getString("Availability"));
         v.setSponsor(rs.getBoolean("IsSponsor"));
-        v.setAge(rs.getInt("Age"));
         return v;
     }
 
-    public Volunteer getVolunteerById(int volunteerId) {
+    public VolunteerUser getVolunteerById(int volunteerId) {
         String sql = "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, "
-                + "v.IsSponsor, v.Age, "
+                + "v.IsSponsor, "
                 + "u.UserID, u.Username, u.FullName, u.Email, u.Phone, u.Role, u.Status AS UserStatus "
                 + "FROM Volunteer v "
                 + "JOIN Users u ON v.UserID = u.UserID "
@@ -135,7 +134,7 @@ public class VolunteerDAO {
                     user.setRole(rs.getString("Role"));
                     user.setStatus(rs.getString("UserStatus"));
 
-                    Volunteer volunteer = new Volunteer();
+                    VolunteerUser volunteer = new VolunteerUser();
                     volunteer.setVolunteerID(rs.getInt("VolunteerID"));
                     volunteer.setUser(user);
                     volunteer.setProfileInfo(rs.getString("ProfileInfo"));
@@ -148,7 +147,6 @@ public class VolunteerDAO {
                     volunteer.setStatus(rs.getString("Status"));
                     volunteer.setAvailability(rs.getString("Availability"));
                     volunteer.setSponsor(rs.getBoolean("IsSponsor"));
-                    volunteer.setAge(rs.getInt("Age"));
 
                     return volunteer;
                 }

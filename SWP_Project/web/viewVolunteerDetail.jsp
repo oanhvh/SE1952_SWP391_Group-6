@@ -33,9 +33,6 @@
                                value="${empty volunteer.user.fullName ? 'N/A' : volunteer.user.fullName}">
                     </div>
                     <div class="col-md-6">
-                        <label for="age" class="form-label">Age:</label>
-                        <input type="text" id="age" class="form-control" readonly disabled
-                               value="${empty volunteer.age ? 'N/A' : volunteer.age}">
                     </div>
                 </div>
 

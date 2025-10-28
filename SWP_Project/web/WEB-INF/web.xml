@@ -10,15 +10,6 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>UserRegister</servlet-name>
-        <servlet-class>controller.UserRegisterController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>UserRegister</servlet-name>
-        <url-pattern>/register</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
         <servlet-name>ListAccount</servlet-name>
         <servlet-class>controller.ListAccountController</servlet-class>
     </servlet>

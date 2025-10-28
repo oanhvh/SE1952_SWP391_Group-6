@@ -1,13 +1,16 @@
 package service;
 
 import dao.VolunteerDAO;
-import entity.Volunteer;
+import entity.VolunteerUser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
+
+import static service.CodeValidatorService.isNotAdmin;
 
 public class VolunteerService {
     private final VolunteerDAO volunteerDao = new VolunteerDAO();
@@ -15,12 +18,17 @@ public class VolunteerService {
     public void getAllVolunteers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        if (isNotAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
+            return;
+        }
+
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
         String status = request.getParameter("status");
 
-        List<Volunteer> volunteers;
+        List<VolunteerUser> volunteers;
 
         if ((name != null && !name.trim().isEmpty()) ||
                 (phone != null && !phone.trim().isEmpty()) ||
@@ -37,11 +45,16 @@ public class VolunteerService {
 
     public void getVolunteerDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (isNotAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
+            return;
+        }
+
         String idParam = request.getParameter("volunteerID");
         if (idParam != null) {
             try {
                 int id = Integer.parseInt(idParam);
-                Volunteer volunteer = volunteerDao.getVolunteerById(id);
+                VolunteerUser volunteer = volunteerDao.getVolunteerById(id);
                 if (volunteer != null) {
                     request.setAttribute("volunteer", volunteer);
                 }
@@ -52,7 +65,12 @@ public class VolunteerService {
         request.getRequestDispatcher("viewVolunteerDetail.jsp").forward(request, response);
     }
 
-    public void updateVolunteerStatus(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException{
+    public void updateVolunteerStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (isNotAdmin(request)) {
+            response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
+            return;
+        }
+
         String volunteerIdParam = request.getParameter("volunteerID");
         String status = request.getParameter("status");
         boolean success = false;
@@ -69,7 +87,7 @@ public class VolunteerService {
                 }
 
                 // Reload the updated volunteer details
-                Volunteer volunteer = volunteerDao.getVolunteerById(volunteerID);
+                VolunteerUser volunteer = volunteerDao.getVolunteerById(volunteerID);
                 request.setAttribute("volunteer", volunteer);
 
             } catch (NumberFormatException e) {
@@ -79,6 +97,6 @@ public class VolunteerService {
             request.setAttribute("error", "Missing volunteer ID or status.");
         }
 
-         request.getRequestDispatcher("viewVolunteerDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("viewVolunteerDetail.jsp").forward(request, response);
     }
 }

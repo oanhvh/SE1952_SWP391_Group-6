@@ -2,14 +2,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <div class="d-flex flex-column flex-shrink-0 p-3 bg-light"
      style="width: 250px; height: 100vh; border-right: 1px solid #ddd;">
 
+    <!-- ✅ Replaced text with image -->
     <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-        <span class="fs-4 fw-bold">Admin Panel</span>
+        <img src="images/logo.png" alt="Admin Logo" width="180" class="img-fluid">
     </a>
-    <hr>
 
     <ul class="nav nav-pills flex-column mb-auto">
 
