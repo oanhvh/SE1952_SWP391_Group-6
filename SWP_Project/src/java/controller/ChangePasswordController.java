@@ -30,27 +30,33 @@ import java.sql.ResultSet;
     "/account/change-password"
 })
 public class ChangePasswordController extends HttpServlet {
-
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //kiếm tra đăng nhập
         HttpSession session = request.getSession(false);
         Users auth = (session != null) ? (Users) session.getAttribute("authUser") : null;
         if (auth == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
+        
+        //kiếm tra quyền
         String scope = resolveScope(request);
         if (!isScopeAllowed(scope, session)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
+        
         forwardToScopeJsp(request, response, scope);
     }
-
+    
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //kiếm tra đăng nhập
         HttpSession session = request.getSession(false);
         Users auth = (session != null) ? (Users) session.getAttribute("authUser") : null;
         if (auth == null) {
@@ -126,7 +132,7 @@ public class ChangePasswordController extends HttpServlet {
             setErrorAndForward(request, response, "An error occurred, please try again");
         }
     }
-
+    
     private static String trimOrNull(String s) {
         return s == null ? null : s.trim();
     }
@@ -167,7 +173,6 @@ public class ChangePasswordController extends HttpServlet {
         request.setAttribute("error", msg);
         String scope = resolveScope(request);
         forwardToScopeJsp(request, response, scope);
-
     }
 
     private static String resolveScope(HttpServletRequest request) {
@@ -190,22 +195,7 @@ public class ChangePasswordController extends HttpServlet {
     private void forwardToScopeJsp(HttpServletRequest request, HttpServletResponse response, String scope)
             throws ServletException, IOException {
         String candidate = "/" + scope + "/change_password.jsp";
-        try {
-            if (getServletContext().getResource(candidate) != null) {
-                request.getRequestDispatcher(candidate).forward(request, response);
-                return;
-            }
-        } catch (Exception ignored) {
-        }
-        // fallback order: manager -> account
-        try {
-            if (getServletContext().getResource("/manager/change_password.jsp") != null) {
-                request.getRequestDispatcher("/manager/change_password.jsp").forward(request, response);
-                return;
-            }
-        } catch (Exception ignored) {
-        }
-        request.getRequestDispatcher("/account/change_password.jsp").forward(request, response);
+        request.getRequestDispatcher(candidate).forward(request, response);
     }
 
     private static boolean isScopeAllowed(String scope, HttpSession session) {
@@ -220,7 +210,7 @@ public class ChangePasswordController extends HttpServlet {
             case "manager":
                 return role.equalsIgnoreCase("Manager");
             case "staff":
-                return role.equalsIgnoreCase("Staff") || role.equalsIgnoreCase("OrgStaff");
+                return role.equalsIgnoreCase("Staff");
             case "volunteer":
                 return role.equalsIgnoreCase("Volunteer");
             default:
