@@ -13,91 +13,80 @@ import java.time.LocalDateTime;
 public class VolunteerApplications {
 
     private int applicationID;
-    private Volunteer volunteer;
-    private Event event;
+    private int volunteerID;
+    private int eventID;
     private String status;
     private LocalDateTime applicationDate;
     private LocalDateTime approvalDate;
-    private OrgStaff approvedByStaff;
-    private String notes;
+    private Integer approvedByStaffID; // nullable
 
     public VolunteerApplications() {
     }
 
-    public VolunteerApplications(int applicationID, Volunteer volunteer, Event event, String status,
-            LocalDateTime applicationDate, LocalDateTime approvalDate,
-            OrgStaff approvedByStaff, String notes) {
+    public VolunteerApplications(int applicationID, int volunteerID, int eventID, String status, LocalDateTime applicationDate, LocalDateTime approvalDate, Integer approvedByStaffID) {
         this.applicationID = applicationID;
-        this.volunteer = volunteer;
-        this.event = event;
+        this.volunteerID = volunteerID;
+        this.eventID = eventID;
         this.status = status;
         this.applicationDate = applicationDate;
         this.approvalDate = approvalDate;
-        this.approvedByStaff = approvedByStaff;
-        this.notes = notes;
+        this.approvedByStaffID = approvedByStaffID;
     }
 
     public int getApplicationID() {
         return applicationID;
     }
 
-    public void setApplicationID(int applicationID) {
-        this.applicationID = applicationID;
+    public int getVolunteerID() {
+        return volunteerID;
     }
 
-    public Volunteer getVolunteer() {
-        return volunteer;
-    }
-
-    public void setVolunteer(Volunteer volunteer) {
-        this.volunteer = volunteer;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
+    public int getEventID() {
+        return eventID;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public LocalDateTime getApplicationDate() {
         return applicationDate;
-    }
-
-    public void setApplicationDate(LocalDateTime applicationDate) {
-        this.applicationDate = applicationDate;
     }
 
     public LocalDateTime getApprovalDate() {
         return approvalDate;
     }
 
+    public Integer getApprovedByStaffID() {
+        return approvedByStaffID;
+    }
+
+    public void setApplicationID(int applicationID) {
+        this.applicationID = applicationID;
+    }
+
+    public void setVolunteerID(int volunteerID) {
+        this.volunteerID = volunteerID;
+    }
+
+    public void setEventID(int eventID) {
+        this.eventID = eventID;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setApplicationDate(LocalDateTime applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
     public void setApprovalDate(LocalDateTime approvalDate) {
         this.approvalDate = approvalDate;
     }
 
-    public OrgStaff getApprovedByStaff() {
-        return approvedByStaff;
+    public void setApprovedByStaffID(Integer approvedByStaffID) {
+        this.approvedByStaffID = approvedByStaffID;
     }
 
-    public void setApprovedByStaff(OrgStaff approvedByStaff) {
-        this.approvedByStaff = approvedByStaff;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
 }

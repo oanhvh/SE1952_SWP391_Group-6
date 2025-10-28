@@ -1,0 +1,113 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 26, 2025, 7:48:12 PM
+    Author     : NHThanh
+*/
+body.activation-page{
+    background:#f5f6fa;
+    font-family:'Segoe UI', Roboto, sans-serif;
+    color:#333
+}
+body.activation-page h3{
+    font-weight:600;
+    color:#1e2a5e
+}
+.activation-page .card{
+    border:none;
+    border-radius:12px;
+    box-shadow:0 4px 20px rgba(0,0,0,.05);
+    overflow:hidden;
+    background:#fff
+}
+.activation-page .card-header{
+    background:#1e2a5e;
+    color:#fff;
+    font-weight:600;
+    font-size:16px;
+    padding:12px 20px
+}
+.activation-page .btn-primary{
+    background-color:#1e2a5e;
+    border-color:#1e2a5e;
+    border-radius:8px;
+    transition:.25s
+}
+.activation-page .btn-primary:hover{
+    background-color:#2f3d75
+}
+.activation-page .btn-outline-secondary{
+    border-radius:8px;
+    transition:.25s
+}
+.activation-page .btn-outline-secondary:hover{
+    background-color:#e9ecef;
+    color:#1e2a5e
+}
+.activation-page .table{
+    margin-bottom:0;
+    border-collapse:separate;
+    border-spacing:0
+}
+.activation-page .table thead th{
+    background:#f0f2f5;
+    color:#1e2a5e;
+    font-weight:600;
+    border-bottom:2px solid #dee2e6
+}
+.activation-page .table tbody tr:hover{
+    background-color:#f8f9fc
+}
+.activation-page .table td,.activation-page .table th{
+    vertical-align:middle;
+    padding:12px 16px
+}
+.activation-page .code-badge{
+    font-family:'Courier New', monospace;
+    font-size:16px;
+    padding:6px 12px;
+    border-radius:6px;
+    background:#f1f3f5;
+    border:1px solid #dee2e6;
+    display:inline-block
+}
+.activation-page .status-badge{
+    padding:4px 10px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:500
+}
+.activation-page .status-used{
+    background:#e6f0ff;
+    color:#0a58ca
+}
+.activation-page .status-new{
+    background:#e6ffed;
+    color:#117a28
+}
+.activation-page .status-pending{
+    background:#fff3cd;
+    color:#8a6d3b
+}
+.activation-page .table .btn{
+    padding:4px 10px;
+    border-radius:6px
+}
+.activation-page #lastCodeWrap{
+    background:#fff;
+    border:1px solid #dee2e6;
+    border-radius:10px;
+    padding:10px 14px;
+    box-shadow:0 2px 10px rgba(0,0,0,.03)
+}
+@media (max-width:768px){
+    .activation-page .card-header,.activation-page .card-body{
+        padding:12px
+    }
+    .activation-page h3{
+        font-size:20px
+    }
+}
+

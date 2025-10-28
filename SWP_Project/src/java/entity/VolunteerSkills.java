@@ -11,17 +11,33 @@ package entity;
 public class VolunteerSkills {
 
     private int volunteerSkillID;
-    private Volunteer volunteer;
-    private Skills skill;
+    private int volunteerID;
+    private int skillID;
     private String proficiencyLevel;
 
     public VolunteerSkills() {
     }
 
-    public VolunteerSkills(int volunteerSkillID, Volunteer volunteer, Skills skill, String proficiencyLevel) {
+    public VolunteerSkills(int volunteerSkillID, int volunteerID, int skillID, String proficiencyLevel) {
         this.volunteerSkillID = volunteerSkillID;
-        this.volunteer = volunteer;
-        this.skill = skill;
+        this.volunteerID = volunteerID;
+        this.skillID = skillID;
+        this.proficiencyLevel = proficiencyLevel;
+    }
+
+    public void setVolunteerSkillID(int volunteerSkillID) {
+        this.volunteerSkillID = volunteerSkillID;
+    }
+
+    public void setVolunteerID(int volunteerID) {
+        this.volunteerID = volunteerID;
+    }
+
+    public void setSkillID(int skillID) {
+        this.skillID = skillID;
+    }
+
+    public void setProficiencyLevel(String proficiencyLevel) {
         this.proficiencyLevel = proficiencyLevel;
     }
 
@@ -29,31 +45,16 @@ public class VolunteerSkills {
         return volunteerSkillID;
     }
 
-    public void setVolunteerSkillID(int volunteerSkillID) {
-        this.volunteerSkillID = volunteerSkillID;
+    public int getVolunteerID() {
+        return volunteerID;
     }
 
-    public Volunteer getVolunteer() {
-        return volunteer;
-    }
-
-    public void setVolunteer(Volunteer volunteer) {
-        this.volunteer = volunteer;
-    }
-
-    public Skills getSkill() {
-        return skill;
-    }
-
-    public void setSkill(Skills skill) {
-        this.skill = skill;
+    public int getSkillID() {
+        return skillID;
     }
 
     public String getProficiencyLevel() {
         return proficiencyLevel;
     }
 
-    public void setProficiencyLevel(String proficiencyLevel) {
-        this.proficiencyLevel = proficiencyLevel;
-    }
 }
