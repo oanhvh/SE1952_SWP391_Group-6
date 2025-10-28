@@ -31,7 +31,7 @@ public class EventController extends HttpServlet {
     private EventService eventService;
 
     @Override
-    public void init() {
+    public void init() throws ServletException{
         eventService = new EventService();
     }
 
@@ -49,7 +49,9 @@ public class EventController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
         switch (action) {
             case "detail":
@@ -83,7 +85,9 @@ public class EventController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if (action == null) action = "";
+        if (action == null) {
+            action = "";
+        }
 
         switch (action) {
             case "add":
@@ -108,7 +112,7 @@ public class EventController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-private void listEvents(HttpServletRequest request, HttpServletResponse response)
+    private void listEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<Event> eventList = eventService.getAllEvents();
         request.setAttribute("eventList", eventList);
@@ -138,8 +142,8 @@ private void listEvents(HttpServletRequest request, HttpServletResponse response
             event.setManagerID(Integer.parseInt(request.getParameter("managerID")));
             event.setCreatedByStaffID(
                     request.getParameter("createdByStaffID") == null || request.getParameter("createdByStaffID").isBlank()
-                            ? null
-                            : Integer.parseInt(request.getParameter("createdByStaffID"))
+                    ? null
+                    : Integer.parseInt(request.getParameter("createdByStaffID"))
             );
             event.setEventName(request.getParameter("eventName"));
             event.setDescription(request.getParameter("description"));
@@ -173,8 +177,8 @@ private void listEvents(HttpServletRequest request, HttpServletResponse response
             event.setManagerID(Integer.parseInt(request.getParameter("managerID")));
             event.setCreatedByStaffID(
                     request.getParameter("createdByStaffID") == null || request.getParameter("createdByStaffID").isBlank()
-                            ? null
-                            : Integer.parseInt(request.getParameter("createdByStaffID"))
+                    ? null
+                    : Integer.parseInt(request.getParameter("createdByStaffID"))
             );
             event.setEventName(request.getParameter("eventName"));
             event.setDescription(request.getParameter("description"));

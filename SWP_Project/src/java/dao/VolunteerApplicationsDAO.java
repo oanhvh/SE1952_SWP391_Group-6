@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,20 @@ public class VolunteerApplicationsDAO extends DBUtils {
         }
 
         return app;
+    }
+
+    public List<VolunteerApplications> getAllVolunteerApplications() {
+        List<VolunteerApplications> list = new ArrayList<>();
+        String sql = "SELECT * FROM VolunteerApplication";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                VolunteerApplications app = extractVolunteerApplications(rs);
+                list.add(app);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public void addVolunteerApplication(VolunteerApplications app) {
@@ -119,5 +134,39 @@ public class VolunteerApplicationsDAO extends DBUtils {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public List<VolunteerApplications> getApplicationsByVolunteer(int volunteerID) {
+        List<VolunteerApplications> list = new ArrayList<>();
+        String sql = "SELECT * FROM VolunteerApplication WHERE VolunteerID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, volunteerID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    VolunteerApplications app = extractVolunteerApplications(rs);
+                    list.add(app);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public void updateStatus(int applicationID, String status, Integer approvedByStaffID) {
+        String sql = "UPDATE VolunteerApplication SET Status = ?, ApprovalDate = ?, ApprovedByStaffID = ? WHERE ApplicationID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            if (approvedByStaffID != null) {
+                pstmt.setInt(3, approvedByStaffID);
+            } else {
+                pstmt.setNull(3, java.sql.Types.INTEGER);
+            }
+            pstmt.setInt(4, applicationID);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
