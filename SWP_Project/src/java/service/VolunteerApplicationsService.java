@@ -66,9 +66,9 @@ public class VolunteerApplicationsService {
         }
         validateID(app.getVolunteerID(), "Volunteer ID không hợp lệ.");
         validateID(app.getEventID(), "Event ID không hợp lệ.");
-        if (app.getStatus() == null || app.getStatus().isEmpty()) {
+//        if (app.getStatus() == null || app.getStatus().isEmpty()) {
             app.setStatus("Pending");
-        }
+//        }
         if (app.getApplicationDate() == null) {
             app.setApplicationDate(LocalDateTime.now());
         }

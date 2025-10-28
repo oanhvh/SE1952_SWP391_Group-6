@@ -136,7 +136,7 @@ public class VolunteerApplicationsController extends HttpServlet {
             VolunteerApplications app = new VolunteerApplications();
             app.setVolunteerID(Integer.parseInt(request.getParameter("volunteerID")));
             app.setEventID(Integer.parseInt(request.getParameter("eventID")));
-            app.setStatus(request.getParameter("status"));
+//            app.setStatus(request.getParameter("status"));
             app.setApplicationDate(request.getParameter("applicationDate") != null
                     ? LocalDateTime.parse(request.getParameter("applicationDate"))
                     : LocalDateTime.now());
