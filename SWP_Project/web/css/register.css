@@ -1,0 +1,115 @@
+/* ===== Topbar ===== */
+.hidden{display:none !important}
+.topbar {
+    height: 96px;
+    background: #2a57c9;
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
+.topbar .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    text-decoration: none;
+}
+.topbar .brand img {
+    height: 80px;
+}
+.topbar .brand span {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.register-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 0;
+    background:
+        linear-gradient(135deg, rgba(41,87,201,.18), rgba(230,240,255,.65)),
+        url('../images/register.jpg') center/cover no-repeat;
+}
+
+/* ===== Password eye toggle ===== */
+#password{ padding-right: 42px; }
+.password-wrapper{ position: relative; }
+.toggle-password{
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+#togglePassword{
+    border: 0;
+    background: transparent;
+    color: #212529; /* darker for better contrast */
+    padding: 6px;
+    line-height: 1;
+    border-radius: 6px;
+}
+#togglePassword:hover{
+    color: #0d6efd; /* bootstrap primary */
+    background-color: rgba(13,110,253,0.08);
+}
+#togglePassword:focus{
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+}
+#togglePassword svg{
+    width: 22px;
+    height: 22px;
+}
+
+/* ===== Register card polish ===== */
+.card-login{
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 18px 50px rgba(0,0,0,.12);
+    overflow: hidden;
+    background: #fff;
+}
+.card-login .card-header{
+    background: linear-gradient(135deg,#1e88e5,#4ea0ff);
+    color:#fff;
+    padding: 20px 28px;
+    font-weight: 800;
+    font-size: 1.25rem; /* ~20px */
+    border:0;
+}
+.card-login .card-header strong{
+    color:#fff !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+}
+.card-login .card-body{
+    padding: 28px 26px 30px;
+}
+
+.form-label{ font-weight:600; color:#243a6b; }
+.form-control, .form-select{
+    height: 48px;
+    border-radius: 12px;
+    border: 1.4px solid #d4dcf1;
+}
+.form-control:focus, .form-select:focus{
+    border-color:#2a57c9;
+    box-shadow: 0 0 0 .2rem rgba(42,87,201,.15);
+}
+
+.btn-primary{
+    background: linear-gradient(135deg,#0d6efd,#2a57c9);
+    border:0;
+    height: 50px;
+    border-radius: 12px;
+    font-weight:700;
+}
+.btn-primary:hover{ filter: brightness(0.95); }
+
+/* strength meter text */
+#pwdStrengthText{ display:inline-block; margin-top:6px; color:#6c7a99; }
+
