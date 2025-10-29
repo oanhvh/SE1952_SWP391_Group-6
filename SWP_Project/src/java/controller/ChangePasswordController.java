@@ -34,7 +34,6 @@ public class ChangePasswordController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //kiếm tra đăng nhập
         HttpSession session = request.getSession(false);
         Users auth = (session != null) ? (Users) session.getAttribute("authUser") : null;
         if (auth == null) {
@@ -56,7 +55,6 @@ public class ChangePasswordController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //kiếm tra đăng nhập
         HttpSession session = request.getSession(false);
         Users auth = (session != null) ? (Users) session.getAttribute("authUser") : null;
         if (auth == null) {
