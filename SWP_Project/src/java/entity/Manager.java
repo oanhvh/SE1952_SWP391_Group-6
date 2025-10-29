@@ -1,93 +1,108 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entity;
 
 import java.time.LocalDate;
 
-/**
- *
- * @author NHThanh
- */
 public class Manager {
 
-    private int managerID;
-    private Users user;
-    private String managerName;
-    private String contactInfo;
-    private String address;
-    private LocalDate registrationDate;
-    private Users createdBy;
+    private int managerId;        
+    private Integer userId;        
+    private String managerName;    
+    private String contactInfo;    
+    private String address;       
+    private LocalDate registrationDate; 
+    private Integer createdByUserId;   
 
     public Manager() {
     }
 
-    public Manager(int managerID, Users user, String managerName, String contactInfo,
-            String address, LocalDate registrationDate, Users createdBy) {
-        this.managerID = managerID;
-        this.user = user;
+    public Manager(int managerId, Integer userId, String managerName, String contactInfo,
+                   String address, LocalDate registrationDate, Integer createdByUserId) {
+        this.managerId = managerId;
+        this.userId = userId;
         this.managerName = managerName;
         this.contactInfo = contactInfo;
         this.address = address;
         this.registrationDate = registrationDate;
-        this.createdBy = createdBy;
+        this.createdByUserId = createdByUserId;
     }
 
-    public int getManagerID() {
-        return managerID;
+    public Manager(Integer userId, String managerName, String contactInfo,
+                   String address, LocalDate registrationDate, Integer createdByUserId) {
+        this.userId = userId;
+        this.managerName = managerName;
+        this.contactInfo = contactInfo;
+        this.address = address;
+        this.registrationDate = registrationDate;
+        this.createdByUserId = createdByUserId;
     }
 
-    public Users getUser() {
-        return user;
+    public int getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(int managerId) {
+        this.managerId = managerId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getManagerName() {
         return managerName;
     }
 
-    public String getContactInfo() {
-        return contactInfo;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public Users getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setManagerID(int managerID) {
-        this.managerID = managerID;
-    }
-
-    public void setUser(Users user) {
-        this.user = user;
-    }
-
     public void setManagerName(String managerName) {
         this.managerName = managerName;
+    }
+
+    public String getContactInfo() {
+        return contactInfo;
     }
 
     public void setContactInfo(String contactInfo) {
         this.contactInfo = contactInfo;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public LocalDate getRegistrationDate() {
+        return registrationDate;
     }
 
     public void setRegistrationDate(LocalDate registrationDate) {
         this.registrationDate = registrationDate;
     }
 
-    public void setCreatedBy(Users createdBy) {
-        this.createdBy = createdBy;
+    public Integer getCreatedByUserId() {
+        return createdByUserId;
     }
 
+    public void setCreatedByUserId(Integer createdByUserId) {
+        this.createdByUserId = createdByUserId;
+    }
+
+    // ===== toString() =====
+    @Override
+    public String toString() {
+        return "Manager{" +
+                "managerId=" + managerId +
+                ", userId=" + userId +
+                ", managerName='" + managerName + '\'' +
+                ", contactInfo='" + contactInfo + '\'' +
+                ", address='" + address + '\'' +
+                ", registrationDate=" + registrationDate +
+                ", createdByUserId=" + createdByUserId +
+                '}';
+    }
 }
