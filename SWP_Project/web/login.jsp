@@ -1,212 +1,173 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!doctype html>
-<html lang="en" data-bs-theme="light" dir="ltr" class="landing-pages">
-  <head>
-    <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <title>Login</title>
-      <!-- Config Options -->
-      <meta name="setting_options" content='{"saveLocal":"sessionStorage","storeKey":"huisetting","setting":{"app_name":{"value":"Kivicare"}}}'>
-      <!-- Google Font Api KEY-->
-      <meta name="google_font_api" content="AIzaSyBG58yNdAjc20_8jAvLNSVi9E4Xhwjau_k">
-      <!-- Favicon -->
-      <link rel="shortcut icon" href="./assets/images/favicon.ico" />
-      
-      <!-- Library / Plugin Css Build -->
-      <link rel="stylesheet" href="./assets/css/core/libs.min.css" />
-      
-      <!-- flaticon css -->
-      <link rel="stylesheet" href="./assets/vendor/flaticon/css/flaticon.css" />
-      
-      <!-- font-awesome css -->
-      <link rel="stylesheet" href="./assets/vendor/font-awesome/css/all.min.css" />
-      
-      
-      
-      
-      
-      <!-- Kivicare Design System Css -->
-      <link rel="stylesheet" href="./assets/css/kivicare.min.css?v=1.4.1" />
-      
-      <!-- Custom Css -->
-      <link rel="stylesheet" href="./assets/css/custom.min.css?v=1.4.1" />
-      
-      <!-- Rtl Css -->
-      <link rel="stylesheet" href="./assets/css/rtl.min.css?v=1.4.1" />
-      
-      <!-- Customizer Css -->
-      <link rel="stylesheet" href="./assets/css/customizer.min.css?v=1.4.1"/>
-      
-      <!-- Google Font -->
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,500&display=swap" rel="stylesheet">
-      
-      
-      <meta name="page_colors" content=''>
-  </head>
-  <body class=" body-bg landing-pages">
-    <span class="screen-darken"></span>
-    <!-- loader Start -->
-    <div id="loading">
-      <div class="loader simple-loader">
-          <div class="loader-body">
-              <img src="./assets/images/loader.gif" alt="loader" class="light-loader img-fluid " width="200">
-          </div>
-      </div>    </div>
-    <!-- loader END -->
-    <main class="main-content">
-      <div class="position-relative">
-        <!--Nav Start-->
-        <!--bread-crumb-->
-        <!--bread-crumb-->
-        
-      </div>
-<div class="sign-in-page position-relative">
-   <div class="container">
-      <div
-         class="row justify-content-center align-items-center height-self-center h-100">
-         <div class="col-lg-5 col-md-12 align-self-center">
-            <div class="sign-user_card position-relative bg-white mx-auto">
-               <div class="logo-img text-center mb-5">
-                  <a href="./index.html" class="navbar-brand m-0">
-                     <span class="logo-normal">
-                        <img src="images/logo.png" alt="logo" class="img-fluid" loading="lazy">
-                     </span>
-                  </a>
-               </div>
-               <form method="post" action="<%= request.getContextPath() %>/login">
-      <div class="mb-3">
-        <label for="username" class="form-label">Username:</label>
-        <input type="text" id="username" name="username" class="form-control" required>
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Password:</label>
-        <input type="password" id="password" name="password" class="form-control" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-               <div class="d-flex align-items-center mt-5 flex-wrap gap-2">
-                  <p class="my-0 text-capitalize">Don't have an account yet?</p>
-                  <h5 class="sign_up_btn mb-0">
-                     <div class="iq-btn-container">
-                        <a class="iq-button iq-btn-link text-capitalize" href="AccountRegister.jsp">
-                           sign up
-                           <span class="btn-link-icon">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 8 8" fill="none">
-                                 <path d="M7.32046 4.70834H4.74952V7.25698C4.74952 7.66734 4.41395 8 4 8C3.58605 8 3.25048 7.66734 3.25048 7.25698V4.70834H0.679545C0.293423 4.6687 0 4.34614 0 3.96132C0 3.5765 0.293423 3.25394 0.679545 3.21431H3.24242V0.673653C3.28241 0.290878 3.60778 0 3.99597 0C4.38416 0 4.70954 0.290878 4.74952 0.673653V3.21431H7.32046C7.70658 3.25394 8 3.5765 8 3.96132C8 4.34614 7.70658 4.6687 7.32046 4.70834Z" fill="currentColor"></path>
-                              </svg>
-                           </span>
-                        </a>
-                     </div>                  </h5>
-               </div>
+<html lang="vi">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Log in</title>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" href="css/responsive.css">
+        <link rel="icon" href="images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Poppins:400,700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/owl.carousel.min.css">
+        <link rel="stylesheet" href="css/owl.theme.default.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+        <link rel="stylesheet" href="css/login.css?v=20251029" />
+    </head>
+    <body class="login-page">
+        <div class="topbar d-flex align-items-center">
+            <div class="container d-flex justify-content-between align-items-center">
+                <a class="brand text-decoration-none" href="index.html">
+                    <img src="images/logo.png" alt="logo"/>
+                    <span class="text-white">Login</span>
+                </a>
             </div>
-         </div>
-      </div>
-   </div>
-</div>
+        </div>
 
-    </main>
-    <!-- Wrapper End -->
-    <!-- Footer start -->
-    <!-- footer end -->
+        <div class="login-wrap">
+            <div class="login-card container-xxl">
+                <div class="row g-4 justify-content-end">
+                    <div class="col-12 col-lg-6 col-xl-5 d-flex">
+                        <div class="card card-login">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Login</strong>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="<%= request.getContextPath() %>/login">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username</label>                                     
+                                        <input type="text" id="username" name="username" class="form-control" placeholder="Please enter your Username" required>
+                                    </div>
+                                    <div class="mb-3 password-wrapper">
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="position-relative">
+                                            <input type="password" id="password" name="password" class="form-control" placeholder="Please enter your password" required>
+                                            <i class="fa fa-eye-slash toggle-password" id="togglePassword"></i>
+                                            <a href="#" class="forgot-link">Forgot password?</a>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">LOGIN</button>
+                                    </div>
+                                </form>                              
+                                <div class="signup-section">
+                                    <p class="signup-text">
+                                        Don't have an account? 
+                                        <a href="AccountRegister.jsp" class="signup-link">Sign up</a>
+                                    </p>
 
-    <!-- setting -->
-    <div class="rtl-box">
-        <a class="btn btn-icon btn-setting bg-primary" id="settingbutton" data-bs-toggle="offcanvas"
-            data-bs-target="#live-customizer" role="button" aria-controls="live-customizer">
-            <svg xmlns="http://www.w3.org/2000/svg" width="1.875em" height="1.875em" viewBox="0 0 20 20" fill="white">
-                <path fill-rule="evenodd"
-                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
-                    clip-rule="evenodd" />
-            </svg>
-        </a>
-        <div class="offcanvas offcanvas-end live-customizer on-rtl end" tabindex="-1" id="live-customizer"
-            data-bs-scroll="true" data-bs-backdrop="false" aria-labelledby="live-customizer-label" aria-modal="true"
-            role="dialog">
-            <div class="offcanvas-header gap-3 pb-2">
-                <div class="d-flex align-items-center">
-                    <h5 class="offcanvas-title" id="live-customizer-label">Language Mode</h5>
-                </div>
-                <div class="d-flex gap-1 align-items-center">
-                    <button class="btn btn-icon text-primary border-0" data-reset="settings" data-bs-toggle="tooltip"
-                        data-bs-placement="left" aria-label="Reset All Settings"
-                        data-bs-original-title="Reset All Settings">
-                        <span class="btn-inner">
-                            <i class="fas fa-sync-alt"></i>
-                        </span>
-                    </button>
-                    <button type="button" class="btn btn-icon btn-close px-0 shadow-none" data-bs-dismiss="offcanvas"
-                        aria-label="Close">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="offcanvas-body pt-0">
-                <div class="modes row row-cols-2 gx-2">
-                    <div class="col">
-                        <div data-setting="attribute" class="text-center w-100">
-                            <input type="radio" value="ltr" class="btn-check" name="theme_scheme_direction" data-prop="dir"
-                                id="theme-scheme-direction-ltr" checked>
-                            <label class="btn dir-btn cutomizer-button w-100" for="theme-scheme-direction-ltr">
-                                LTR
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div data-setting="attribute" class="text-center w-100">
-                            <input type="radio" value="rtl" class="btn-check" name="theme_scheme_direction" data-prop="dir"
-                                id="theme-scheme-direction-rtl">
-                            <label class="btn dir-btn cutomizer-button w-100" for="theme-scheme-direction-rtl">
-                                RTL
-                            </label>
+                                    <button class="google-btn">
+                                        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_ios_64dp.png" alt="Google logo" class="google-logo">
+                                        Google
+                                    </button>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>    <!-- setting -->
-
-    <!-- Back To Top -->
-      <div id="back-to-top" style="display: none;">
-         <a class="p-0 btn btn-sm position-fixed top border-0 text-white" id="top" href="#top">
-            <svg width="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-               <path d="M5 15.5L12 8.5L19 15.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                  stroke-linejoin="round"></path>
-            </svg>
-         </a>
-      </div>
-    <!-- Back To Top -->
-    
-    <!-- Library Bundle Script -->
-    <script src="./assets/js/core/libs.min.js"></script>
-    <!-- Plugin Scripts -->
-    
-    <!-- Slider-tab Script -->
-    <script src="./assets/js/plugins/slider-tabs.js"></script>
-    
-    <!-- fslightbox Script -->
-    <script src="./assets/js/plugins/fslightbox.js" defer></script>
-    
-    
-    
-    
-    
-    <!-- Lodash Utility -->
-    <script src="./assets/vendor/lodash/lodash.min.js"></script>
-    <!-- Utilities Functions -->
-    <script src="./assets/js/iqonic-script/utility.min.js"></script>
-    <!-- Settings Script -->
-    <script src="./assets/js/iqonic-script/setting.min.js"></script>
-    <!-- Settings Init Script -->
-   <!-- <script src="./assets/js/iqonic-script/setting-init.js"></script>-->
-    <!-- External Library Bundle Script -->
-    <script src="./assets/js/core/external.min.js"></script>
-    <!-- Kivicare Script -->
-    <script src="./assets/js/kivicare.js?v=1.4.1" defer></script>
-    <script src="./assets/js/kivicare-advance.js?v=1.4.1" defer></script>
-    <!-- Kivicare Pages Script -->
-    <script src="./assets/js/slider.js" defer></script>
-   <!-- <script src="./assets/js/scroll-text.js" defer></script> -->
-  </body>
+        <div class="footer_section layout_padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <div class="footer_logo"><img src="images/footer-logo.png"></div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <h4 class="footer_taital">NAVIGATION</h4>
+                        <div class="footer_menu_main">
+                            <div class="footer_menu_left">
+                                <div class="footer_menu">
+                                    <ul>
+                                        <li><a href="index_1.html">Home</a></li>
+                                        <li><a href="donate.html">Donate</a></li>
+                                        <li><a href="contact.html">Contact us</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="footer_menu_right">
+                                <div class="footer_menu">
+                                    <ul>
+                                        <li><a href="about.html">About</a></li>
+                                        <li><a href="news.html">News</a></li>
+                                        <li><a href="mission.html">Our Mission</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <h4 class="footer_taital">NEWS</h4>
+                        <p class="footer_text">Generators on the Internet</p>
+                        <p class="footer_text">Tend to repeat predefined</p>
+                        <p class="footer_text">Chunks as necessary, making</p>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <h4 class="footer_taital">address</h4>
+                        <p class="footer_text">Ave NW, Washington</p>
+                        <p class="footer_text">+01 1234567890</p>
+                        <p class="footer_text">demo@gmail.com</p>
+                    </div>
+                </div>
+                <div class="footer_section_2">
+                    <div class="row">
+                        <div class="col-sm-4 col-md-4 col-lg-3">
+                            <div class="social_icon">
+                                <ul>
+                                    <li><a href="#"><img src="images/fb-icon.png"></a></li>
+                                    <li><a href="#"><img src="images/twitter-icon.png"></a></li>
+                                    <li><a href="#"><img src="images/linkedin-icon.png"></a></li>
+                                    <li><a href="#"><img src="images/instagram-icon.png"></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-8 col-lg-9">
+                            <input type="text" class="address_text" placeholder="Enter your Enail" name="text">
+                            <button type="button" class="get_bt">SUBSCRIBE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright_section">
+            <div class="container">
+                <p class="copyright_text">2020 All Rights Reserved. Design by <a href="https://html.design">Free html  Templates</a></p>
+            </div>
+        </div>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/popper.min.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/jquery-3.0.0.min.js"></script>
+        <script src="js/plugin.js"></script>
+        <!-- sidebar -->
+        <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="js/custom.js"></script>
+        <!-- javascript --> 
+        <script src="js/owl.carousel.js"></script>
+        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>  
+    </body>
+    <script>
+        (function () {
+            var pwd = document.getElementById('password');
+            var toggle = document.getElementById('togglePassword');
+            if (toggle && pwd) {
+                toggle.addEventListener('click', function () {
+                    var show = pwd.type === 'password';
+                    pwd.type = show ? 'text' : 'password';
+                    toggle.classList.toggle('fa-eye', show);
+                    toggle.classList.toggle('fa-eye-slash', !show);
+                    toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+                });
+            }
+        })();
+    </script>
 </html>
