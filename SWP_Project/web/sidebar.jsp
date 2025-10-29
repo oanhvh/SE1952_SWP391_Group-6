@@ -12,7 +12,6 @@
 
     <ul class="nav nav-pills flex-column mb-auto">
 
-        <!-- ✅ Account Manager collapsible section -->
         <li class="nav-item">
             <a class="nav-link text-dark d-flex justify-content-between align-items-center"
                data-bs-toggle="collapse" href="#accountManagerCollapse" role="button"
@@ -24,14 +23,12 @@
                 <ul class="nav flex-column mt-2">
                     <li><a class="nav-link text-dark" href="ListAccount">View Account List</a></li>
                     <li><a class="nav-link text-dark" href="AddAccountController">Add New Account</a></li>
-                    <li></li>
                 </ul>
             </div>
         </li>
 
         <hr>
 
-        <!-- Dashboard -->
         <li>
             <a class="nav-link text-dark" href="ListVolunteer">
                 <i class="bi bi-house">View Volunteer</i>
