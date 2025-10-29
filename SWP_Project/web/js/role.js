@@ -52,8 +52,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // (listener toggle đã gắn ở trên)
 });
-
-
-
-
-
