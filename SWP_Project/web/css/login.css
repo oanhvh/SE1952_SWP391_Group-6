@@ -1,0 +1,291 @@
+body.login-page{
+    min-height:100vh;
+    background:linear-gradient(135deg,#eaf3ff,#dfeeff);
+    display:flex;
+    flex-direction:column
+}
+body.login-page .topbar{
+    height:96px !important;
+    background:#2a57c9;
+    color:#fff;
+    border-bottom:none;
+    display:flex;
+    align-items:center
+}
+body.login-page .topbar .brand{
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    color:#fff
+}
+body.login-page .topbar .brand img{
+    height:80px !important;
+}
+body.login-page .topbar .brand span{
+    color:#fff;
+    font-size:24px !important;
+    font-weight:700
+}
+.topbar .help-link{
+    color:#fff;
+    text-decoration:none
+}
+.topbar .help-link:hover{
+    text-decoration:underline
+}
+
+.login-wrap{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:56px 0;
+    background:
+        linear-gradient(135deg, rgba(41,87,201,.18), rgba(230,240,255,.65)),
+        url('../images/login.jpg') center/cover no-repeat;
+}
+.login-card{
+    max-width:100%;
+    width:100%
+}
+.login-card.container{
+    padding-left:0;
+    padding-right:0
+}
+
+/* hero placeholders no longer needed but kept in case */
+.login-hero{
+    display:none
+}
+
+.card-login {
+    border: none;
+    border-radius: 24px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+    max-width: 750px;
+    width: 85%;
+    margin: 0 6vw 0 auto;    /* 👈 tăng khoảng cách lề phải lên */
+    background: #ffffff;
+    transition: all 0.3s ease;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hiệu ứng hover */
+.card-login:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Header */
+.card-login .card-header {
+    background: linear-gradient(135deg, #1e88e5, #90caf9); /* xanh đậm sang xanh nhạt */
+    color: #ffffff;
+    border: none;
+    text-align: left;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    padding: 25px 45px; /* giảm padding cho header ngắn hơn */
+    font-size: 28px;
+    font-weight: 700;
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.card-login .card-header strong {
+    background: linear-gradient(90deg, #ffffff, #eaf3ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Body */
+.card-login .card-body {
+    padding: 48px 60px;
+}
+
+/* Input và button */
+.form-label {
+    font-weight: 600;
+    color: #1e2a5e;
+    font-size: 17px;
+}
+.form-control {
+    border-radius: 12px;
+    height: 56px;
+    font-size: 16px;
+    border: 1.5px solid #d0d7f0;
+    transition: all 0.2s ease;
+}
+.form-control:focus {
+    border-color: #2a57c9;
+    box-shadow: 0 0 0 0.2rem rgba(42, 87, 201, 0.15);
+}
+
+/* Nút login */
+.btn-primary {
+    background: #2a57c9;
+    border: none;
+    border-radius: 12px;
+    height: 56px;          /* Giống chiều cao input */
+    font-weight: 700;
+    font-size: 18px;
+    width: 100%;           /* 👈 Cho nút rộng bằng ô nhập */
+    transition: all 0.2s ease;
+    margin-top: 24px;
+}
+
+.btn-primary:hover {
+    background: #1f49ad;
+    transform: translateY(-2px);
+}
+
+/* Social buttons */
+.social-btns {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+}
+.social-btns .btn {
+    height: 52px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: 16px;
+}
+.social-btns .btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsive chỉnh lại vị trí khi màn hình nhỏ */
+@media (max-width: 992px) {
+    .card-login {
+        max-width: 95%;
+        margin: auto; /* ở giữa khi thu nhỏ màn hình */
+    }
+    .card-login .card-body {
+        padding: 32px 24px;
+    }
+}
+/* Footer */
+.site-footer {
+    background: #eaf3ff;
+}
+/* Footer */
+.site-footer{
+    background:#f7faff;
+    border-top:1px solid rgba(0,0,0,.06);
+    padding:20px 0;
+    margin-top:auto;
+    color:#51608c
+}
+.site-footer a{
+    color:#2a57c9;
+    text-decoration:none
+}
+.site-footer a:hover{
+    text-decoration:underline
+}
+
+@media (max-width:992px){
+    .login-card.container{
+        padding-left:12px;
+        padding-right:12px
+    }
+}
+
+@media (min-width:1200px){
+    .card-login{
+        margin-left:3vw
+    }
+}
+@media (min-width:1400px){
+    .card-login{
+        margin-left:5vw
+    }
+}
+
+/* Khối password */
+.password-wrapper {
+    position: relative;
+}
+
+/* Icon con mắt trong ô input */
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #7a7f9a;
+    font-size: 18px;
+    transition: color 0.2s ease;
+}
+
+.toggle-password:hover {
+    color: #2a57c9;
+}
+
+/* Link Forgot password nằm dưới góc phải */
+.password-wrapper .forgot-link {
+    position: absolute;
+    right: 0;
+    bottom: -22px;
+    font-size: 14px;
+    color: #2a57c9;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.password-wrapper .forgot-link:hover {
+    color: #1f49ad;
+    text-decoration: underline;
+}
+
+.signup-section {
+    text-align: center;
+    margin-top: 30px; /* khoảng cách xa hơn so với nút Login */
+}
+
+.signup-text {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px; /* đẩy chữ xa hơn nút Google */
+}
+
+.signup-link {
+    color: #1a73e8; /* màu xanh giống Google */
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 4px; /* tạo cảm giác “ra một chút” */
+}
+
+.signup-link:hover {
+    text-decoration: underline;
+}
+
+.google-btn {
+    width: 100%; /* cho to ngang nút Login */
+    max-width: 300px; /* có thể tùy theo nút Login */
+    height: 45px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* khoảng cách giữa logo và chữ */
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 auto; /* căn giữa */
+}
+
+.google-btn:hover {
+    background-color: #f8f8f8;
+}
+
+.google-logo {
+    width: 20px;
+    height: 20px;
+}

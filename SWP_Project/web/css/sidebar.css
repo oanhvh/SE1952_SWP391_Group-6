@@ -20,7 +20,8 @@
   top: 0;
   left: 0;
   height: 100%;
-  width: 220px;
+  width: 25vw;
+  min-width: 240px;
   background-color: #343a40;
   color: white;
   padding-top: 60px;

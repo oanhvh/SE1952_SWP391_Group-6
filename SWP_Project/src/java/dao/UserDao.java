@@ -13,6 +13,13 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.sql.Timestamp;
+import java.sql.Date;
+import java.sql.Statement;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
+
 /**
  *
  * @author Duc
@@ -31,6 +38,9 @@ public class UserDao extends DBUtils{
         user.setStatus(rs.getString("Status"));
         user.setFullName(rs.getString("FullName"));
         user.setEmail(rs.getString("Email"));
+        user.setDateOfBirth(rs.getDate("DateOfBirth") != null
+                ? rs.getDate("DateOfBirth").toLocalDate()
+                : null);
         user.setPhone(rs.getString("Phone"));
         user.setAvatar(rs.getString("Avatar"));
         user.setCreatedAt(rs.getTimestamp("CreatedAt") != null
@@ -76,6 +86,11 @@ public class UserDao extends DBUtils{
         return user;
     }
 
+    // dùng tạm để giữ cho code cũ tiếp tục chạy mà không bị crash do thay đổi tên phương thức
+    /*public Users getUserbyUsername(String username) {
+        return getUserByUsername(username);
+    }*/
+
     public boolean isUsernameExisted(String username) {
         String sql = "SELECT COUNT(*) FROM Users WHERE username = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -94,9 +109,42 @@ public class UserDao extends DBUtils{
         return false;
     }
 
+
+    // tạo một user mới trong bảng Users
+    public int createUser(Connection conn, Users user, boolean hashPassword) throws Exception {
+        String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, DateOfBirth, Phone, Avatar, CreatedAt, UpdatedAt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, SYSUTCDATETIME(), SYSUTCDATETIME())";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, user.getUsername());
+            String pwd = user.getPasswordHash();
+            if (hashPassword && pwd != null) {
+                pwd = sha256(pwd);
+            }
+            pstmt.setString(2, pwd);
+            pstmt.setString(3, user.getRole());
+            pstmt.setString(4, user.getStatus());
+            pstmt.setString(5, user.getFullName());
+            pstmt.setString(6, user.getEmail());
+            pstmt.setDate(7, user.getDateOfBirth() != null ? Date.valueOf(user.getDateOfBirth()) : null);
+            pstmt.setString(8, user.getPhone());
+            pstmt.setString(9, user.getAvatar());
+            int affected = pstmt.executeUpdate();
+            if (affected == 0) {
+                throw new RuntimeException("Creating user failed, no rows affected.");
+            }
+            try (ResultSet keys = pstmt.getGeneratedKeys()) {
+                if (keys.next()) {
+                    return keys.getInt(1);
+                }
+            }
+            throw new RuntimeException("Creating user failed, no ID obtained.");
+        }
+    }
+
+
     public int addUser(Users user) {
-        String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, Phone, Avatar, CreatedAt, UpdatedAt) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, DateOfBirth, Phone, Avatar, CreatedAt, UpdatedAt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getPasswordHash());
@@ -104,10 +152,11 @@ public class UserDao extends DBUtils{
             pstmt.setString(4, user.getStatus());
             pstmt.setString(5, user.getFullName());
             pstmt.setString(6, user.getEmail());
-            pstmt.setString(7, user.getPhone());
-            pstmt.setString(8, user.getAvatar());
-            pstmt.setTimestamp(9, user.getCreatedAt() != null ? Timestamp.valueOf(user.getCreatedAt()) : null);
-            pstmt.setTimestamp(10, user.getUpdatedAt() != null ? Timestamp.valueOf(user.getUpdatedAt()) : null);
+            pstmt.setDate(7, user.getDateOfBirth() != null ? Date.valueOf(user.getDateOfBirth()) : null);
+            pstmt.setString(8, user.getPhone());
+            pstmt.setString(9, user.getAvatar());
+            pstmt.setTimestamp(10, user.getCreatedAt() != null ? Timestamp.valueOf(user.getCreatedAt()) : null);
+            pstmt.setTimestamp(11, user.getUpdatedAt() != null ? Timestamp.valueOf(user.getUpdatedAt()) : null);
             return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,8 +165,10 @@ public class UserDao extends DBUtils{
     }
 
     public void updateUser(Users user) {
-        String sql = "UPDATE Users SET Password = ?, Role = ?, Status = ?, FullName = ?, "
-                + "Email = ?, Phone = ?, Avatar = ?, UpdateAt = ? WHERE UserID = ?";
+
+        String sql = "UPDATE Users SET PasswordHash = ?, Role = ?, Status = ?, FullName = ?, "
+                + "Email = ?, DateOfBirth = ?, Phone = ?, Avatar = ?, UpdatedAt = ? WHERE UserID = ?";
+
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, user.getPasswordHash());
@@ -125,10 +176,12 @@ public class UserDao extends DBUtils{
             pstmt.setString(3, user.getStatus());
             pstmt.setString(4, user.getFullName());
             pstmt.setString(5, user.getEmail());
-            pstmt.setString(6, user.getPhone());
-            pstmt.setString(7, user.getAvatar());
-            pstmt.setTimestamp(8, user.getUpdatedAt() != null ? Timestamp.valueOf(user.getUpdatedAt()) : null);
-            pstmt.setInt(9, user.getUserID());
+
+            pstmt.setDate(6, user.getDateOfBirth() != null ? Date.valueOf(user.getDateOfBirth()) : null);
+            pstmt.setString(7, user.getPhone());
+            pstmt.setString(8, user.getAvatar());
+            pstmt.setTimestamp(9, user.getUpdatedAt() != null ? Timestamp.valueOf(user.getUpdatedAt()) : null);
+            pstmt.setInt(10, user.getUserID());
 
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -157,6 +210,46 @@ public class UserDao extends DBUtils{
             e.printStackTrace();
         }
     }
+
+
+    // ghi lại log thời gian hoạt động gần nhất, xét từ ngay khi đăng nhập vào
+    public boolean updateLastLogin(int userId) {
+        String sql = "UPDATE Users SET UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getUserRole(int userId) {
+        String sql = "SELECT Role FROM Users WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static String sha256(String input) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
+        StringBuilder hex = new StringBuilder();
+        for (byte b : hash) {
+            hex.append(String.format("%02x", b));
+        }
+        return hex.toString();
+    }
+
+
 
     public List<Users> searchUser(String name, String role, String phone) {
         List<Users> list = new ArrayList<>();
@@ -204,21 +297,50 @@ public class UserDao extends DBUtils{
     }
 
     public Users getUserById(int userId) {
-        String sql = "SELECT * FROM Users WHERE UserID = ?";
-        Users user = null;
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    user = extractUser(rs);
-                }
+        String sql = "SELECT * FROM Users WHERE userID = ?";
+        try (Connection conn = DBUtils.getConnection1(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Users u = new Users();
+                u.setUserID(rs.getInt("userID"));
+                u.setUsername(rs.getString("username"));
+                u.setFullName(rs.getString("fullName"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setAvatar(rs.getString("avatar"));
+                u.setDateOfBirth(rs.getDate("dateOfBirth").toLocalDate());
+                u.setRole(rs.getString("role"));
+                u.setStatus(rs.getString("status"));
+                u.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
+                u.setUpdatedAt(rs.getTimestamp("updatedAt").toLocalDateTime());
+                return u;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return user;
+        return null;
     }
+    public boolean updateProfile(Users user) {
+    String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, DateOfBirth = ?, Avatar = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
+    try (Connection conn = DBUtils.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, user.getFullName());
+        ps.setString(2, user.getEmail());
+        ps.setString(3, user.getPhone());
+        if (user.getDateOfBirth() != null)
+            ps.setDate(4, java.sql.Date.valueOf(user.getDateOfBirth()));
+        else
+            ps.setNull(4, java.sql.Types.DATE);
+        ps.setString(5, user.getAvatar());
+        ps.setInt(6, user.getUserID());
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
     public boolean updateProfileByUsername(Users user) {
         String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, UpdatedAt = ? WHERE Username = ?";
         try (Connection conn = DBUtils.getConnection1();

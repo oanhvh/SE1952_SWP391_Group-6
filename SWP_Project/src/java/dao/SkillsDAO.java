@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  *
- * @author Admin
+ * @author NHThanh
  */
 public class SkillsDAO extends DBUtils {
 
@@ -39,36 +39,54 @@ public class SkillsDAO extends DBUtils {
         return skillList;
     }
 
-    public void addSkill(Skills skill) {
-        String sql = "INSERT INTO Skills (SkillID, SkillName, Description) "
-                + "VALUES (?, ?, ?)";
+    public int addSkill(Skills skill) {
+        String sql = "INSERT INTO Skills (SkillName, Description) VALUES (?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, skill.getSkillID());
-            pstmt.setString(2, skill.getSkillName());
-            pstmt.setString(3, skill.getDescription());
+            pstmt.setString(1, skill.getSkillName());
+            pstmt.setString(2, skill.getDescription());
+            return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
-    
-    public void updateSkill(Skills skill) {
-        String sql = "UPDATE Skills SET SkillID = ?, SkillName = ?, Description) = ?";
+
+    public int updateSkill(Skills skill) {
+        String sql = "UPDATE Skills SET SkillName = ?, Description = ? WHERE SkillID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, skill.getSkillID());
-            pstmt.setString(2, skill.getSkillName());
-            pstmt.setString(3, skill.getDescription());
+            pstmt.setString(1, skill.getSkillName());
+            pstmt.setString(2, skill.getDescription());
+            pstmt.setInt(3, skill.getSkillID());
+            return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
-    
-    public void deleteSkill(int skillID) {
+
+    public int deleteSkill(int skillID) {
         String sql = "DELETE FROM Skills WHERE SkillID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, skillID);
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
+    }
+
+    public Skills getById(int id) {
+        String sql = "SELECT * FROM Skills WHERE SkillID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractSkill(rs);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
