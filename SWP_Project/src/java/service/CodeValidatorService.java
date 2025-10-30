@@ -5,6 +5,9 @@
 package service;
 
 import dao.EmployeeCodesDAO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import java.sql.Connection;
 
 /**
@@ -22,6 +25,14 @@ public class CodeValidatorService {
         }
         String normalized = employeeCode.trim();
         return codesDAO.getValidCodeInfo(conn, normalized);
+    }
+
+    public static boolean isNotAdmin(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) return true;
+
+        String role = (String) session.getAttribute("role");
+        return role == null || !role.equalsIgnoreCase("Admin");
     }
 }
     

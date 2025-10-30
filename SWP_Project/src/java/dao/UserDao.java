@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.sql.Timestamp;
 import java.sql.Date;
 import java.sql.Statement;
@@ -82,6 +81,11 @@ public class UserDao extends DBUtils {
         }
         return user;
     }
+
+    // dùng tạm để giữ cho code cũ tiếp tục chạy mà không bị crash do thay đổi tên phương thức
+//    public Users getUserbyUsername(String username) {
+//        return getUserByUsername(username);
+//    }
 
     public boolean isUsernameExisted(String username) {
         String sql = "SELECT COUNT(*) FROM Users WHERE username = ?";
@@ -222,7 +226,7 @@ public class UserDao extends DBUtils {
         return null;
     }
 
-    private static String sha256(String input) throws Exception {
+    public static String sha256(String input) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
         StringBuilder hex = new StringBuilder();
@@ -231,6 +235,7 @@ public class UserDao extends DBUtils {
         }
         return hex.toString();
     }
+
 
     public List<Users> searchUser(String name, String role, String phone) {
         List<Users> list = new ArrayList<>();
@@ -266,6 +271,7 @@ public class UserDao extends DBUtils {
                 u.setStatus(rs.getString("status"));
                 list.add(u);
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

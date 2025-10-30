@@ -19,7 +19,9 @@ public class DBUtils {
         System.out.println("Connected.");
         return conn;
     }
-//    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-//        System.out.println(getConnection1().toString());
-//    }
+
+
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        System.out.println(getConnection1().toString());
+    }
 }
