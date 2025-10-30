@@ -231,31 +231,31 @@ public class ManagerDAO {
         return m;
     }
 
-    public static void main(String[] args) {
-        ManagerDAO dao = new ManagerDAO();
-
-        System.out.println("===== TEST DANH SÁCH PHÂN TRANG =====");
-        List<Manager> list = dao.getManagersByPage(1);
-        for (Manager m : list) {
-            System.out.println(m);
-        }
-
-        System.out.println("===== TEST THÊM MỚI =====");
-        Manager newM = new Manager(null, "Tổ chức Trẻ Xanh", "trexanh@gmail.com",
-                "Hà Nội", LocalDate.now(), null);
-        System.out.println("Insert: " + dao.insertManager(newM));
-
-        System.out.println("===== TEST CẬP NHẬT =====");
-        Manager updateM = new Manager(1, null, "Green Earth Org - Updated", "greenearth@mail.com",
-                "Hà Nội - Updated", LocalDate.now(), null);
-        System.out.println("Update: " + dao.updateManager(updateM));
-
-        System.out.println("===== TEST XOÁ =====");
-        System.out.println("Delete ID=2: " + dao.deleteManager(2));
-
-        System.out.println("===== TEST CHI TIẾT =====");
-        System.out.println(dao.getManagerById(1));
-    }
+//    public static void main(String[] args) {
+//        ManagerDAO dao = new ManagerDAO();
+//
+//        System.out.println("===== TEST DANH SÁCH PHÂN TRANG =====");
+//        List<Manager> list = dao.getManagersByPage(1);
+//        for (Manager m : list) {
+//            System.out.println(m);
+//        }
+//
+//        System.out.println("===== TEST THÊM MỚI =====");
+//        Manager newM = new Manager(null, "Tổ chức Trẻ Xanh", "trexanh@gmail.com",
+//                "Hà Nội", LocalDate.now(), null);
+//        System.out.println("Insert: " + dao.insertManager(newM));
+//
+//        System.out.println("===== TEST CẬP NHẬT =====");
+//        Manager updateM = new Manager(1, null, "Green Earth Org - Updated", "greenearth@mail.com",
+//                "Hà Nội - Updated", LocalDate.now(), null);
+//        System.out.println("Update: " + dao.updateManager(updateM));
+//
+//        System.out.println("===== TEST XOÁ =====");
+//        System.out.println("Delete ID=2: " + dao.deleteManager(2));
+//
+//        System.out.println("===== TEST CHI TIẾT =====");
+//        System.out.println(dao.getManagerById(1));
+//    }
 
     public List<Manager> searchManagersByName(String keyword, int page) {
         List<Manager> list = new ArrayList<>();

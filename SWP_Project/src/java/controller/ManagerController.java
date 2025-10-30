@@ -194,7 +194,7 @@ public class ManagerController extends HttpServlet {
         String address = request.getParameter("address");
 
         Manager m = new Manager();
-        m.setManagerId(id);
+        m.setManagerID(id);
         m.setManagerName(name);
         m.setContactInfo(contact);
         m.setAddress(address);
