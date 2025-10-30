@@ -30,9 +30,9 @@
                     <span class="text-muted">(<%= role %>)</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                    <a class="dropdown-item" href="profile.jsp">My account</a>
-                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="<%= request.getContextPath() %>/ProfileController">My account</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="<%= request.getContextPath() %>/manager/change_password.jsp">Change password</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="<%= request.getContextPath() %>/logout">Sign out</a>
                 </div>
