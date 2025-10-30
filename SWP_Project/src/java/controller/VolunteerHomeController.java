@@ -15,12 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "VolunteerHomeController", urlPatterns = {"/volunteer/index_1.html"})
+@WebServlet(name = "VolunteerHomeController", urlPatterns = {"/volunteer/home"})
 public class VolunteerHomeController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/volunteer/index_1.html").forward(request, response);
+        request.getRequestDispatcher("/volunteer/index_1.jsp").forward(request, response);
     }
 }

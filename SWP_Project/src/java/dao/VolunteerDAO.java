@@ -7,6 +7,7 @@ package dao;
 import entity.Users;
 import entity.VolunteerUser;
 
+import entity.Volunteer;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;

@@ -21,6 +21,6 @@ public class StaffHomeController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/staff/index_1.html").forward(request, response);
+        request.getRequestDispatcher("/staff/index_1.jsp").forward(request, response);
     }
 }

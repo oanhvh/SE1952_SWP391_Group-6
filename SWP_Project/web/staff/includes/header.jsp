@@ -30,21 +30,20 @@
                     <span class="text-muted">(<%= role %>)</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                    <a class="dropdown-item" href="profile.jsp">Tài khoản của tôi</a>
+                    <a class="dropdown-item" href="<%= request.getContextPath() %>/ProfileController">My account</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="change_password.jsp">Đổi mật khẩu</a>
+                    <a class="dropdown-item" href="<%= request.getContextPath() %>/staff/change_password.jsp">Change password</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout">Đăng xuất</a>
+                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout">Sign out</a>
                 </div>
             </div>
         </div>
     </div>
 </nav>
-<!-- header section end -->
-<!-- sidebar toggle (optional) -->
+
 <button id="sidebarToggle" class="sidebar-toggle">☰</button>
 <div class="sidebar" id="managerSidebar">
     <ul>
-        <li><a href="activation.jsp">Create activation code</a></li>
+        <li><a href="activation.jsp">...</a></li>
     </ul>
 </div>

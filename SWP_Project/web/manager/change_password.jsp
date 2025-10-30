@@ -121,12 +121,12 @@
                     var widths = {0: 0, 1: 20, 2: 40, 3: 60, 4: 80, 5: 100};
                     bar.style.width = widths[sc] + "%";
                     bar.className = 'progress-bar';
-                    var label = 'Weak password', cls = 'bg-danger';
+                    var label = 'Weak', cls = 'bg-danger';
                     if (sc >= 4) {
-                        label = 'Strong password';
+                        label = 'Strong';
                         cls = 'bg-success';
                     } else if (sc >= 3) {
-                        label = 'Medium password';
+                        label = 'Medium';
                         cls = 'bg-warning';
                     }
                     bar.classList.add(cls);

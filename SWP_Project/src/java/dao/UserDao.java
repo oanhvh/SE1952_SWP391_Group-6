@@ -22,7 +22,7 @@ import java.security.MessageDigest;
  *
  * @author Duc
  */
-public class UserDao extends DBUtils{
+public class UserDao extends DBUtils {
 //    Connection conn = null;
 //    PreparedStatement pstmt = null;
 //    ResultSet rs = null;
@@ -54,9 +54,7 @@ public class UserDao extends DBUtils{
     public List<Users> getAllUsers() {
         List<Users> userList = new ArrayList<>();
         String sql = "SELECT * FROM Users";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 Users user = extractUser(rs);
                 userList.add(user);
@@ -183,7 +181,6 @@ public class UserDao extends DBUtils{
     public void deleteUser(int userId) {
         String sql = "DELETE FROM Users WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             pstmt.setInt(1, userId);
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -200,85 +197,6 @@ public class UserDao extends DBUtils{
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public List<Users> searchUser(String name, String role, String phone) {
-        List<Users> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM Users WHERE 1=1");
-
-        if (name != null && !name.trim().isEmpty()) {
-            sql.append(" AND fullName LIKE ?");
-        }
-        if (role != null && !role.trim().isEmpty()) {
-            sql.append(" AND role LIKE ?");
-        }
-        if (phone != null && !phone.trim().isEmpty()) {
-            sql.append(" AND phone LIKE ?");
-        }
-
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-
-            int index = 1;
-            if (name != null && !name.trim().isEmpty()) {
-                ps.setString(index++, "%" + name + "%");
-            }
-            if (role != null && !role.trim().isEmpty()) {
-                ps.setString(index++, "%" + role + "%");
-            }
-            if (phone != null && !phone.trim().isEmpty()) {
-                ps.setString(index, "%" + phone + "%");
-            }
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Users u = new Users();
-                u.setUserID(rs.getInt("userID"));
-                u.setFullName(rs.getString("fullName"));
-                u.setEmail(rs.getString("email"));
-                u.setPhone(rs.getString("phone"));
-                u.setRole(rs.getString("role"));
-                u.setStatus(rs.getString("status"));
-                list.add(u);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public Users getUserById(int userId) {
-        String sql = "SELECT * FROM Users WHERE UserID = ?";
-        Users user = null;
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    user = extractUser(rs);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return user;
-    }
-    public boolean updateProfileByUsername(Users user) {
-        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, UpdatedAt = ? WHERE Username = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, user.getFullName());
-            ps.setString(2, user.getEmail());
-            ps.setString(3, user.getPhone());
-            ps.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
-            ps.setString(5, user.getUsername());
-
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     // ghi lại log thời gian hoạt động gần nhất, xét từ ngay khi đăng nhập vào
@@ -316,5 +234,107 @@ public class UserDao extends DBUtils{
             hex.append(String.format("%02x", b));
         }
         return hex.toString();
+    }
+
+
+    public List<Users> searchUser(String name, String role, String phone) {
+        List<Users> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM Users WHERE 1=1");
+        if (name != null && !name.trim().isEmpty()) {
+            sql.append(" AND fullName LIKE ?");
+        }
+        if (role != null && !role.trim().isEmpty()) {
+            sql.append(" AND role LIKE ?");
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            sql.append(" AND phone LIKE ?");
+        }
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            int index = 1;
+            if (name != null && !name.trim().isEmpty()) {
+                ps.setString(index++, "%" + name + "%");
+            }
+            if (role != null && !role.trim().isEmpty()) {
+                ps.setString(index++, "%" + role + "%");
+            }
+            if (phone != null && !phone.trim().isEmpty()) {
+                ps.setString(index, "%" + phone + "%");
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Users u = new Users();
+                u.setUserID(rs.getInt("userID"));
+                u.setFullName(rs.getString("fullName"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setRole(rs.getString("role"));
+                u.setStatus(rs.getString("status"));
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Users getUserById(int userId) {
+        String sql = "SELECT * FROM Users WHERE userID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Users u = new Users();
+                u.setUserID(rs.getInt("userID"));
+                u.setUsername(rs.getString("username"));
+                u.setFullName(rs.getString("fullName"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setAvatar(rs.getString("avatar"));
+                u.setDateOfBirth(rs.getDate("dateOfBirth").toLocalDate());
+                u.setRole(rs.getString("role"));
+                u.setStatus(rs.getString("status"));
+                u.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
+                u.setUpdatedAt(rs.getTimestamp("updatedAt").toLocalDateTime());
+                return u;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateProfile(Users user) {
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, DateOfBirth = ?, Avatar = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, user.getFullName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPhone());
+            if (user.getDateOfBirth() != null) {
+                ps.setDate(4, java.sql.Date.valueOf(user.getDateOfBirth()));
+            } else {
+                ps.setNull(4, java.sql.Types.DATE);
+            }
+            ps.setString(5, user.getAvatar());
+            ps.setInt(6, user.getUserID());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateProfileByUsername(Users user) {
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, UpdatedAt = ? WHERE Username = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, user.getFullName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPhone());
+            ps.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
+            ps.setString(5, user.getUsername());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

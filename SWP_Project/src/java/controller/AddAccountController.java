@@ -6,7 +6,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import org.mindrot.jbcrypt.BCrypt;
 import service.UserService;
 
 public class AddAccountController extends HttpServlet {

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class Manager {
 
     private int managerID;
-    private Users user;
+    private Users userID;
     private String managerName;
     private String contactInfo;
     private String address;
@@ -26,7 +26,7 @@ public class Manager {
     public Manager(int managerID, Users user, String managerName, String contactInfo,
             String address, LocalDate registrationDate, Users createdBy) {
         this.managerID = managerID;
-        this.user = user;
+        this.userID = user;
         this.managerName = managerName;
         this.contactInfo = contactInfo;
         this.address = address;
@@ -39,7 +39,7 @@ public class Manager {
     }
 
     public Users getUser() {
-        return user;
+        return userID;
     }
 
     public String getManagerName() {
@@ -67,7 +67,7 @@ public class Manager {
     }
 
     public void setUser(Users user) {
-        this.user = user;
+        this.userID = user;
     }
 
     public void setManagerName(String managerName) {
@@ -88,6 +88,20 @@ public class Manager {
 
     public void setCreatedBy(Users createdBy) {
         this.createdBy = createdBy;
+    }
+
+    // ===== toString() =====
+    @Override
+    public String toString() {
+        return "Manager{"
+                + "managerId=" + managerID
+                + ", userId=" + userID
+                + ", managerName='" + managerName + '\''
+                + ", contactInfo='" + contactInfo + '\''
+                + ", address='" + address + '\''
+                + ", registrationDate=" + registrationDate
+                + ", createdByUserId=" + createdBy
+                + '}';
     }
 
 }
