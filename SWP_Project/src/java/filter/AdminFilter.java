@@ -7,4 +7,4 @@ import jakarta.servlet.annotation.WebFilter;
 public class AdminFilter extends BaseRoleFilter {
     @Override
     protected String expectedRole() { return "Admin"; }
-}
+}   

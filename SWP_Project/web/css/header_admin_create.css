@@ -1,0 +1,33 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 30, 2025, 2:45:59 PM
+    Author     : NHThanh
+*/
+/* ===== Topbar ===== */
+.hidden{display:none !important}
+.topbar {
+    height: 96px;
+    background: #2a57c9;
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
+.topbar .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    text-decoration: none;
+}
+.topbar .brand img {
+    height: 80px;
+}
+.topbar .brand span {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+

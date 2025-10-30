@@ -4,10 +4,6 @@
  */
 package controller;
 
-/**
- *
- * @author NHThanh
- */
 import dao.DBUtils;
 import dao.ManagerDAO;
 import dao.UserDao;
@@ -17,11 +13,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 
-@WebServlet(name = "AdminUserManagementController", urlPatterns = {"/admin/users/new"})
-public class AdminUserManagementController extends HttpServlet {
+/**
+ *
+ * @author NHThanh
+ */
+@WebServlet(name = "CreateManagerController", urlPatterns = {"/admin/manager_create"})
+public class CreateManagerController extends HttpServlet {
 
     private final UserDao userDao = new UserDao();
     private final ManagerDAO managerDAO = new ManagerDAO();
@@ -29,63 +30,54 @@ public class AdminUserManagementController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/admin/users_new.jsp").forward(request, response);
+        // Only Admin can access
+        HttpSession session = request.getSession(false);
+        String role = session != null ? (String) session.getAttribute("role") : null;
+        if (role == null || !"Admin".equalsIgnoreCase(role)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        request.getRequestDispatcher("/admin/manager_create.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Only Admin can post
+        HttpSession session = request.getSession(false);
+        String sessionRole = session != null ? (String) session.getAttribute("role") : null;
+        if (sessionRole == null || !"Admin".equalsIgnoreCase(sessionRole)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        // Accept either 'type' or 'role' but force Manager
         String type = param(request, "type");
+        String roleParam = param(request, "role");
         String username = param(request, "username");
         String password = param(request, "password");
         String fullName = param(request, "fullName");
         String email = param(request, "email");
         String phone = param(request, "phone");
+        // Extra fields from JSP (optional for now)
+        String managerCode = param(request, "managerCode");
+        String department = param(request, "department");
+        String position = param(request, "position");
 
-        if (isBlank(type) || isBlank(username) || isBlank(password)) {
+        if (isBlank(username) || isBlank(password)) {
             request.setAttribute("error", "Please enter required information");
-            request.getRequestDispatcher("/admin/users_new.jsp").forward(request, response);
+            request.getRequestDispatcher("/admin/manager_create.jsp").forward(request, response);
             return;
         }
 
         if (userDao.isUsernameExisted(username)) {
             request.setAttribute("error", "Username already exists");
-            request.getRequestDispatcher("/admin/users_new.jsp").forward(request, response);
+            request.getRequestDispatcher("/admin/manager_create.jsp").forward(request, response);
             return;
         }
 
         try (Connection conn = DBUtils.getConnection1()) {
             conn.setAutoCommit(false);
-            //tạo Admin
-            if ("Admin".equalsIgnoreCase(type)) {
-                Users u = new Users();
-                u.setUsername(username);
-                u.setPasswordHash(password);
-                u.setRole("Admin");
-                u.setStatus("Active");
-                u.setFullName(fullName);
-                u.setEmail(email);
-                u.setPhone(phone);
-
-                userDao.createUser(conn, u, true);
-                conn.commit();
-                request.setAttribute("success", "Admin account created successfully");
-                request.getRequestDispatcher("/admin/users_new.jsp").forward(request, response);
-                return;
-            }
-
-            //thêm thông tin so với admin do yêu cầu từ Long
-            if ("Manager".equalsIgnoreCase(type)) {
-                String managerName = param(request, "managerName");
-                String contactInfo = param(request, "managerContact");
-                String address = param(request, "managerAddress");
-
-                if (isBlank(managerName)) {
-                    request.setAttribute("error", "Please enter manager name");
-                    request.getRequestDispatcher("/admin/users_new.jsp").forward(request, response);
-                    return;
-                }
-                //Tạo Manager
+            // Force Manager regardless of provided param
                 Users u = new Users();
                 u.setUsername(username);
                 u.setPasswordHash(password);
@@ -96,21 +88,19 @@ public class AdminUserManagementController extends HttpServlet {
                 u.setPhone(phone);
 
                 int userId = userDao.createUser(conn, u, true);
-
+                // Keep DAO call compatible with existing signature. Map available info.
+                String managerName = !isBlank(fullName) ? fullName : username;
+                String contactInfo = !isBlank(phone) ? phone : email;
+                String address = position; // temporary mapping; adjust DAO to proper fields later
                 managerDAO.createManager(conn, userId, managerName, contactInfo, address, null);
 
                 conn.commit();
-                request.setAttribute("success", "Manager account created successfully");
-                request.getRequestDispatcher("/admin/users_new.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/admin/manager_create.jsp?success=1");
                 return;
-            }
-            request.setAttribute("error", "Invalid account type");
-            request.getRequestDispatcher("/admin/users_new.jsp").forward(request, response);
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            request.setAttribute("error", "Failed to create account: " + ex.getMessage());
-            request.getRequestDispatcher("/admin/users_new.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/admin/manager_create.jsp?error=" + ex.getMessage());
         }
     }
 
