@@ -4,7 +4,6 @@
  */
 package controller;
 
-import dao.UserDao;
 import entity.Users;
 import java.io.IOException;
 import java.io.PrintWriter;
