@@ -271,6 +271,7 @@ public class UserDao extends DBUtils {
                 u.setStatus(rs.getString("status"));
                 list.add(u);
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

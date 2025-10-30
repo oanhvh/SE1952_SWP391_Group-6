@@ -1,80 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-<<<<<<< HEAD
     <servlet>
         <servlet-name>BaseController</servlet-name>
         <servlet-class>controller.BaseController</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>BaseController</servlet-name>
-        <url-pattern>/baseController</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>ListAccount</servlet-name>
         <servlet-class>controller.ListAccountController</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>ListAccount</servlet-name>
-        <url-pattern>/ListAccount</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>ViewAccountDetailController</servlet-name>
         <servlet-class>controller.ViewAccountDetailController</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>ViewAccountDetailController</servlet-name>
-        <url-pattern>/viewAccountDetail</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>EditProfileController</servlet-name>
         <servlet-class>controller.EditProfileController</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>EditProfileController</servlet-name>
-        <url-pattern>/EditProfileController</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>AddAccountController</servlet-name>
         <servlet-class>controller.AddAccountController</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>AddAccountController</servlet-name>
-        <url-pattern>/AddAccountController</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>ListVolunteerController</servlet-name>
         <servlet-class>controller.ListVolunteerController</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>ListVolunteerController</servlet-name>
-        <url-pattern>/ListVolunteer</url-pattern>
-    </servlet-mapping>
-
     <servlet>
-    <servlet-name>ViewVolunteerDetailController</servlet-name>
-    <servlet-class>controller.ViewVolunteerDetailController</servlet-class>
-</servlet>
-    <servlet-mapping>
         <servlet-name>ViewVolunteerDetailController</servlet-name>
-        <url-pattern>/viewVolunteerDetail</url-pattern>
-    </servlet-mapping>
-
+        <servlet-class>controller.ViewVolunteerDetailController</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>UpdateVolunteerStatusController</servlet-name>
         <servlet-class>controller.UpdateVolunteerStatusController</servlet-class>
     </servlet>
     <servlet-mapping>
+        <servlet-name>BaseController</servlet-name>
+        <url-pattern>/baseController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ListAccount</servlet-name>
+        <url-pattern>/ListAccount</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewAccountDetailController</servlet-name>
+        <url-pattern>/viewAccountDetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditProfileController</servlet-name>
+        <url-pattern>/EditProfileController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddAccountController</servlet-name>
+        <url-pattern>/AddAccountController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ListVolunteerController</servlet-name>
+        <url-pattern>/ListVolunteer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewVolunteerDetailController</servlet-name>
+        <url-pattern>/viewVolunteerDetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>UpdateVolunteerStatusController</servlet-name>
         <url-pattern>/UpdateVolunteerStatus</url-pattern>
     </servlet-mapping>
-=======
->>>>>>> origin/mainV1
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
-</web-app>
+    </web-app>

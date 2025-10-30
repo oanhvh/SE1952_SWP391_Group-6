@@ -78,6 +78,7 @@
             <table class="table table-hover table-bordered align-middle">
                 <thead class="table-primary text-center">
                 <tr>
+                    <th>Full name</th>
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Role</th>
@@ -90,6 +91,7 @@
                     <c:when test="${not empty userList}">
                         <c:forEach var="u" items="${userList}">
                             <tr>
+                                <td>${u.fullName}</td>
                                 <td>${u.email}</td>
                                 <td>${u.phone}</td>
                                 <td>${u.role}</td>
