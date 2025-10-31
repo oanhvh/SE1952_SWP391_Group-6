@@ -68,7 +68,7 @@
 <button id="sidebarToggle" class="sidebar-toggle">☰</button>
 <div class="sidebar" id="volunteerSidebar">
     <ul>
-        <li><a href="<%= request.getContextPath() %>/volunteer/apply.jsp">Events Application</a></li>
+        <li><a href="<%= request.getContextPath() %>/ApplyEventController">Apply Events</a></li>
         <li><a href="<%= request.getContextPath() %>/ProfileController">Profile</a></li>
     </ul>
 </div>
