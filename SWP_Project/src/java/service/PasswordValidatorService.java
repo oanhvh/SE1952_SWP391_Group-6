@@ -34,4 +34,6 @@ public class PasswordValidatorService {
         }
         return hex.toString();
     }
+    
+    //nâng cấp bảo mật
 }

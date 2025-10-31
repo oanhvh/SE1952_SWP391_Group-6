@@ -39,7 +39,7 @@ public class AddAccountController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
             return;
         }
-        request.getRequestDispatcher("AddAccount.jsp").forward(request, response);
+        request.getRequestDispatcher("/admin/AddAccount.jsp").forward(request, response);
     }
 
     /**
