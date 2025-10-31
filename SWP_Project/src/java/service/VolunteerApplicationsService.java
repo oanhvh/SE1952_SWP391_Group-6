@@ -37,7 +37,7 @@ public class VolunteerApplicationsService {
     }
 
     public void deleteVolunteerApplication(int applicationID) {
-        validateID(applicationID, "Application ID không hợp lệ để xóa.");
+        validateID(applicationID, "Invalid ApplicationID.");
         volunteerAppDAO.deleteVolunteerApplication(applicationID);
     }
 
@@ -47,12 +47,12 @@ public class VolunteerApplicationsService {
     }
 
     public List<VolunteerApplications> getApplicationsByVolunteer(int volunteerID) {
-        validateID(volunteerID, "Volunteer ID không hợp lệ.");
+        validateID(volunteerID, "Invalid VolunteerID.");
         return volunteerAppDAO.getApplicationsByVolunteer(volunteerID);
     }
 
     public void updateStatus(int applicationID, String status, Integer approvedByStaffID) {
-        validateID(applicationID, "Application ID không hợp lệ.");
+        validateID(applicationID, "Invalid ApplicationID.");
         validateDecisionStatus(status);
         volunteerAppDAO.updateStatus(applicationID, status, approvedByStaffID);
     }
@@ -62,10 +62,10 @@ public class VolunteerApplicationsService {
     // =============================
     private void validateApplicationForAdd(VolunteerApplications app) {
         if (app == null) {
-            throw new IllegalArgumentException("Dữ liệu ứng tuyển không hợp lệ.");
+            throw new IllegalArgumentException("Invalid information.");
         }
-        validateID(app.getVolunteerID(), "Volunteer ID không hợp lệ.");
-        validateID(app.getEventID(), "Event ID không hợp lệ.");
+        validateID(app.getVolunteerID(), "Invalid VolunteerID.");
+        validateID(app.getEventID(), "Invalid EventID.");
 //        if (app.getStatus() == null || app.getStatus().isEmpty()) {
             app.setStatus("Pending");
 //        }
@@ -76,19 +76,19 @@ public class VolunteerApplicationsService {
 
     private void validateApplicationForUpdate(VolunteerApplications app) {
         if (app == null || app.getApplicationID() <= 0) {
-            throw new IllegalArgumentException("Application ID không hợp lệ khi cập nhật.");
+            throw new IllegalArgumentException("Invalid ApplicationID.");
         }
     }
 
     private void validateStatus(String status) {
         if (status == null || status.isEmpty()) {
-            throw new IllegalArgumentException("Trạng thái không hợp lệ.");
+            throw new IllegalArgumentException("Invalid status.");
         }
     }
 
     private void validateDecisionStatus(String status) {
         if (!"Approved".equalsIgnoreCase(status) && !"Rejected".equalsIgnoreCase(status)) {
-            throw new IllegalArgumentException("Trạng thái phải là Approved hoặc Rejected.");
+            throw new IllegalArgumentException("Status must be Approved or Rejected.");
         }
     }
 
