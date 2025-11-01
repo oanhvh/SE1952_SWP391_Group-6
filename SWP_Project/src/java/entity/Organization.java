@@ -8,10 +8,10 @@ import java.time.LocalDate;
 
 /**
  *
- * @author Admin
+ * @author NHThanh
  */
 public class Organization {
-    
+
     private int orgID;
     private Users user;
     private String orgName;
