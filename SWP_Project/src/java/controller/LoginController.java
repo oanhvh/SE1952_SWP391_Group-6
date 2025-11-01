@@ -4,6 +4,10 @@
  */
 package controller;
 
+/**
+ *
+ * @author NHThanh
+ */
 import dao.UserDao;
 import entity.Users;
 import jakarta.servlet.ServletException;
@@ -15,7 +19,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import service.PasswordValidatorService;
 
-@WebServlet(name = "LoginController", urlPatterns = {"/login"})
+@WebServlet(name = "LoginController", urlPatterns = {"/login", "/login.html"})
 public class LoginController extends HttpServlet {
 
     private final UserDao userDao = new UserDao();
@@ -28,7 +32,7 @@ public class LoginController extends HttpServlet {
         String password = request.getParameter("password");
 
         if (isBlank(username) || isBlank(password)) {
-            request.setAttribute("error", "Vui lòng nhập đầy đủ tài khoản và mật khẩu");
+            request.setAttribute("error", "Please enter username and password");
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
@@ -41,7 +45,7 @@ public class LoginController extends HttpServlet {
         }
 
         boolean ok = passwordService.validatePassword(user.getPasswordHash(), password);
-        if (!ok) {
+        if (!ok) {  
             request.setAttribute("error", "Password is incorrect");
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
@@ -56,22 +60,19 @@ public class LoginController extends HttpServlet {
 
         String role = userDao.getUserRole(user.getUserID());
 
-        // Store session
         HttpSession session = request.getSession(true);
         session.setAttribute("authUser", user);
         session.setAttribute("role", role);
 
-        // Redirect by role (placeholder paths)
         if ("Volunteer".equalsIgnoreCase(role)) {
-            response.sendRedirect(request.getContextPath() + "/volunteer/home");
-        } else if ("OrgStaff".equalsIgnoreCase(role)) {
-            response.sendRedirect(request.getContextPath() + "/orgstaff/home");
+            response.sendRedirect(request.getContextPath() + "/volunteer/index_1.jsp");
+        } else if ("Staff".equalsIgnoreCase(role)) {
+            response.sendRedirect(request.getContextPath() + "/staff/index_1.jsp");
+        } else if ("Manager".equalsIgnoreCase(role)) {
+            response.sendRedirect(request.getContextPath() + "/manager/index_1.jsp");
         } else if ("Admin".equalsIgnoreCase(role)) {
-            response.sendRedirect(request.getContextPath() + "/admin/dashboard");
-        } else if ("Organization".equalsIgnoreCase(role)) {
-            response.sendRedirect(request.getContextPath() + "/organization/home");
+            response.sendRedirect(request.getContextPath() + "/admin/lisAccount.jsp");
         } else {
-            // Unknown role -> default
             response.sendRedirect(request.getContextPath() + "/");
         }
     }
@@ -79,7 +80,6 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // show login page
         request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 

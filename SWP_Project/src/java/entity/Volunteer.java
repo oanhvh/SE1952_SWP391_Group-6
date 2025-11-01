@@ -13,90 +13,90 @@ import java.time.LocalDate;
 public class Volunteer {
 
     private int volunteerID;
-    private Users user;
+    private int userID;
     private String profileInfo;
     private LocalDate joinDate;
     private String status;
     private String availability;
     private boolean isSponsor;
-    private Integer age;
+    private String badge;
 
     public Volunteer() {
     }
 
-    public Volunteer(int volunteerID, Users user, String profileInfo, LocalDate joinDate, String status,
-            String availability, boolean isSponsor, Integer age) {
+    public Volunteer(int volunteerID, int userID, String profileInfo, LocalDate joinDate, String status, String availability, boolean isSponsor, String badge) {
         this.volunteerID = volunteerID;
-        this.user = user;
+        this.userID = userID;
         this.profileInfo = profileInfo;
         this.joinDate = joinDate;
         this.status = status;
         this.availability = availability;
         this.isSponsor = isSponsor;
-        this.age = age;
+        this.badge = badge;
     }
 
     public int getVolunteerID() {
         return volunteerID;
     }
 
-    public void setVolunteerID(int volunteerID) {
-        this.volunteerID = volunteerID;
-    }
-
-    public Users getUser() {
-        return user;
-    }
-
-    public void setUser(Users user) {
-        this.user = user;
+    public int getUserID() {
+        return userID;
     }
 
     public String getProfileInfo() {
         return profileInfo;
     }
 
-    public void setProfileInfo(String profileInfo) {
-        this.profileInfo = profileInfo;
-    }
-
     public LocalDate getJoinDate() {
         return joinDate;
-    }
-
-    public void setJoinDate(LocalDate joinDate) {
-        this.joinDate = joinDate;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getAvailability() {
         return availability;
+    }
+
+    public boolean isIsSponsor() {
+        return isSponsor;
+    }
+
+    public String getBadge() {
+        return badge;
+    }
+
+    public void setVolunteerID(int volunteerID) {
+        this.volunteerID = volunteerID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    public void setProfileInfo(String profileInfo) {
+        this.profileInfo = profileInfo;
+    }
+
+    public void setJoinDate(LocalDate joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setAvailability(String availability) {
         this.availability = availability;
     }
 
-    public boolean isSponsor() {
-        return isSponsor;
-    }
-
-    public void setSponsor(boolean isSponsor) {
+    public void setIsSponsor(boolean isSponsor) {
         this.isSponsor = isSponsor;
     }
 
-    public Integer getAge() {
-        return age;
+    public void setBadge(String badge) {
+        this.badge = badge;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 }

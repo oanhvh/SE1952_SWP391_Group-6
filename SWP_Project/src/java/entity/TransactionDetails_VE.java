@@ -11,20 +11,19 @@ package entity;
 public class TransactionDetails_VE {
 
     private int detailID;
-    private TransactionHeader transaction;
-    private Volunteer volunteer;
-    private Event event;
+    private int transactionID;
+    private Integer volunteerID;
+    private Integer eventID;
     private String purpose;
 
     public TransactionDetails_VE() {
     }
 
-    public TransactionDetails_VE(int detailID, TransactionHeader transaction, Volunteer volunteer,
-            Event event, String purpose) {
+    public TransactionDetails_VE(int detailID, int transactionID, Integer volunteerID, Integer eventID, String purpose) {
         this.detailID = detailID;
-        this.transaction = transaction;
-        this.volunteer = volunteer;
-        this.event = event;
+        this.transactionID = transactionID;
+        this.volunteerID = volunteerID;
+        this.eventID = eventID;
         this.purpose = purpose;
     }
 
@@ -32,39 +31,40 @@ public class TransactionDetails_VE {
         return detailID;
     }
 
-    public void setDetailID(int detailID) {
-        this.detailID = detailID;
+    public int getTransactionID() {
+        return transactionID;
     }
 
-    public TransactionHeader getTransaction() {
-        return transaction;
+    public Integer getVolunteerID() {
+        return volunteerID;
     }
 
-    public void setTransaction(TransactionHeader transaction) {
-        this.transaction = transaction;
-    }
-
-    public Volunteer getVolunteer() {
-        return volunteer;
-    }
-
-    public void setVolunteer(Volunteer volunteer) {
-        this.volunteer = volunteer;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
+    public Integer getEventID() {
+        return eventID;
     }
 
     public String getPurpose() {
         return purpose;
     }
 
+    public void setDetailID(int detailID) {
+        this.detailID = detailID;
+    }
+
+    public void setTransactionID(int transactionID) {
+        this.transactionID = transactionID;
+    }
+
+    public void setVolunteerID(Integer volunteerID) {
+        this.volunteerID = volunteerID;
+    }
+
+    public void setEventID(Integer eventID) {
+        this.eventID = eventID;
+    }
+
     public void setPurpose(String purpose) {
         this.purpose = purpose;
     }
+
 }

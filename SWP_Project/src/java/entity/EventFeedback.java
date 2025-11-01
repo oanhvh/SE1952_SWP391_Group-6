@@ -13,80 +13,80 @@ import java.time.LocalDateTime;
 public class EventFeedback {
 
     private int commentID;
-    private Event event;
-    private Volunteer volunteer;
+    private int eventID;
+    private Integer volunteerID;
     private String commentText;
     private LocalDateTime createdAt;
     private String replyText;
-    private Users replyByUser;
+    private Integer replyByUserID;
 
     public EventFeedback() {
     }
 
-    public EventFeedback(int commentID, Event event, Volunteer volunteer, String commentText,
-            LocalDateTime createdAt, String replyText, Users replyByUser) {
+    public EventFeedback(int commentID, int eventID, Integer volunteerID, String commentText, LocalDateTime createdAt, String replyText, Integer replyByUserID) {
         this.commentID = commentID;
-        this.event = event;
-        this.volunteer = volunteer;
+        this.eventID = eventID;
+        this.volunteerID = volunteerID;
         this.commentText = commentText;
         this.createdAt = createdAt;
         this.replyText = replyText;
-        this.replyByUser = replyByUser;
+        this.replyByUserID = replyByUserID;
     }
 
     public int getCommentID() {
         return commentID;
     }
 
-    public void setCommentID(int commentID) {
-        this.commentID = commentID;
+    public int getEventID() {
+        return eventID;
     }
 
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
-    }
-
-    public Volunteer getVolunteer() {
-        return volunteer;
-    }
-
-    public void setVolunteer(Volunteer volunteer) {
-        this.volunteer = volunteer;
+    public Integer getVolunteerID() {
+        return volunteerID;
     }
 
     public String getCommentText() {
         return commentText;
     }
 
-    public void setCommentText(String commentText) {
-        this.commentText = commentText;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public String getReplyText() {
         return replyText;
     }
 
+    public Integer getReplyByUserID() {
+        return replyByUserID;
+    }
+
+    public void setCommentID(int commentID) {
+        this.commentID = commentID;
+    }
+
+    public void setEventID(int eventID) {
+        this.eventID = eventID;
+    }
+
+    public void setVolunteerID(Integer volunteerID) {
+        this.volunteerID = volunteerID;
+    }
+
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public void setReplyText(String replyText) {
         this.replyText = replyText;
     }
 
-    public Users getReplyByUser() {
-        return replyByUser;
+    public void setReplyByUserID(Integer replyByUserID) {
+        this.replyByUserID = replyByUserID;
     }
 
-    public void setReplyByUser(Users replyByUser) {
-        this.replyByUser = replyByUser;
-    }
 }

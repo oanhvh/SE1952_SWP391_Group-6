@@ -4,8 +4,64 @@
         <servlet-name>BaseController</servlet-name>
         <servlet-class>controller.BaseController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ListAccount</servlet-name>
+        <servlet-class>controller.ListAccountController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewAccountDetailController</servlet-name>
+        <servlet-class>controller.ViewAccountDetailController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditProfileController</servlet-name>
+        <servlet-class>controller.EditProfileController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddAccountController</servlet-name>
+        <servlet-class>controller.AddAccountController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ListVolunteerController</servlet-name>
+        <servlet-class>controller.ListVolunteerController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewVolunteerDetailController</servlet-name>
+        <servlet-class>controller.ViewVolunteerDetailController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateVolunteerStatusController</servlet-name>
+        <servlet-class>controller.UpdateVolunteerStatusController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>BaseController</servlet-name>
         <url-pattern>/baseController</url-pattern>
     </servlet-mapping>
-</web-app>
+    <servlet-mapping>
+        <servlet-name>ListAccount</servlet-name>
+        <url-pattern>/ListAccount</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewAccountDetailController</servlet-name>
+        <url-pattern>/viewAccountDetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditProfileController</servlet-name>
+        <url-pattern>/EditProfileController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddAccountController</servlet-name>
+        <url-pattern>/AddAccountController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ListVolunteerController</servlet-name>
+        <url-pattern>/ListVolunteer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewVolunteerDetailController</servlet-name>
+        <url-pattern>/viewVolunteerDetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateVolunteerStatusController</servlet-name>
+        <url-pattern>/UpdateVolunteerStatus</url-pattern>
+    </servlet-mapping>
+    </web-app>

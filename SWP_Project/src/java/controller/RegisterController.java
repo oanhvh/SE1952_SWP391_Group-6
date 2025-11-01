@@ -4,9 +4,13 @@
  */
 package controller;
 
+/**
+ *
+ * @author NHThanh
+ */
 import dao.DBUtils;
-import dao.OrgEmployeeCodesDAO;
-import dao.OrgStaffDAO;
+import dao.EmployeeCodesDAO;
+import dao.StaffDAO;
 import dao.UserDao;
 import dao.VolunteerDAO;
 import entity.Users;
@@ -15,6 +19,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.sql.Connection;
 import service.CodeValidatorService;
@@ -24,45 +29,45 @@ public class RegisterController extends HttpServlet {
 
     private final UserDao userDao = new UserDao();
     private final VolunteerDAO volunteerDAO = new VolunteerDAO();
-    private final OrgEmployeeCodesDAO codesDAO = new OrgEmployeeCodesDAO();
-    private final OrgStaffDAO orgStaffDAO = new OrgStaffDAO();
+    private final EmployeeCodesDAO codesDAO = new EmployeeCodesDAO();
+    private final StaffDAO staffDAO = new StaffDAO();
     private final CodeValidatorService codeService = new CodeValidatorService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/register.jsp").forward(request, response);
+        request.getRequestDispatcher("/AccountRegister.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String role = param(request, "role"); // expected: Volunteer or OrgStaff
+        String role = param(request, "role");
         String username = param(request, "username");
         String password = param(request, "password");
         String fullName = param(request, "fullName");
         String email = param(request, "email");
         String phone = param(request, "phone");
-        String employeeCode = param(request, "employeeCode"); // only for OrgStaff
+        String employeeCode = param(request, "employeeCode");
 
         if (isBlank(username) || isBlank(password) || isBlank(role)) {
-            errorForward(request, response, "Vui lòng nhập đầy đủ thông tin bắt buộc");
+            errorForward(request, response, "Please enter required information");
             return;
         }
 
         if (userDao.isUsernameExisted(username)) {
-            errorForward(request, response, "Username đã tồn tại");
+            errorForward(request, response, "Username already exists");
             return;
         }
 
         try (Connection conn = DBUtils.getConnection1()) {
             conn.setAutoCommit(false);
-
+            
+            //tạo tài khoản volunteer + user || staff + user
             if ("Volunteer".equalsIgnoreCase(role)) {
-                // Create user
                 Users u = new Users();
                 u.setUsername(username);
-                u.setPasswordHash(password); // will be hashed in DAO
+                u.setPasswordHash(password);
                 u.setRole("Volunteer");
                 u.setStatus("Pending");
                 u.setFullName(fullName);
@@ -71,27 +76,24 @@ public class RegisterController extends HttpServlet {
 
                 int userId = userDao.createUser(conn, u, true);
 
-                // Create volunteer
-                volunteerDAO.createVolunteer(conn, userId);
+                volunteerDAO.createVolunteer(conn, userId); //tạo hồ sơ liên kết với user
 
                 conn.commit();
-                successRedirect(response, request, "Đăng ký thành công. Vui lòng đăng nhập.");
+                successForward(request, response, "Registration successful. Please proceed to the login page to sign in.");
                 return;
 
-            } else if ("OrgStaff".equalsIgnoreCase(role)) {
-                // Validate employee code
-                OrgEmployeeCodesDAO.CodeInfo codeInfo = codeService.validateEmployeeCode(conn, employeeCode);
+            } else if ("Staff".equalsIgnoreCase(role)) {
+                EmployeeCodesDAO.CodeInfo codeInfo = codeService.validateEmployeeCode(conn, employeeCode);
                 if (codeInfo == null) {
                     conn.rollback();
-                    errorForward(request, response, "Mã nhân viên không hợp lệ");
+                    errorForward(request, response, "Invalid employee code");
                     return;
                 }
 
-                // Create user
                 Users u = new Users();
                 u.setUsername(username);
-                u.setPasswordHash(password); // will be hashed in DAO
-                u.setRole("OrgStaff");
+                u.setPasswordHash(password);
+                u.setRole("Staff");
                 u.setStatus("Pending");
                 u.setFullName(fullName);
                 u.setEmail(email);
@@ -99,42 +101,45 @@ public class RegisterController extends HttpServlet {
 
                 int userId = userDao.createUser(conn, u, true);
 
-                // Create org staff and mark code used
-                orgStaffDAO.createOrgStaff(conn, userId, codeInfo.orgId, codeInfo.codeId, true);
-                codesDAO.markCodeUsed(conn, codeInfo.codeId);
+                staffDAO.createStaff(conn, userId, codeInfo.managerId, codeInfo.codeId, true);
+                codesDAO.markCodeUsed(conn, codeInfo.codeId); //đánh dấu mã đã dùng
 
                 conn.commit();
-                successRedirect(response, request, "Đăng ký thành công. Vui lòng đăng nhập.");
+                successForward(request, response, "Registration successful. Please proceed to the login page to sign in.");
                 return;
             }
 
-            // Not supported role for public registration
-            errorForward(request, response, "Vai trò không được hỗ trợ để tự đăng ký");
+            errorForward(request, response, "Role not supported for public registration");
         } catch (Exception ex) {
             ex.printStackTrace();
-            errorForward(request, response, "Đăng ký thất bại. Vui lòng thử lại.");
+            errorForward(request, response, "Registration failed. Please try again.");
         }
     }
-
+    
+    //xóa khoảng trắng
     private String param(HttpServletRequest req, String name) {
         String v = req.getParameter(name);
         return v != null ? v.trim() : null;
     }
-
+    
+    //kiểm tra chuỗi rỗng
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }
-
+    
     private void errorForward(HttpServletRequest request, HttpServletResponse response, String message)
             throws ServletException, IOException {
         request.setAttribute("error", message);
-        request.getRequestDispatcher("/register.jsp").forward(request, response);
+        request.getRequestDispatcher("/AccountRegister.jsp").forward(request, response);
     }
 
-    private void successRedirect(HttpServletResponse response, HttpServletRequest request, String message)
-            throws IOException {
-        // attach a simple query param message; ideally use flash scope
-        String msg = java.net.URLEncoder.encode(message, java.nio.charset.StandardCharsets.UTF_8);
-        response.sendRedirect(request.getContextPath() + "/login?msg=" + msg);
+    private void successForward(HttpServletRequest request, HttpServletResponse response, String message)
+            throws IOException, ServletException {
+        request.setAttribute("success", message);
+        try {
+            request.getRequestDispatcher("/register_success.jsp").forward(request, response);
+        } catch (ServletException ex) {
+            throw ex;
+        }
     }
 }

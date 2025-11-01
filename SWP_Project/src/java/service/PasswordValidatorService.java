@@ -12,8 +12,11 @@ import java.security.MessageDigest;
  * @author NHThanh
  */
 public class PasswordValidatorService {
-    public boolean validatePassword(String storedHash, String submittedPlain) {
-        if (storedHash == null || submittedPlain == null) return false;
+
+    public boolean validatePassword(String storedHash, String submittedPlain) { //storeHash mk trong database
+        if (storedHash == null || submittedPlain == null) {
+            return false;
+        }
         try {
             String hash = sha256(submittedPlain);
             return storedHash.equalsIgnoreCase(hash);
@@ -26,7 +29,11 @@ public class PasswordValidatorService {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
         StringBuilder hex = new StringBuilder();
-        for (byte b : hash) hex.append(String.format("%02x", b));
+        for (byte b : hash) {
+            hex.append(String.format("%02x", b));
+        }
         return hex.toString();
     }
+    
+    //nâng cấp bảo mật
 }
