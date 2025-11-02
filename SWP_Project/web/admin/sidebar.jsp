@@ -23,12 +23,10 @@
                 <ul class="nav flex-column mt-2">
                     <li><a class="nav-link text-dark" href="ListAccount">View Account List</a></li>
                     <li><a class="nav-link text-dark" href="AddAccountController">Add New Account</a></li>
+                    <li><a class="nav-link text-dark" href="/admin/create_create.jsp">create Manager</a></li>          
                 </ul>
             </div>
         </li>
-
-        <hr>
-
         <li>
             <a class="nav-link text-dark" href="ListVolunteer">
                 <i class="bi bi-house">View Volunteer</i>
