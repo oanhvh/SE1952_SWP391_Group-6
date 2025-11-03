@@ -21,7 +21,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import service.EventService;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.nio.file.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50)   // 50MB
 /**
  *
  * @author DucNM
@@ -186,7 +195,7 @@ public class EventController extends HttpServlet {
         }
     }
 
-    private Event buildEventFromRequest(HttpServletRequest request, boolean isUpdate) {
+    private Event buildEventFromRequest(HttpServletRequest request, boolean isUpdate) throws ServletException, IOException {
         Event event = new Event();
         if (isUpdate) {
             event.setEventID(Integer.parseInt(request.getParameter("eventID")));
@@ -200,8 +209,42 @@ public class EventController extends HttpServlet {
         event.setEndDate(LocalDateTime.parse(request.getParameter("endDate"), FORMATTER));
         event.setStatus(request.getParameter("status"));
         event.setCapacity(Integer.parseInt(request.getParameter("capacity")));
-        event.setImage(request.getParameter("image"));
+//        event.setImage(request.getParameter("image"));
         event.setCategoryID(Integer.parseInt(request.getParameter("categoryID")));
+
+        Part filePart = request.getPart("image");
+        if (filePart != null && filePart.getSize() > 0) {
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            
+            fileName = fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+            
+            String timeStamp = String.valueOf(System.currentTimeMillis());
+            String fileExtension = "";
+            int dotIndex = fileName.lastIndexOf('.');
+            if (dotIndex > 0) {
+                fileExtension = fileName.substring(dotIndex);
+                fileName = fileName.substring(0, dotIndex) + "_" + timeStamp + fileExtension;
+            } else {
+                fileName = fileName + "_" + timeStamp;
+            }
+            
+            String uploadPath = request.getServletContext().getRealPath("") + File.separator + "images";
+            
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            
+            String savePath = uploadPath + File.separator + fileName;
+            filePart.write(savePath);
+            
+            event.setImage("images/" + fileName);
+        } else if (isUpdate) {
+            String oldImage = request.getParameter("oldImage");
+            if (oldImage != null && !oldImage.isEmpty()) {
+                event.setImage(oldImage);
+            }
+        }
 
         if (isUpdate && request.getParameter("createdAt") != null && !request.getParameter("createdAt").isBlank()) {
             event.setCreatedAt(LocalDateTime.parse(request.getParameter("createdAt"), FORMATTER));
