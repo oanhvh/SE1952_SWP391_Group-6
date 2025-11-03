@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dao.VolunteerApplicationsDao;
@@ -13,8 +9,8 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/VolunteerHistory")
-public class VolunteerHistoryController extends HttpServlet {
+@WebServlet("/VolunteerTodayController")
+public class VolunteerTodayController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -22,18 +18,17 @@ public class VolunteerHistoryController extends HttpServlet {
 
         HttpSession session = request.getSession();
         Users authUser = (Users) session.getAttribute("authUser");
-
         if (authUser == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
-        int userId = authUser.getUserID(); // Lấy userID từ session
+        int userId = authUser.getUserID();
         VolunteerApplicationsDao dao = new VolunteerApplicationsDao();
-        List<VolunteerApplications> historyList = dao.getCompletedApplicationsByUserId(userId);
+        List<VolunteerApplications> todayEvents = dao.getTodayEventsByUserId(userId);
 
-        request.setAttribute("historyList", historyList);
-        request.getRequestDispatcher("/volunteer/volunteer_history.jsp").forward(request, response);
+        request.setAttribute("todayEvents", todayEvents);
+        request.getRequestDispatcher("/volunteer/volunteer_today.jsp").forward(request, response);
     }
 }
 
