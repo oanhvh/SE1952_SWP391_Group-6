@@ -1,12 +1,15 @@
 package service;
 
+import dao.ManagerDAO;
 import dao.UserDao;
+import entity.Manager;
 import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class UserService {
         }
 
         request.setAttribute("userList", userList);
-        request.getRequestDispatcher("listAccount.jsp").forward(request, response);
+        request.getRequestDispatcher("admin/listAccount.jsp").forward(request, response);
     }
 
     public void getUserById(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -56,7 +59,7 @@ public class UserService {
                 // Handle invalid id
             }
         }
-        request.getRequestDispatcher("viewAccountDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("admin/viewAccountDetail.jsp").forward(request, response);
     }
 
     public void displayEditInformation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -67,7 +70,7 @@ public class UserService {
         String username = request.getParameter("username");
         if (username == null || username.trim().isEmpty()) {
             request.setAttribute("error", "Invalid username.");
-            request.getRequestDispatcher("editProfile.jsp").forward(request, response);
+            request.getRequestDispatcher("admin/editProfile.jsp").forward(request, response);
             return;
         }
 
@@ -80,7 +83,7 @@ public class UserService {
             request.setAttribute("user", user);
         }
 
-        request.getRequestDispatcher("editProfile.jsp").forward(request, response);
+        request.getRequestDispatcher("admin/editProfile.jsp").forward(request, response);
     }
 
     public void editInformation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -98,7 +101,7 @@ public class UserService {
 
         if (user == null) {
             request.setAttribute("error", "User not found.");
-            request.getRequestDispatcher("editProfile.jsp").forward(request, response);
+            request.getRequestDispatcher("admin/editProfile.jsp").forward(request, response);
             return;
         }
 
@@ -119,35 +122,51 @@ public class UserService {
             request.setAttribute("error", "There are something wrong when update profile. Please try again later.");
         }
 
-        request.getRequestDispatcher("editProfile.jsp").forward(request, response);
+        request.getRequestDispatcher("admin/editProfile.jsp").forward(request, response);
 
     }
 
-    public void addNewUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void addNewUser(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         if (isNotAdmin(request)) {
             response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
             return;
         }
+
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = request.getParameter("username").trim();
+        String password = request.getParameter("password").trim();
         String role = request.getParameter("role");
         String status = request.getParameter("status");
-        String fullName = request.getParameter("fullName");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
+        String fullName = request.getParameter("fullName").trim();
+        String email = request.getParameter("email").trim();
+        String phone = request.getParameter("phone").trim();
+        String dateOfBirthStr = request.getParameter("dateOfBirth");
+
+        String managerName = request.getParameter("managerName").trim();
+        String contactInfo = request.getParameter("contactInfo").trim();
+        String address = request.getParameter("address").trim();
 
         try {
             UserDao userDao = new UserDao();
+            ManagerDAO managerDao = new ManagerDAO();
 
             if (userDao.isUsernameExisted(username)) {
                 request.setAttribute("errorMessage", "Username already exists!");
-                request.getRequestDispatcher("AddAccount.jsp").forward(request, response);
+                request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
                 return;
             }
+
+            LocalDate dateOfBirth = null;
+            if (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) {
+                dateOfBirth = LocalDate.parse(dateOfBirthStr);
+            }
+
             password = sha256(password);
+
             Users user = new Users();
             user.setUsername(username);
             user.setPasswordHash(password);
@@ -156,24 +175,52 @@ public class UserService {
             user.setFullName(fullName);
             user.setEmail(email);
             user.setPhone(phone);
+            user.setDateOfBirth(dateOfBirth);
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
 
-            int result = userDao.addUser(user);
-
-            if (result > 0) {
-                request.setAttribute("successMessage", "Account created successfully!");
-            } else {
-                request.setAttribute("errorMessage", "Failed to create account. Please try again later.");
+            int addUserResult = userDao.addUser(user);
+            if (addUserResult <= 0) {
+                request.setAttribute("errorMessage", "Failed to create user account.");
+                request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
+                return;
             }
 
-            request.getRequestDispatcher("AddAccount.jsp").forward(request, response);
+            int userId = userDao.getUserIdByUsername(username);
+            if (userId <= 0) {
+                request.setAttribute("errorMessage", "Failed to retrieve new user ID.");
+                request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
+                return;
+            }
+            user.setUserID(userId);
+
+            // Step 3: Insert Manager
+            Manager manager = new Manager();
+            manager.setUser(user);
+            manager.setManagerName(managerName);
+            manager.setContactInfo(contactInfo);
+            manager.setAddress(address);
+            manager.setRegistrationDate(LocalDate.now());
+
+            Users adminUser = (Users) request.getSession().getAttribute("loggedUser");
+            manager.setCreatedBy(adminUser);
+
+            int managerResult = managerDao.addManager(manager);
+
+            if (managerResult > 0) {
+                request.setAttribute("successMessage", "Manager account created successfully!");
+            } else {
+                request.setAttribute("errorMessage", "Failed to create manager record.");
+            }
+
+            request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred while creating the account.");
-            request.getRequestDispatcher("AddAccount.jsp").forward(request, response);
-
+            request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
         }
     }
+
+
 }

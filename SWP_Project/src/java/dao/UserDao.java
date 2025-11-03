@@ -6,17 +6,16 @@ package dao;
 
 import entity.Users;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.Statement;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 
 /**
  *
@@ -146,7 +145,11 @@ public class UserDao extends DBUtils {
             pstmt.setString(4, user.getStatus());
             pstmt.setString(5, user.getFullName());
             pstmt.setString(6, user.getEmail());
-            pstmt.setDate(7, user.getDateOfBirth() != null ? Date.valueOf(user.getDateOfBirth()) : null);
+            if (user.getDateOfBirth() != null) {
+                pstmt.setDate(7, java.sql.Date.valueOf(user.getDateOfBirth()));
+            } else {
+                pstmt.setNull(7, java.sql.Types.DATE);
+            }
             pstmt.setString(8, user.getPhone());
             pstmt.setString(9, user.getAvatar());
             pstmt.setTimestamp(10, user.getCreatedAt() != null ? Timestamp.valueOf(user.getCreatedAt()) : null);
@@ -338,4 +341,20 @@ public class UserDao extends DBUtils {
         }
         return false;
     }
+
+    public int getUserIdByUsername(String username) {
+        String sql = "SELECT UserID FROM Users WHERE Username = ?";
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("UserID");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 }

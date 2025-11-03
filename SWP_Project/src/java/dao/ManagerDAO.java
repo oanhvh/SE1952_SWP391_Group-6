@@ -65,6 +65,26 @@ public class ManagerDAO {
         return null;
     }
 
+
+    public int addManager(Manager manager) {
+        String sql = "INSERT INTO Manager (UserID, ManagerName, ContactInfo, Address, RegistrationDate, CreatedByUserID) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, manager.getUser().getUserID());
+            pstmt.setString(2, manager.getManagerName());
+            pstmt.setString(3, manager.getContactInfo());
+            pstmt.setString(4, manager.getAddress());
+            pstmt.setDate(5, Date.valueOf(manager.getRegistrationDate()));
+            pstmt.setInt(6, manager.getCreatedBy() != null ? manager.getCreatedBy().getUserID() : 0);
+            return pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+
+
 //    public List<Manager> getManagersByPage(int page) {
 //        List<Manager> list = new ArrayList<>();
 //        int pageSize = 5;
