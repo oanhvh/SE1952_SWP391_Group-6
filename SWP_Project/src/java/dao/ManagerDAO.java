@@ -8,16 +8,13 @@ package dao;
  *
  * @author NHThanh
  */
+
+import entity.Manager;
+
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import entity.Manager;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ManagerDAO {
 
