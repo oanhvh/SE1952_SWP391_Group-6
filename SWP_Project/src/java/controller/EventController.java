@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller;
 
+import dao.StaffDAO;
 import entity.Event;
 import entity.Staff;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -29,10 +30,13 @@ import service.EventService;
 public class EventController extends HttpServlet {
 
     private EventService eventService;
+    private StaffDAO staffDAO;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     @Override
-    public void init() throws ServletException{
+    public void init() throws ServletException {
         eventService = new EventService();
+        staffDAO = new StaffDAO();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -132,83 +136,84 @@ public class EventController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
         request.setAttribute("event", event);
-        request.getRequestDispatcher("updateEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("staff/updateEvent.jsp").forward(request, response);
     }
 
     private void addEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
         try {
-            Event event = new Event();
-            event.setManagerID(Integer.parseInt(request.getParameter("managerID")));
-            event.setCreatedByStaffID(
-                    request.getParameter("createdByStaffID") == null || request.getParameter("createdByStaffID").isBlank()
-                    ? null
-                    : Integer.parseInt(request.getParameter("createdByStaffID"))
-            );
-            event.setEventName(request.getParameter("eventName"));
-            event.setDescription(request.getParameter("description"));
-            event.setLocation(request.getParameter("location"));
-            event.setStartDate(LocalDateTime.parse(request.getParameter("startDate")));
-            event.setEndDate(LocalDateTime.parse(request.getParameter("endDate")));
-            event.setStatus(request.getParameter("status"));
-            event.setCapacity(Integer.parseInt(request.getParameter("capacity")));
-            event.setImage(request.getParameter("image"));
-            event.setCategoryID(Integer.parseInt(request.getParameter("categoryID")));
+            int userId = (int) session.getAttribute("userId");
+            int staffId = staffDAO.getStaffIdByUserId(userId);
+            int managerId = staffDAO.getManagerIdByUserId(userId);
+
+            Event event = buildEventFromRequest(request, false);
+            event.setCreatedByStaffID(staffId);
+            event.setManagerID(managerId);
             event.setCreatedAt(LocalDateTime.now());
 
             eventService.addEvent(event);
-            response.sendRedirect("event?action=list");
+            response.sendRedirect(request.getContextPath() + "/event?action=list");
 
         } catch (IllegalArgumentException e) {
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("createEvent.jsp").forward(request, response);
+            request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Unexpected error while adding event");
-            request.getRequestDispatcher("createEvent.jsp").forward(request, response);
+            request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
         }
     }
 
     private void updateEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         try {
-            Event event = new Event();
-            event.setEventID(Integer.parseInt(request.getParameter("eventID")));
-            event.setManagerID(Integer.parseInt(request.getParameter("managerID")));
-            event.setCreatedByStaffID(
-                    request.getParameter("createdByStaffID") == null || request.getParameter("createdByStaffID").isBlank()
-                    ? null
-                    : Integer.parseInt(request.getParameter("createdByStaffID"))
-            );
-            event.setEventName(request.getParameter("eventName"));
-            event.setDescription(request.getParameter("description"));
-            event.setLocation(request.getParameter("location"));
-            event.setStartDate(LocalDateTime.parse(request.getParameter("startDate")));
-            event.setEndDate(LocalDateTime.parse(request.getParameter("endDate")));
-            event.setStatus(request.getParameter("status"));
-            event.setCapacity(Integer.parseInt(request.getParameter("capacity")));
-            event.setImage(request.getParameter("image"));
-            event.setCategoryID(Integer.parseInt(request.getParameter("categoryID")));
-            event.setCreatedAt(LocalDateTime.parse(request.getParameter("createdAt")));
-
+            Event event = buildEventFromRequest(request, true);
             eventService.updateEvent(event);
-            response.sendRedirect("event?action=list");
-
+            response.sendRedirect(request.getContextPath() + "/event?action=list");
         } catch (IllegalArgumentException e) {
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("updateEvent.jsp").forward(request, response);
+            request.getRequestDispatcher("staff/updateEvent.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Unexpected error while updating event");
-            request.getRequestDispatcher("updateEvent.jsp").forward(request, response);
+            request.getRequestDispatcher("staff/updateEvent.jsp").forward(request, response);
         }
+    }
+
+    private Event buildEventFromRequest(HttpServletRequest request, boolean isUpdate) {
+        Event event = new Event();
+        if (isUpdate) {
+            event.setEventID(Integer.parseInt(request.getParameter("eventID")));
+        }
+
+        event.setEventName(request.getParameter("eventName"));
+        event.setDescription(request.getParameter("description"));
+        event.setLocation(request.getParameter("location"));
+
+        event.setStartDate(LocalDateTime.parse(request.getParameter("startDate"), FORMATTER));
+        event.setEndDate(LocalDateTime.parse(request.getParameter("endDate"), FORMATTER));
+        event.setStatus(request.getParameter("status"));
+        event.setCapacity(Integer.parseInt(request.getParameter("capacity")));
+        event.setImage(request.getParameter("image"));
+        event.setCategoryID(Integer.parseInt(request.getParameter("categoryID")));
+
+        if (isUpdate && request.getParameter("createdAt") != null && !request.getParameter("createdAt").isBlank()) {
+            event.setCreatedAt(LocalDateTime.parse(request.getParameter("createdAt"), FORMATTER));
+        }
+        return event;
     }
 
     private void deleteEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         eventService.deleteEvent(id);
-        response.sendRedirect("event?action=list");
+        response.sendRedirect(request.getContextPath() + "/event?action=list");
     }
 
     private void updateStatus(HttpServletRequest request, HttpServletResponse response)
@@ -216,6 +221,6 @@ public class EventController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         String status = request.getParameter("status");
         eventService.updateEventStatus(id, status);
-        response.sendRedirect("event?action=list");
+        response.sendRedirect(request.getContextPath() + "/event?action=list");
     }
 }
