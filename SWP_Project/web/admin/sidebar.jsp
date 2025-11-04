@@ -23,7 +23,7 @@
                 <ul class="nav flex-column mt-2">
                     <li><a class="nav-link text-dark" href="ListAccount">View Account List</a></li>
                     <li><a class="nav-link text-dark" href="AddAccountController">Add New Account</a></li>
-                    <li><a class="nav-link text-dark" href="/admin/create_create.jsp">create Manager</a></li>          
+                    <li><a href="<%= request.getContextPath() %>/admin/manager_create.jsp" class="btn btn-primary">create Manager</a></li>          
                 </ul>
             </div>
         </li>
