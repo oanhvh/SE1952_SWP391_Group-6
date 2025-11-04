@@ -4,6 +4,9 @@
  */
 package controller;
 
+import dao.UserDao;
+import dao.StaffDAO;
+import dao.VolunteerDAO;
 import entity.VolunteerApplications;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.List;
+import service.EventService;
 import service.VolunteerApplicationsService;
 
 /**
@@ -24,6 +28,10 @@ import service.VolunteerApplicationsService;
 public class VolunteerApplicationsController extends HttpServlet {
 
     private VolunteerApplicationsService volunteerAppService;
+    private EventService eventService;
+    private VolunteerDAO volunteerDAO;
+    private StaffDAO staffDAO;
+    private UserDao userDAO;
 
     @Override
     public void init() throws ServletException {
@@ -111,7 +119,7 @@ public class VolunteerApplicationsController extends HttpServlet {
             throws ServletException, IOException {
         List<VolunteerApplications> list = volunteerAppService.getAllVolunteerApplications();
         request.setAttribute("applicationList", list);
-        request.getRequestDispatcher("listVolunteerApplications.jsp").forward(request, response);
+        request.getRequestDispatcher("staff/listVolunteerApplications.jsp").forward(request, response);
     }
 
     private void showDetail(HttpServletRequest request, HttpServletResponse response)
@@ -119,7 +127,7 @@ public class VolunteerApplicationsController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         VolunteerApplications app = volunteerAppService.getApplicationsByVolunteer(id).stream().findFirst().orElse(null);
         request.setAttribute("application", app);
-        request.getRequestDispatcher("viewVolunteerApplication.jsp").forward(request, response);
+        request.getRequestDispatcher("staff/viewVolunteerApplication.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -127,7 +135,7 @@ public class VolunteerApplicationsController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         VolunteerApplications app = volunteerAppService.getApplicationsByVolunteer(id).stream().findFirst().orElse(null);
         request.setAttribute("application", app);
-        request.getRequestDispatcher("updateVolunteerApplication.jsp").forward(request, response);
+        request.getRequestDispatcher("staff/updateVolunteerApplication.jsp").forward(request, response);
     }
 
     private void addApplication(HttpServletRequest request, HttpServletResponse response)
