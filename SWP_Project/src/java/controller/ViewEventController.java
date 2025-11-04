@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dao.EventDao;
+import dao.EventDAO;
 import entity.Event;
 import entity.Users;
 import jakarta.servlet.ServletException;
@@ -19,7 +19,7 @@ import java.util.List;
 @WebServlet(name = "ViewEventController", urlPatterns = {"/volunteer/events"})
 public class ViewEventController extends HttpServlet {
 
-    private final EventDao eventDao = new EventDao();
+    private final EventDAO eventDao = new EventDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

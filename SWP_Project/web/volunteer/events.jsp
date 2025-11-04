@@ -13,7 +13,7 @@
     String applyError = (String) session.getAttribute("applyError");
     String applySuccess = (String) session.getAttribute("applySuccess");
 
-    // ✅ Xóa session message sau khi hiển thị
+    //  Xóa session message sau khi hiển thị
     session.removeAttribute("applyError");
     session.removeAttribute("applySuccess");
 %>
