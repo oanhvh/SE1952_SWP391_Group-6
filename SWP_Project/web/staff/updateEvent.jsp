@@ -129,9 +129,21 @@
                     </div>
                 </div>
 
-                <div class="form-group mb-3">
+                <%--<div class="form-group mb-3">
                     <label>Category ID <span class="text-danger">*</span></label>
                     <input type="number" class="form-control" name="categoryID" value="${event.categoryID}" min="1" required>
+                </div>--%>
+                <div class="form-group mb-3">
+                    <label>Category <span class="text-danger">*</span></label>
+                    <select class="form-control" name="categoryID" required>
+                        <option value="">-- Select Category --</option>
+                        <c:forEach var="cat" items="${categoryList}">
+                            <option value="${cat.categoryID}" 
+                                    <c:if test="${event != null && event.categoryID == cat.categoryID}">selected</c:if>>
+                                ${cat.categoryName}
+                            </option>
+                        </c:forEach>
+                    </select>
                 </div>
 
                 <div class="form-group mb-3">

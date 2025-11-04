@@ -4,7 +4,9 @@
  */
 package controller;
 
+import dao.CategoryDAO;
 import dao.StaffDAO;
+import entity.Category;
 import entity.Event;
 import entity.Staff;
 import java.io.IOException;
@@ -40,12 +42,14 @@ public class EventController extends HttpServlet {
 
     private EventService eventService;
     private StaffDAO staffDAO;
+    private CategoryDAO categoryDAO;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     @Override
     public void init() throws ServletException {
         eventService = new EventService();
         staffDAO = new StaffDAO();
+        categoryDAO = new CategoryDAO();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -127,7 +131,8 @@ public class EventController extends HttpServlet {
 
     private void listEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Event> eventList = eventService.getAllEvents();
+//        List<Event> eventList = eventService.getAllEvents();
+        List<Event> eventList = eventService.getEventsByStatus("Active");
         request.setAttribute("eventList", eventList);
         request.getRequestDispatcher("listEvent.jsp").forward(request, response);
     }
@@ -144,7 +149,9 @@ public class EventController extends HttpServlet {
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
+        List<Category> categoryList = categoryDAO.getAllCategory();
         request.setAttribute("event", event);
+        request.setAttribute("categoryList", categoryList);
         request.getRequestDispatcher("staff/updateEvent.jsp").forward(request, response);
     }
 
@@ -170,10 +177,14 @@ public class EventController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/event?action=list");
 
         } catch (IllegalArgumentException e) {
+            List<Category> categoryList = categoryDAO.getAllCategory();
+            request.setAttribute("categoryList", categoryList);
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
+            List<Category> categoryList = categoryDAO.getAllCategory();
+            request.setAttribute("categoryList", categoryList);
             request.setAttribute("error", "Unexpected error while adding event");
             request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
         }
@@ -215,9 +226,9 @@ public class EventController extends HttpServlet {
         Part filePart = request.getPart("image");
         if (filePart != null && filePart.getSize() > 0) {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            
+
             fileName = fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
-            
+
             String timeStamp = String.valueOf(System.currentTimeMillis());
             String fileExtension = "";
             int dotIndex = fileName.lastIndexOf('.');
@@ -227,17 +238,17 @@ public class EventController extends HttpServlet {
             } else {
                 fileName = fileName + "_" + timeStamp;
             }
-            
+
             String uploadPath = request.getServletContext().getRealPath("") + File.separator + "images";
-            
+
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
             }
-            
+
             String savePath = uploadPath + File.separator + fileName;
             filePart.write(savePath);
-            
+
             event.setImage("images/" + fileName);
         } else if (isUpdate) {
             String oldImage = request.getParameter("oldImage");
@@ -255,7 +266,8 @@ public class EventController extends HttpServlet {
     private void deleteEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        eventService.deleteEvent(id);
+//        eventService.deleteEvent(id);
+        eventService.updateEventStatus(id, "Inactive");
         response.sendRedirect(request.getContextPath() + "/event?action=list");
     }
 

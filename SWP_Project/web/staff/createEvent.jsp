@@ -100,9 +100,21 @@
                     </div>
                 </div>
 
-                <div class="form-group mb-3">
+                <%--<div class="form-group mb-3">
                     <label>Category ID <span class="text-danger">*</span></label>
                     <input type="number" class="form-control" name="categoryID" value="${event.categoryID}" min="1" required>
+                </div>--%>
+                <div class="form-group mb-3">
+                    <label>Category <span class="text-danger">*</span></label>
+                    <select class="form-control" name="categoryID" required>
+                        <option value="">-- Select Category --</option>
+                        <c:forEach var="cat" items="${categoryList}">
+                            <option value="${cat.categoryID}" 
+                                    <c:if test="${event != null && event.categoryID == cat.categoryID}">selected</c:if>>
+                                ${cat.categoryName}
+                            </option>
+                        </c:forEach>
+                    </select>
                 </div>
 
                 <div class="form-group mb-3">
@@ -126,10 +138,10 @@
             function previewImage(input) {
                 const preview = document.getElementById('preview');
                 const previewDiv = document.getElementById('imagePreview');
-                
+
                 if (input.files && input.files[0]) {
                     const file = input.files[0];
-                    
+
                     // Validate file size (10MB)
                     if (file.size > 10 * 1024 * 1024) {
                         alert('File size must be less than 10MB');
@@ -137,7 +149,7 @@
                         previewDiv.style.display = 'none';
                         return;
                     }
-                    
+
                     // Validate file type
                     if (!file.type.match('image.*')) {
                         alert('Please select an image file');
@@ -145,9 +157,9 @@
                         previewDiv.style.display = 'none';
                         return;
                     }
-                    
+
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         preview.src = e.target.result;
                         previewDiv.style.display = 'block';
                     };
@@ -156,7 +168,7 @@
                     previewDiv.style.display = 'none';
                 }
             }
-            
+
             // Format datetime-local -> dd-MM-yyyy HH:mm before submit
             function validateForm() {
                 const startEl = document.getElementById("startDate");
@@ -178,7 +190,7 @@
                     alert("End date must be after start date.");
                     return false;
                 }
-                
+
                 // Validate current date
                 const now = new Date();
                 if (start < now) {
@@ -186,7 +198,7 @@
                         return false;
                     }
                 }
-                
+
                 // Validate image file
                 if (!imageFile.files || imageFile.files.length === 0) {
                     alert("Please select an image file.");
