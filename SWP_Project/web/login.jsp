@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!doctype html>
 <html lang="vi">
     <head>
@@ -41,6 +42,9 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <c:if test="${not empty error}">
+                                    <div class="alert alert-danger">${error}</div>
+                                </c:if>
                                 <form method="post" action="<%= request.getContextPath() %>/login">
                                     <div class="mb-3">
                                         <label for="username" class="form-label">Username</label>                                     
@@ -64,10 +68,12 @@
                                         <a href="AccountRegister.jsp" class="signup-link">Sign up</a>
                                     </p>
 
-                                    <button class="google-btn">
-                                        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_ios_64dp.png" alt="Google logo" class="google-logo">
-                                        Google
-                                    </button>
+                                    <div class="d-grid gap-2 mt-3">
+                                        <a href="<%= request.getContextPath() %>/auth/google" class="btn btn-outline-danger d-flex align-items-center justify-content-center" style="text-decoration: none;">
+                                            <img src="https://www.gstatic.com/images/branding/product/1x/gsa_ios_64dp.png" alt="Google logo" style="width: 20px; height: 20px; margin-right: 8px;">
+                                            <span>Sign in with Google</span>
+                                        </a>
+                                    </div>
                                 </div>
 
                             </div>
@@ -88,7 +94,7 @@
                             <div class="footer_menu_left">
                                 <div class="footer_menu">
                                     <ul>
-                                        <li><a href="index_1.html">Home</a></li>
+                                        <li><a href="index.html">Home</a></li>
                                         <li><a href="donate.html">Donate</a></li>
                                         <li><a href="contact.html">Contact us</a></li>
                                     </ul>

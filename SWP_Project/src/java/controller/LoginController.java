@@ -4,10 +4,6 @@
  */
 package controller;
 
-/**
- *
- * @author NHThanh
- */
 import dao.UserDao;
 import entity.Users;
 import jakarta.servlet.ServletException;
@@ -18,6 +14,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import service.PasswordValidatorService;
+/**
+ *
+ * @author NHThanh
+ */
 
 @WebServlet(name = "LoginController", urlPatterns = {"/login", "/login.html"})
 public class LoginController extends HttpServlet {
@@ -44,8 +44,21 @@ public class LoginController extends HttpServlet {
             return;
         }
 
+        String loginProvider = user.getLoginProvider();
+        if (loginProvider != null && !"Local".equalsIgnoreCase(loginProvider)) {
+            request.setAttribute("error", "This account uses " + loginProvider + " login. Please use " + loginProvider + " to sign in.");
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            return;
+        }
+
+        if (user.getPasswordHash() == null || user.getPasswordHash().trim().isEmpty()) {
+            request.setAttribute("error", "Password is not set for this account");
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            return;
+        }
+
         boolean ok = passwordService.validatePassword(user.getPasswordHash(), password);
-        if (!ok) {  
+        if (!ok) {
             request.setAttribute("error", "Password is incorrect");
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
@@ -71,7 +84,7 @@ public class LoginController extends HttpServlet {
         } else if ("Manager".equalsIgnoreCase(role)) {
             response.sendRedirect(request.getContextPath() + "/manager/index_1.jsp");
         } else if ("Admin".equalsIgnoreCase(role)) {
-            response.sendRedirect(request.getContextPath() + "/admin/lisAccount.jsp");
+            response.sendRedirect(request.getContextPath() + "/admin/listAccount.jsp");
         } else {
             response.sendRedirect(request.getContextPath() + "/");
         }
