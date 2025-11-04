@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dao.VolunteerApplicationsDao;
+import dao.VolunteerApplicationsDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -17,7 +17,7 @@ public class CompleteEventController extends HttpServlet {
             throws ServletException, IOException {
 
         int appId = Integer.parseInt(request.getParameter("applicationId"));
-        VolunteerApplicationsDao dao = new VolunteerApplicationsDao();
+        VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
         boolean success = dao.markAsCompleted(appId);
 
         response.sendRedirect(request.getContextPath() + "/VolunteerTodayController");

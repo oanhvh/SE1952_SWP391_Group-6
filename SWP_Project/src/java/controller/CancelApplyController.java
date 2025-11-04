@@ -1,6 +1,6 @@
 package controller;
 
-import dao.VolunteerApplicationsDao;
+import dao.VolunteerApplicationsDAO;
 import entity.Users;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,7 +23,7 @@ public class CancelApplyController extends HttpServlet {
         }
 
         int applicationId = Integer.parseInt(request.getParameter("applicationId"));
-        VolunteerApplicationsDao dao = new VolunteerApplicationsDao();
+        VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
         boolean canceled = dao.cancelApplication(applicationId);
 
         if (canceled) {

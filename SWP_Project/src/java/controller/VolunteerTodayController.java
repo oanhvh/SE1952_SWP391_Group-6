@@ -1,6 +1,6 @@
 package controller;
 
-import dao.VolunteerApplicationsDao;
+import dao.VolunteerApplicationsDAO;
 import entity.Users;
 import entity.VolunteerApplications;
 import jakarta.servlet.*;
@@ -24,7 +24,7 @@ public class VolunteerTodayController extends HttpServlet {
         }
 
         int userId = authUser.getUserID();
-        VolunteerApplicationsDao dao = new VolunteerApplicationsDao();
+        VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
         List<VolunteerApplications> todayEvents = dao.getTodayEventsByUserId(userId);
 
         request.setAttribute("todayEvents", todayEvents);
