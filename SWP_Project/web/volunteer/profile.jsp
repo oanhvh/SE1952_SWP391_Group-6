@@ -141,7 +141,7 @@
 
     <div class="buttons">
         <a href="<%= request.getContextPath() %>/volunteer/profile?action=edit" class="button">Edit Profile</a>
-        <a href="<%= request.getContextPath() %>/volunteer/history.jsp" class="button">View Volunteer History</a>
+        <a href="<%= request.getContextPath() %>/VolunteerHistory" class="button back-btn">Volunteer Historys</a>
         <a href="<%= request.getContextPath() %>/volunteer/index_1.jsp" class="button back-btn">Back to Homepage</a>
     </div>
 </div>

@@ -180,4 +180,21 @@ public class VolunteerDAO {
             ps.executeUpdate();
         }
     }
+    
+    public Integer getVolunteerIdByUserId(int userId) {
+        String sql = "SELECT VolunteerID FROM Volunteer WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("VolunteerID");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null; // nếu không tìm thấy
+    }
+   
 }

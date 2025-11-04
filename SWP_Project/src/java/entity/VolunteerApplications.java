@@ -19,6 +19,9 @@ public class VolunteerApplications {
     private LocalDateTime applicationDate;
     private LocalDateTime approvalDate;
     private Integer approvedByStaffID; // nullable
+    private Event event;
+
+
 
     public VolunteerApplications() {
     }
@@ -32,7 +35,7 @@ public class VolunteerApplications {
         this.approvalDate = approvalDate;
         this.approvedByStaffID = approvedByStaffID;
     }
-
+    
     public int getApplicationID() {
         return applicationID;
     }
@@ -88,5 +91,13 @@ public class VolunteerApplications {
     public void setApprovedByStaffID(Integer approvedByStaffID) {
         this.approvedByStaffID = approvedByStaffID;
     }
+    public Event getEvent() {
+    return event;
+}
+
+public void setEvent(Event event) {
+    this.event = event;
+}
+
 
 }
