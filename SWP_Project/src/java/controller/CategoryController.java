@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller;
 
 import entity.Category;
@@ -19,9 +18,9 @@ import service.CategoryService;
  *
  * @author DucNM
  */
-@WebServlet(name="CategoryController", urlPatterns={"/category"})
+@WebServlet(name = "CategoryController", urlPatterns = {"/category"})
 public class CategoryController extends HttpServlet {
-   
+
     private CategoryService categoryService;
 
     @Override
@@ -30,8 +29,9 @@ public class CategoryController extends HttpServlet {
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -39,10 +39,12 @@ public class CategoryController extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        
+            throws ServletException, IOException {
+
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
         switch (action) {
             case "add":
@@ -57,10 +59,11 @@ public class CategoryController extends HttpServlet {
             default:
                 listCategories(request, response);
         }
-    } 
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -68,10 +71,12 @@ public class CategoryController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        
+            throws ServletException, IOException {
+
         String action = request.getParameter("action");
-        if (action == null) action = "";
+        if (action == null) {
+            action = "";
+        }
 
         switch (action) {
             case "add":
@@ -85,8 +90,9 @@ public class CategoryController extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
@@ -94,23 +100,28 @@ public class CategoryController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-     private void listCategories(HttpServletRequest request, HttpServletResponse response)
+    private void listCategories(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("categories", categoryService.getAllCategories());
-        request.getRequestDispatcher("listCategory.jsp").forward(request, response);
+        request.getRequestDispatcher("manager/listCategory.jsp").forward(request, response);
     }
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("addCategory.jsp").forward(request, response);
+        request.getRequestDispatcher("manager/addCategory.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int categoryID = Integer.parseInt(request.getParameter("id"));
+        String idParam = request.getParameter("id");
+        if (idParam == null || idParam.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/category?action=list");
+            return;
+        }
+        int categoryID = Integer.parseInt(idParam);
         Category category = categoryService.getCategoryById(categoryID);
         request.setAttribute("category", category);
-        request.getRequestDispatcher("editCategory.jsp").forward(request, response);
+        request.getRequestDispatcher("manager/editCategory.jsp").forward(request, response);
     }
 
     private void addCategory(HttpServletRequest request, HttpServletResponse response)
@@ -123,9 +134,10 @@ public class CategoryController extends HttpServlet {
         String error = categoryService.addCategory(category);
         if (error != null) {
             request.setAttribute("error", error);
-            request.getRequestDispatcher("addCategory.jsp").forward(request, response);
+            request.setAttribute("categoryName", name);
+            request.getRequestDispatcher("manager/addCategory.jsp").forward(request, response);
         } else {
-            response.sendRedirect("CategoryController?action=list");
+            response.sendRedirect(request.getContextPath() + "/category?action=list");
         }
     }
 
@@ -142,9 +154,9 @@ public class CategoryController extends HttpServlet {
         if (error != null) {
             request.setAttribute("error", error);
             request.setAttribute("category", category);
-            request.getRequestDispatcher("editCategory.jsp").forward(request, response);
+            request.getRequestDispatcher("manager/editCategory.jsp").forward(request, response);
         } else {
-            response.sendRedirect("CategoryController?action=list");
+            response.sendRedirect(request.getContextPath() + "/category?action=list");
         }
     }
 
@@ -152,6 +164,6 @@ public class CategoryController extends HttpServlet {
             throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         categoryService.deleteCategory(id);
-        response.sendRedirect("CategoryController?action=list");
+        response.sendRedirect(request.getContextPath() + "/category?action=list");
     }
 }
