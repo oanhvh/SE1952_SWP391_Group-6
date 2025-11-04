@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author DucNM
  */
-public class VolunteerApplicationsDAO extends DBUtils {
+public class VolunteerApplicationsDao extends DBUtils {
 
     private VolunteerApplications extractVolunteerApplications(ResultSet rs) throws Exception {
         VolunteerApplications app = new VolunteerApplications();

@@ -4,7 +4,7 @@
  */
 package service;
 
-import dao.VolunteerApplicationsDAO;
+import dao.VolunteerApplicationsDao;
 import dao.VolunteerDAO;
 import entity.VolunteerApplications;
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class VolunteerApplicationsService {
 
-    private VolunteerApplicationsDAO volunteerAppDAO = new VolunteerApplicationsDAO();
+    private VolunteerApplicationsDao volunteerAppDAO = new VolunteerApplicationsDao();
     private VolunteerDAO volunteerDAO = new VolunteerDAO();
 
     // =============================
