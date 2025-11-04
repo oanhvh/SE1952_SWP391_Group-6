@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dao.VolunteerApplicationsDao;
+import dao.VolunteerApplicationsDAO;
 import entity.Users;
 import entity.VolunteerApplications;
 import jakarta.servlet.*;
@@ -29,7 +29,7 @@ public class VolunteerHistoryController extends HttpServlet {
         }
 
         int userId = authUser.getUserID(); // Lấy userID từ session
-        VolunteerApplicationsDao dao = new VolunteerApplicationsDao();
+        VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
         List<VolunteerApplications> historyList = dao.getCompletedApplicationsByUserId(userId);
 
         request.setAttribute("historyList", historyList);

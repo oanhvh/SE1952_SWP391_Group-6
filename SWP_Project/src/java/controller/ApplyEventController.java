@@ -1,6 +1,6 @@
 package controller;
 
-import dao.VolunteerApplicationsDao;
+import dao.VolunteerApplicationsDAO;
 import entity.Users;
 import entity.VolunteerApplications;
 import jakarta.servlet.*;
@@ -25,7 +25,7 @@ public class ApplyEventController extends HttpServlet {
         }
 
         int userID = authUser.getUserID();
-        VolunteerApplicationsDao dao = new VolunteerApplicationsDao();
+        VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
         List<VolunteerApplications> list = dao.getApplicationsByUserId(userID);
 
         request.setAttribute("appliedEvents", list);
@@ -47,7 +47,7 @@ public class ApplyEventController extends HttpServlet {
         int userID = authUser.getUserID();
         int eventID = Integer.parseInt(request.getParameter("eventId"));
 
-        VolunteerApplicationsDao dao = new VolunteerApplicationsDao();
+        VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
         boolean success = dao.applyEventByUserId(userID, eventID);
 
         if (success) {
