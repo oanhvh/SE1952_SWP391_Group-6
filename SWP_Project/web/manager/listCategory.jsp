@@ -83,6 +83,9 @@
             .delete-btn:hover {
                 background-color: #c82333;
             }
+            .dataTables_filter {
+                display: none;
+            }
         </style>
     </head>
 
@@ -126,7 +129,7 @@
                 const table = $('#categoryTable').DataTable({
                     paging: true,
                     info: false,
-                    searching: false,
+                    searching: true,
                     lengthChange: false
                 });
 
