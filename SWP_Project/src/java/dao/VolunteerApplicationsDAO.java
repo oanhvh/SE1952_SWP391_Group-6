@@ -189,47 +189,32 @@ public class VolunteerApplicationsDAO extends DBUtils {
         return -1;
     }
 
-    // ✅ Apply event (chặn trùng sự kiện hoặc trùng ngày)
-    public boolean applyEventByUserId(int userID, int eventID) {
-        int volunteerID = getVolunteerIdByUserId(userID);
-        if (volunteerID == -1) return false;
+    // ✅ Apply event có thêm lý do và kinh nghiệm
+public boolean applyEventByUserId(int userID, int eventID, String motivation, String experience) {
+    int volunteerID = getVolunteerIdByUserId(userID);
+    if (volunteerID == -1) return false;
 
-        String checkSql = """
-            SELECT COUNT(*) FROM VolunteerApplications va
-            JOIN Event e1 ON va.EventID = e1.EventID
-            JOIN Event e2 ON e2.EventID = ?
-            WHERE va.VolunteerID = ?
-            AND (va.EventID = ? OR
-                (e1.StartDate <= e2.EndDate AND e1.EndDate >= e2.StartDate))
-        """;
+    String sql = """
+        INSERT INTO VolunteerApplications 
+        (VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)
+        VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)
+    """;
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
+    try (Connection conn = DBUtils.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            checkPs.setInt(1, eventID);
-            checkPs.setInt(2, volunteerID);
-            checkPs.setInt(3, eventID);
+        ps.setInt(1, volunteerID);
+        ps.setInt(2, eventID);
+        ps.setString(3, motivation);
+        ps.setString(4, experience);
 
-            try (ResultSet rs = checkPs.executeQuery()) {
-                if (rs.next() && rs.getInt(1) > 0) {
-                    System.out.println("❌ Đã apply trùng sự kiện hoặc trùng ngày!");
-                    return false;
-                }
-            }
-
-            String insertSql = "INSERT INTO VolunteerApplications (VolunteerID, EventID, Status, ApplicationDate) VALUES (?, ?, 'Pending', ?)";
-            try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
-                ps.setInt(1, volunteerID);
-                ps.setInt(2, eventID);
-                ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
-                return ps.executeUpdate() > 0;
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
         return false;
     }
+}
+
 
     // ✅ Lấy danh sách đã apply
     public List<VolunteerApplications> getApplicationsByUserId(int userID) {
@@ -272,18 +257,38 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
 
     // ✅ Hủy đơn (chỉ khi đang pending)
-    public boolean cancelApplication(int applicationID) {
-        String sql = "DELETE FROM VolunteerApplications WHERE ApplicationID = ? AND Status = 'Pending'";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    public boolean cancelApplication(int applicationId) {
+    String sqlDeleteSkills = "DELETE FROM EventApplicationSkills WHERE ApplicationID = ?";
+    String sqlDeleteApp = "DELETE FROM VolunteerApplications WHERE ApplicationID = ? AND Status = 'Pending'";
 
-            ps.setInt(1, applicationID);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+    try (Connection con = DBUtils.getConnection1();
+         PreparedStatement ps1 = con.prepareStatement(sqlDeleteSkills);
+         PreparedStatement ps2 = con.prepareStatement(sqlDeleteApp)) {
+
+        con.setAutoCommit(false); // Bắt đầu transaction
+
+        // Xóa kỹ năng liên quan
+        ps1.setInt(1, applicationId);
+        ps1.executeUpdate();
+
+        // Xóa đơn apply nếu đang Pending
+        ps2.setInt(1, applicationId);
+        int rows = ps2.executeUpdate();
+
+        if (rows > 0) {
+            con.commit();
+            return true; // Hủy thành công
+        } else {
+            con.rollback(); // Không xóa được → rollback
             return false;
         }
+
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return false;
+}
+
 
     // ✅ Lấy danh sách sự kiện tình nguyện hôm nay cho volunteer
 public List<VolunteerApplications> getTodayEventsByUserId(int userID) {
@@ -385,5 +390,24 @@ public List<VolunteerApplications> getCompletedApplicationsByUserId(int userID) 
         e.printStackTrace();
     }
     return list;
+}
+
+public boolean hasAppliedForEvent(int userID, int eventID) {
+    int volunteerID = getVolunteerIdByUserId(userID);
+    String sql = "SELECT COUNT(*) FROM VolunteerApplications WHERE VolunteerID = ? AND EventID = ?";
+    try (Connection conn = DBUtils.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, volunteerID);
+        ps.setInt(2, eventID);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
 }
 }

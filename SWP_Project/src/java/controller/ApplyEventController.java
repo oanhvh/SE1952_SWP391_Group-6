@@ -24,9 +24,9 @@ public class ApplyEventController extends HttpServlet {
             return;
         }
 
-        int userID = authUser.getUserID();
+        int userId = authUser.getUserID();
         VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
-        List<VolunteerApplications> list = dao.getApplicationsByUserId(userID);
+        List<VolunteerApplications> list = dao.getApplicationsByUserId(userId);
 
         request.setAttribute("appliedEvents", list);
         request.getRequestDispatcher("/volunteer/applied_events.jsp").forward(request, response);
@@ -44,17 +44,26 @@ public class ApplyEventController extends HttpServlet {
             return;
         }
 
-        int userID = authUser.getUserID();
-        int eventID = Integer.parseInt(request.getParameter("eventId"));
+        int userId = authUser.getUserID();
+        int eventId = Integer.parseInt(request.getParameter("eventId"));
+        String motivation = request.getParameter("motivation");
+        String experience = request.getParameter("experience");
 
         VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
-        boolean success = dao.applyEventByUserId(userID, eventID);
+
+        // ✅ Kiểm tra trùng sự kiện hoặc trùng ngày
+        if (dao.hasAppliedForEvent(userId, eventId)) {
+            request.setAttribute("error", "Bạn đã đăng ký sự kiện này rồi!");
+            request.getRequestDispatcher("/volunteer/events.jsp").forward(request, response);
+            return;
+        }
+
+        boolean success = dao.applyEventByUserId(userId, eventId, motivation, experience);
 
         if (success) {
             response.sendRedirect("ApplyEventController");
         } else {
-            request.setAttribute("error", "You have already applied for this event or have a schedule conflict!");
-            request.getRequestDispatcher("/volunteer/events.jsp").forward(request, response);
+            response.sendRedirect("error.jsp");
         }
     }
 }

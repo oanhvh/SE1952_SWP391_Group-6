@@ -1,6 +1,6 @@
 /*
- * Click nbsp://nbSystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbsp://nbSystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package entity;
 
@@ -19,14 +19,16 @@ public class VolunteerApplications {
     private LocalDateTime applicationDate;
     private LocalDateTime approvalDate;
     private Integer approvedByStaffID; // nullable
+    private String motivation;         // ✅ Lý do tham gia
+    private String experience;         // ✅ Kinh nghiệm
+    private String staffComment;       // ✅ Ghi chú nhân viên
     private Event event;
 
+    public VolunteerApplications() {}
 
-
-    public VolunteerApplications() {
-    }
-
-    public VolunteerApplications(int applicationID, int volunteerID, int eventID, String status, LocalDateTime applicationDate, LocalDateTime approvalDate, Integer approvedByStaffID) {
+    public VolunteerApplications(int applicationID, int volunteerID, int eventID, String status,
+                                 LocalDateTime applicationDate, LocalDateTime approvalDate,
+                                 Integer approvedByStaffID, String motivation, String experience, String staffComment) {
         this.applicationID = applicationID;
         this.volunteerID = volunteerID;
         this.eventID = eventID;
@@ -34,70 +36,42 @@ public class VolunteerApplications {
         this.applicationDate = applicationDate;
         this.approvalDate = approvalDate;
         this.approvedByStaffID = approvedByStaffID;
-    }
-    
-    public int getApplicationID() {
-        return applicationID;
-    }
-
-    public int getVolunteerID() {
-        return volunteerID;
+        this.motivation = motivation;
+        this.experience = experience;
+        this.staffComment = staffComment;
     }
 
-    public int getEventID() {
-        return eventID;
-    }
+    // 🔹 Getter & Setter
+    public int getApplicationID() { return applicationID; }
+    public void setApplicationID(int applicationID) { this.applicationID = applicationID; }
 
-    public String getStatus() {
-        return status;
-    }
+    public int getVolunteerID() { return volunteerID; }
+    public void setVolunteerID(int volunteerID) { this.volunteerID = volunteerID; }
 
-    public LocalDateTime getApplicationDate() {
-        return applicationDate;
-    }
+    public int getEventID() { return eventID; }
+    public void setEventID(int eventID) { this.eventID = eventID; }
 
-    public LocalDateTime getApprovalDate() {
-        return approvalDate;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public Integer getApprovedByStaffID() {
-        return approvedByStaffID;
-    }
+    public LocalDateTime getApplicationDate() { return applicationDate; }
+    public void setApplicationDate(LocalDateTime applicationDate) { this.applicationDate = applicationDate; }
 
-    public void setApplicationID(int applicationID) {
-        this.applicationID = applicationID;
-    }
+    public LocalDateTime getApprovalDate() { return approvalDate; }
+    public void setApprovalDate(LocalDateTime approvalDate) { this.approvalDate = approvalDate; }
 
-    public void setVolunteerID(int volunteerID) {
-        this.volunteerID = volunteerID;
-    }
+    public Integer getApprovedByStaffID() { return approvedByStaffID; }
+    public void setApprovedByStaffID(Integer approvedByStaffID) { this.approvedByStaffID = approvedByStaffID; }
 
-    public void setEventID(int eventID) {
-        this.eventID = eventID;
-    }
+    public String getMotivation() { return motivation; }
+    public void setMotivation(String motivation) { this.motivation = motivation; }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getExperience() { return experience; }
+    public void setExperience(String experience) { this.experience = experience; }
 
-    public void setApplicationDate(LocalDateTime applicationDate) {
-        this.applicationDate = applicationDate;
-    }
+    public String getStaffComment() { return staffComment; }
+    public void setStaffComment(String staffComment) { this.staffComment = staffComment; }
 
-    public void setApprovalDate(LocalDateTime approvalDate) {
-        this.approvalDate = approvalDate;
-    }
-
-    public void setApprovedByStaffID(Integer approvedByStaffID) {
-        this.approvedByStaffID = approvedByStaffID;
-    }
-    public Event getEvent() {
-    return event;
-}
-
-public void setEvent(Event event) {
-    this.event = event;
-}
-
-
+    public Event getEvent() { return event; }
+    public void setEvent(Event event) { this.event = event; }
 }

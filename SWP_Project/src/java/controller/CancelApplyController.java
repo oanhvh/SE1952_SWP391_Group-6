@@ -22,14 +22,21 @@ public class CancelApplyController extends HttpServlet {
             return;
         }
 
-        int applicationId = Integer.parseInt(request.getParameter("applicationId"));
-        VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
-        boolean canceled = dao.cancelApplication(applicationId);
+        try {
+            int applicationId = Integer.parseInt(request.getParameter("applicationId"));
+            
+            VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
+            boolean canceled = dao.cancelApplication(applicationId);
 
-        if (canceled) {
-            session.setAttribute("cancelMsg", "✅ Hủy apply thành công!");
-        } else {
-            session.setAttribute("cancelMsg", "⚠️ Chỉ có thể hủy khi trạng thái là 'Pending'.");
+            if (canceled) {
+                session.setAttribute("cancelMsg", "✅ Hủy đăng ký thành công!");
+            } else {
+                session.setAttribute("cancelMsg", "⚠️ Chỉ có thể hủy khi trạng thái là 'Pending'.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.setAttribute("cancelMsg", "❌ Đã xảy ra lỗi khi hủy apply.");
         }
 
         response.sendRedirect("ApplyEventController");

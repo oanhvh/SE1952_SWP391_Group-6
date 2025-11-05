@@ -160,6 +160,13 @@
     </style>
 </head>
 <body>
+<% if (cancelMsg != null) { %>
+<script>
+    window.onload = function() {
+        alert("<%= cancelMsg.replace("\"", "\\\"") %>");
+    }
+</script>
+<% } %>
 
 <section class="banner">
     <h1>MY APPLIED EVENTS</h1>

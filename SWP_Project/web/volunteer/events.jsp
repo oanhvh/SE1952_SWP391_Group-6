@@ -165,6 +165,58 @@
         .back-home:hover {
             background: #0d1445;
         }
+      /* Popup overlay */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1000; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5); 
+}
+
+/* Form nội dung */
+.modal-content {
+  background-color: #fff;
+  margin: 8% auto;
+  padding: 20px 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  font-family: 'Poppins', sans-serif;
+  resize: vertical;
+}
+
+/* Nút đóng (x) */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover {
+  color: #000;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: scale(0.9);}
+  to {opacity: 1; transform: scale(1);}
+}
+
+
     </style>
 </head>
 <body>
@@ -195,10 +247,11 @@
                 <p><b>🕒 Start:</b> <%= e.getStartDate() %> — <b>End:</b> <%= e.getEndDate() %></p>
                 <p><%= e.getDescription() %></p>
 
-                <form action="<%= request.getContextPath() %>/ApplyEventController" method="post">
-                    <input type="hidden" name="eventId" value="<%= e.getEventID() %>">
-                    <button type="submit" class="apply-btn">Apply</button>
-                </form>
+        <!-- Nút Apply mở popup -->
+<button type="button" class="apply-btn" onclick="openApplyForm(<%= e.getEventID() %>, '<%= e.getEventName().replace("'", "\\'") %>')">
+    Apply
+</button>
+
             </div>
         </div>
     <% } } else { %>
@@ -213,6 +266,48 @@
 <footer>
     <p>&copy; 2025 DONI Charity | Together We Make a Difference</p>
 </footer>
+    <!-- Form Apply Popup -->
+<div id="applyModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeApplyForm()">&times;</span>
+    <h2>Apply for Event</h2>
+    <p id="eventNameDisplay" style="font-weight:bold; color:#1a237e; margin-bottom:10px;"></p>
+
+    <form id="applyForm" action="<%= request.getContextPath() %>/ApplyEventController" method="post">
+      <input type="hidden" name="eventId" id="eventIdField">
+
+      <label><b>✨ Why do you want to join?</b></label><br>
+      <textarea name="motivation" rows="3" placeholder="Write your motivation..." required></textarea><br><br>
+
+      <label><b>💼 Your previous experience:</b></label><br>
+      <textarea name="experience" rows="3" placeholder="Describe your experience..." required></textarea><br>
+
+      <div style="text-align:right; margin-top:10px;">
+        <button type="button" class="apply-btn" style="background:#9e9e9e;" onclick="closeApplyForm()">Cancel</button>
+        <button type="submit" class="apply-btn" style="background:#2e7d32;">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openApplyForm(eventId, eventName) {
+  document.getElementById('applyModal').style.display = 'block';
+  document.getElementById('eventIdField').value = eventId;
+  document.getElementById('eventNameDisplay').innerText = eventName;
+}
+
+function closeApplyForm() {
+  document.getElementById('applyModal').style.display = 'none';
+}
+window.onclick = function(event) {
+  const modal = document.getElementById('applyModal');
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
 
 </body>
 </html>
