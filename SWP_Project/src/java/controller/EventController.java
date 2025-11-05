@@ -83,6 +83,9 @@ public class EventController extends HttpServlet {
             case "status":
                 updateStatus(request, response);
                 break;
+            case "create":
+                showCreateForm(request, response);
+                break;
             default:
                 listEvents(request, response);
                 break;
@@ -277,5 +280,12 @@ public class EventController extends HttpServlet {
         String status = request.getParameter("status");
         eventService.updateEventStatus(id, status);
         response.sendRedirect(request.getContextPath() + "/event?action=list");
+    }
+
+    private void showCreateForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Category> categoryList = categoryDAO.getAllCategory();
+        request.setAttribute("categoryList", categoryList);
+        request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
     }
 }
