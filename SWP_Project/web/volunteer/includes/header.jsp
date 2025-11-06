@@ -64,12 +64,23 @@
     </div>
 </nav>
 
-<!-- Sidebar (nếu cần) -->
+<!-- Sidebar Toggle Button -->
 <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+
+<!-- Volunteer Sidebar -->
 <div class="sidebar" id="volunteerSidebar">
     <ul>
-        <li><a href="<%= request.getContextPath() %>/volunteer/apply.jsp">Events Application</a></li>
-        <li><a href="<%= request.getContextPath() %>/ProfileController">Profile</a></li>
+        <!-- 🔹 Xem danh sách tất cả sự kiện -->
+        <li><a href="<%= request.getContextPath() %>/volunteer/events">📅 View Events</a></li>
+        
+        <!-- 🔹 Xem các sự kiện đã apply -->
+        <li><a href="<%= request.getContextPath() %>/ApplyEventController">📝 My Applied Events</a></li>
+        
+        <!-- 🔹 Sự kiện hôm nay -->
+        <li><a href="<%= request.getContextPath() %>/VolunteerTodayController">🌞 Volunteer Today</a></li>
+        
+        <!-- 🔹 Trang hồ sơ -->
+        <li><a href="<%= request.getContextPath() %>/ProfileController">👤 Profile</a></li>
     </ul>
 </div>
 <!-- ========================= -->

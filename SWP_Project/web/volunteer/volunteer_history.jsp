@@ -1,0 +1,153 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="entity.VolunteerApplications" %>
+<%@ page import="entity.Event" %>
+
+<%
+    List<VolunteerApplications> historyList = (List<VolunteerApplications>) request.getAttribute("historyList");
+%>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch sử tình nguyện | DONI Charity</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f9fbfd;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            color: #333;
+        }
+
+        .header-section {
+            text-align: center;
+            padding: 80px 20px 50px 20px;
+            background: #001f54;
+            color: #fff;
+        }
+
+        .header-section h2 {
+            font-size: 40px;
+            font-weight: 700;
+        }
+
+        .header-section p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: -40px auto 60px;
+        }
+
+        .event-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .event-details h5 {
+            color: #001f54;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .event-details p {
+            margin: 3px 0;
+            font-size: 15px;
+        }
+
+        .event-status {
+            margin-top: 10px;
+        }
+
+        .badge {
+            font-size: 13px;
+            padding: 6px 10px;
+            border-radius: 10px;
+        }
+
+        .alert-info {
+            background-color: #eaf4ff;
+            color: #004085;
+            border: none;
+            font-weight: 500;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            background-color: #001f54;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #003080;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header-section">
+        <h2>📜 Volunteer History</h2>
+        <p>Your completed and past volunteer experiences</p>
+    </div>
+
+    <!-- Content -->
+    <div class="container">
+        <% if (historyList == null || historyList.isEmpty()) { %>
+            <div class="alert alert-info text-center mt-4">
+                Nothing
+            </div>
+        <% } else { %>
+            <% for (VolunteerApplications va : historyList) {
+                   Event e = va.getEvent(); %>
+            <div class="event-card">
+                <div class="event-details">
+                    <h5><%= e.getEventName() %></h5>
+                    <p>📍 <strong>Location:</strong> <%= e.getLocation() %></p>
+                    <p>🕒 <strong>Time:</strong> <%= e.getStartDate() %> - <%= e.getEndDate() %></p>
+                    <div class="event-status">
+                        <% if ("Completed".equalsIgnoreCase(va.getStatus())) { %>
+                            <span class="badge bg-success">Completed</span>
+                        <% } else if ("Pending".equalsIgnoreCase(va.getStatus())) { %>
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        <% } else if ("Rejected".equalsIgnoreCase(va.getStatus())) { %>
+                            <span class="badge bg-danger">Rejected</span>
+                        <% } else { %>
+                            <span class="badge bg-secondary"><%= va.getStatus() %></span>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        <% } %>
+
+        <div class="text-center">
+            <a href="<%= request.getContextPath() %>/volunteer/profile" class="btn-back">⬅ Back to profile</a>
+        </div>
+    </div>
+
+</body>
+</html>
