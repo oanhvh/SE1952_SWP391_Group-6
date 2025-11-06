@@ -56,4 +56,5 @@ public class AddAccountController extends HttpServlet {
         UserService userService = new UserService();
         userService.addNewUser(request, response);
     }
+
 }

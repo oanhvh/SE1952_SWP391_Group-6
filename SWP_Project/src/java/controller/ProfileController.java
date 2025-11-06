@@ -157,6 +157,6 @@ public class ProfileController extends HttpServlet {
         if (path.startsWith("/manager/") || "Manager".equalsIgnoreCase(role)) return "manager";
         if (path.startsWith("/staff/") || "Staff".equalsIgnoreCase(role)) return "staff";
         if (path.startsWith("/volunteer/") || "Volunteer".equalsIgnoreCase(role)) return "volunteer";
-        return "admin";
+        return "manager";
     }
 }

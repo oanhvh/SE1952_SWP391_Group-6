@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static dao.UserDao.sha256;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.nio.file.Paths;
 import static service.CodeValidatorService.isNotAdmin;
 
 public class UserService {
@@ -91,10 +94,29 @@ public class UserService {
             response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
             return;
         }
+
+        request.setCharacterEncoding("UTF-8");
         String username = request.getParameter("username");
+        System.out.println(username);
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
+        Part avatarPart = request.getPart("avatar");
+
+        String avatarPath = null;
+        if (avatarPart != null && avatarPart.getSize() > 0) {
+            String uploadPath = request.getServletContext().getRealPath("") + File.separator + "uploads" + File.separator + "avatars";
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            String fileName = Paths.get(avatarPart.getSubmittedFileName()).getFileName().toString();
+            String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
+            String filePath = uploadPath + File.separator + uniqueFileName;
+            avatarPart.write(filePath);
+            avatarPath = "uploads/avatars/" + uniqueFileName;
+        }
 
         UserDao userDao = new UserDao();
         Users user = userDao.getUserbyUsername(username);
@@ -109,21 +131,22 @@ public class UserService {
         user.setEmail(email);
         user.setPhone(phone);
         user.setUpdatedAt(LocalDateTime.now());
+        if (avatarPath != null) {
+            user.setAvatar(avatarPath);
+        }
 
         boolean success = userDao.updateProfileByUsername(user);
 
         if (success) {
-            // Reload user info after update
             Users updatedUser = userDao.getUserbyUsername(username);
             request.setAttribute("user", updatedUser);
-            request.setAttribute("success", "Update profile success.");
+            request.setAttribute("success", "Profile updated successfully.");
         } else {
             request.setAttribute("user", user);
-            request.setAttribute("error", "There are something wrong when update profile. Please try again later.");
+            request.setAttribute("error", "Failed to update profile. Please try again later.");
         }
 
         request.getRequestDispatcher("admin/editProfile.jsp").forward(request, response);
-
     }
 
     public void addNewUser(HttpServletRequest request, HttpServletResponse response)

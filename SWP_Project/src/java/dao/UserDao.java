@@ -502,14 +502,30 @@ public class UserDao extends DBUtils {
     }
 
     public boolean updateProfileByUsername(Users user) {
-        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, UpdatedAt = ? WHERE Username = ?";
-        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, user.getFullName());
-            ps.setString(2, user.getEmail());
-            ps.setString(3, user.getPhone());
-            ps.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
-            ps.setString(5, user.getUsername());
+        StringBuilder sql = new StringBuilder(
+                "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, UpdatedAt = ?"
+        );
+
+        if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+            sql.append(", Avatar = ?");
+        }
+        sql.append(" WHERE Username = ?");
+
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            ps.setString(index++, user.getFullName());
+            ps.setString(index++, user.getEmail());
+            ps.setString(index++, user.getPhone());
+            ps.setTimestamp(index++, Timestamp.valueOf(user.getUpdatedAt()));
+
+            if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+                ps.setString(index++, user.getAvatar());
+            }
+
+            ps.setString(index, user.getUsername());
             return ps.executeUpdate() > 0;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
