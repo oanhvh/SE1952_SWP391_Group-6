@@ -9,6 +9,7 @@ import dao.StaffDAO;
 import entity.Category;
 import entity.Event;
 import entity.Staff;
+import entity.Users;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -161,15 +162,22 @@ public class EventController extends HttpServlet {
     private void addEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
+        Users authUser = (session != null) ? (Users) session.getAttribute("authUser") : null;
+        if (authUser == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
+//        if (session == null || session.getAttribute("userId") == null) {
+//            response.sendRedirect(request.getContextPath() + "/login");
+//            return;
         }
 
         try {
-            int userId = (int) session.getAttribute("userId");
+            int userId = authUser.getUserID();
             int staffId = staffDAO.getStaffIdByUserId(userId);
             int managerId = staffDAO.getManagerIdByUserId(userId);
+//            int userId = (int) session.getAttribute("userId");
+//            int staffId = staffDAO.getStaffIdByUserId(userId);
+//            int managerId = staffDAO.getManagerIdByUserId(userId);
 
             Event event = buildEventFromRequest(request, false);
             event.setCreatedByStaffID(staffId);

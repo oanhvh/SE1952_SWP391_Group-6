@@ -73,9 +73,9 @@ public class RegisterController extends HttpServlet {
                 u.setFullName(fullName);
                 u.setEmail(email);
                 u.setPhone(phone);
-//                u.setLoginProvider("Local");
-//                u.setIsEmailVerified(false);
-//                u.setIsPhoneVerified(false);
+                u.setLoginProvider("Local");
+                u.setIsEmailVerified(false);
+                u.setIsPhoneVerified(false);
                 int userId = userDao.createUser(conn, u, true);
 
                 volunteerDAO.createVolunteer(conn, userId); //tạo hồ sơ liên kết với user
@@ -100,9 +100,9 @@ public class RegisterController extends HttpServlet {
                 u.setFullName(fullName);
                 u.setEmail(email);
                 u.setPhone(phone);
-//                u.setLoginProvider("Local");
-//                u.setIsEmailVerified(false);
-//                u.setIsPhoneVerified(false);
+                u.setLoginProvider("Local");
+                u.setIsEmailVerified(false);
+                u.setIsPhoneVerified(false);
 
                 int userId = userDao.createUser(conn, u, true);
 
