@@ -4,6 +4,7 @@
  */
 package dao;
 
+import entity.Event;
 import entity.VolunteerApplications;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -169,4 +170,285 @@ public class VolunteerApplicationsDAO extends DBUtils {
             e.printStackTrace();
         }
     }
+    
+    // ✅ Lấy volunteerID từ userID
+    private int getVolunteerIdByUserId(int userID) {
+        String sql = "SELECT VolunteerID FROM Volunteer WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("VolunteerID");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    // ✅ Apply event có thêm lý do và kinh nghiệm
+public boolean applyEventByUserId(int userID, int eventID, String motivation, String experience) {
+    int volunteerID = getVolunteerIdByUserId(userID);
+    if (volunteerID == -1) return false;
+
+    String sql = """
+        INSERT INTO VolunteerApplications 
+        (VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)
+        VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)
+    """;
+
+    try (Connection conn = DBUtils.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, volunteerID);
+        ps.setInt(2, eventID);
+        ps.setString(3, motivation);
+        ps.setString(4, experience);
+
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+
+    // ✅ Lấy danh sách đã apply
+    public List<VolunteerApplications> getApplicationsByUserId(int userID) {
+        List<VolunteerApplications> list = new ArrayList<>();
+        String sql = """
+            SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
+            FROM VolunteerApplications va
+            JOIN Event e ON va.EventID = e.EventID
+            JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+            WHERE v.UserID = ?
+            ORDER BY va.ApplicationDate DESC
+        """;
+
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    VolunteerApplications app = new VolunteerApplications();
+                    app.setApplicationID(rs.getInt("ApplicationID"));
+                    app.setVolunteerID(rs.getInt("VolunteerID"));
+                    app.setEventID(rs.getInt("EventID"));
+                    app.setStatus(rs.getString("Status"));
+
+                    Event e = new Event();
+                    e.setEventID(rs.getInt("EventID"));
+                    e.setEventName(rs.getString("EventName"));
+                    e.setLocation(rs.getString("Location"));
+                    e.setStartDate(rs.getTimestamp("StartDate").toLocalDateTime());
+                    e.setEndDate(rs.getTimestamp("EndDate").toLocalDateTime());
+                    app.setEvent(e);
+                    list.add(app);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // ✅ Hủy đơn (chỉ khi đang pending)
+   public String cancelApplication(int applicationId, String cancelReason) {
+        String sqlSelect = "SELECT Status, StaffComment FROM VolunteerApplications WHERE ApplicationID = ?";
+        String sqlDeleteSkills = "DELETE FROM EventApplicationSkills WHERE ApplicationID = ?";
+        String sqlDeleteApp = "DELETE FROM VolunteerApplications WHERE ApplicationID = ? AND Status = 'Pending'";
+        String sqlUpdateCancel = """
+            UPDATE VolunteerApplications
+            SET Status = 'Cancelled',
+                Motivation = CONCAT(ISNULL(Motivation, ''), CHAR(13) + CHAR(10), '--- Cancelled Reason: ', ?)
+            WHERE ApplicationID = ? AND Status = 'Approved'
+        """;
+
+        try (Connection con = DBUtils.getConnection1();
+             PreparedStatement psSelect = con.prepareStatement(sqlSelect);
+             PreparedStatement psDelSkill = con.prepareStatement(sqlDeleteSkills);
+             PreparedStatement psDelApp = con.prepareStatement(sqlDeleteApp);
+             PreparedStatement psUpdate = con.prepareStatement(sqlUpdateCancel)) {
+
+            con.setAutoCommit(false);
+
+            psSelect.setInt(1, applicationId);
+            ResultSet rs = psSelect.executeQuery();
+            if (!rs.next()) {
+                con.rollback();
+                return "NOT_FOUND";
+            }
+
+            String status = rs.getString("Status");
+            String staffComment = rs.getString("StaffComment");
+
+            if ("Pending".equalsIgnoreCase(status)) {
+                psDelSkill.setInt(1, applicationId);
+                psDelSkill.executeUpdate();
+
+                psDelApp.setInt(1, applicationId);
+                int rows = psDelApp.executeUpdate();
+
+                if (rows > 0) {
+                    con.commit();
+                    return "PENDING_CANCELLED";
+                } else {
+                    con.rollback();
+                    return "ERROR";
+                }
+
+            } else if ("Approved".equalsIgnoreCase(status)) {
+                psUpdate.setString(1, cancelReason != null ? cancelReason : "Không có lý do");
+                psUpdate.setInt(2, applicationId);
+
+                int rows = psUpdate.executeUpdate();
+                if (rows > 0) {
+                    con.commit();
+                    return "APPROVED_CANCELLED";
+                } else {
+                    con.rollback();
+                    return "ERROR";
+                }
+
+            } else if ("Rejected".equalsIgnoreCase(status)) {
+                System.out.println("Application was rejected. Staff comment: " + staffComment);
+                con.rollback();
+                return "REJECTED";
+            }
+
+            con.rollback();
+            return "ERROR";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
+    }
+
+
+
+    // ✅ Lấy danh sách sự kiện tình nguyện hôm nay cho volunteer
+public List<VolunteerApplications> getTodayEventsByUserId(int userID) {
+    List<VolunteerApplications> list = new ArrayList<>();
+    String sql = """
+        SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
+        FROM VolunteerApplications va
+        JOIN Event e ON va.EventID = e.EventID
+        JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+        WHERE v.UserID = ? 
+          AND va.Status = 'Approved'
+          AND CAST(GETDATE() AS DATE) BETWEEN CAST(e.StartDate AS DATE) AND CAST(e.EndDate AS DATE)
+        ORDER BY e.StartDate
+    """;
+
+    try (Connection conn = DBUtils.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, userID);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                VolunteerApplications app = new VolunteerApplications();
+                app.setApplicationID(rs.getInt("ApplicationID"));
+                app.setVolunteerID(rs.getInt("VolunteerID"));
+                app.setEventID(rs.getInt("EventID"));
+                app.setStatus(rs.getString("Status"));
+
+                Event e = new Event();
+                e.setEventID(rs.getInt("EventID"));
+                e.setEventName(rs.getString("EventName"));
+                e.setLocation(rs.getString("Location"));
+                e.setStartDate(rs.getTimestamp("StartDate").toLocalDateTime());
+                e.setEndDate(rs.getTimestamp("EndDate").toLocalDateTime());
+                app.setEvent(e);
+
+                list.add(app);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+    // ✅ Đánh dấu sự kiện đã hoàn thành
+public boolean markAsCompleted(int applicationId) {
+    String sql = "UPDATE VolunteerApplications SET Status = 'Completed' WHERE ApplicationID = ?";
+    try (Connection conn = DBUtils.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, applicationId);
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+
+    // Lấy danh sách các event đã hoàn thành (Completed)
+public List<VolunteerApplications> getCompletedApplicationsByUserId(int userID) {
+    List<VolunteerApplications> list = new ArrayList<>();
+    String sql = """
+        SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
+        FROM VolunteerApplications va
+        JOIN Event e ON va.EventID = e.EventID
+        JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+        WHERE v.UserID = ? AND va.Status = 'Completed'
+        ORDER BY va.ApplicationDate DESC
+    """;
+
+    try (Connection conn = DBUtils.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, userID);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                VolunteerApplications app = new VolunteerApplications();
+                app.setApplicationID(rs.getInt("ApplicationID"));
+                app.setVolunteerID(rs.getInt("VolunteerID"));
+                app.setEventID(rs.getInt("EventID"));
+                app.setStatus(rs.getString("Status"));
+                Timestamp t = rs.getTimestamp("ApplicationDate");
+                if (t != null) app.setApplicationDate(t.toLocalDateTime());
+
+                Event e = new Event();
+                e.setEventID(rs.getInt("EventID"));
+                e.setEventName(rs.getString("EventName"));
+                e.setLocation(rs.getString("Location"));
+                Timestamp start = rs.getTimestamp("StartDate");
+                Timestamp end = rs.getTimestamp("EndDate");
+                if (start != null) e.setStartDate(start.toLocalDateTime());
+                if (end != null) e.setEndDate(end.toLocalDateTime());
+                app.setEvent(e);
+
+                list.add(app);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+public boolean hasAppliedForEvent(int userID, int eventID) {
+    int volunteerID = getVolunteerIdByUserId(userID);
+    String sql = "SELECT COUNT(*) FROM VolunteerApplications WHERE VolunteerID = ? AND EventID = ?";
+    try (Connection conn = DBUtils.getConnection1();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, volunteerID);
+        ps.setInt(2, eventID);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
 }

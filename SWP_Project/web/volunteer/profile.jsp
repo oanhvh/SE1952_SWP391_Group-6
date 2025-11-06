@@ -1,9 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="entity.Users" %>
+<%@ page import="java.util.List" %>
+<%@ page import="entity.Skills" %>
+<%@ page import="entity.Users, entity.VolunteerSkills" %>
 <%
     Users user = (Users) request.getAttribute("user");
     String success = (String) request.getAttribute("success");
     String error = (String) request.getAttribute("error");
+    List<Skills> skills = (List<Skills>) request.getAttribute("skills");
 %>
 <!DOCTYPE html>
 <html>
@@ -75,6 +78,28 @@
             color: #001F60;
         }
 
+        .skills {
+            margin-top: 25px;
+        }
+
+        .skills h3 {
+            color: #001F60;
+            margin-bottom: 10px;
+        }
+
+        .skills ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .skills li {
+            background: #f1f3f6;
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
         .buttons {
             text-align: center;
             margin-top: 35px;
@@ -137,11 +162,33 @@
         <p><strong>Email:</strong> <%= user.getEmail() %></p>
         <p><strong>Phone:</strong> <%= user.getPhone() %></p>
         <p><strong>Date of Birth:</strong> <%= user.getDateOfBirth() != null ? user.getDateOfBirth() : "" %></p>
+        <p><strong>Role:</strong> <%= user.getRole() != null ? user.getRole() : "N/A" %></p>
     </div>
 
+    <div class="skills-section">
+    <h2>🎯 Skills</h2>
+    <%
+        if (skills != null && !skills.isEmpty()) {
+            for (Skills s : skills) {
+    %>
+                <div class="skill-item">
+                    <strong><%= s.getSkillName() %></strong><br>
+                    <em><%= s.getDescription() %></em>
+                </div>
+    <%
+            }
+        } else {
+    %>
+        <p>No skills found.</p>
+    <%
+        }
+    %>
+</div>
+
     <div class="buttons">
+        <a href="<%= request.getContextPath() %>/volunteer/profile?action=editSkills" class="button">Update Skills</a>
         <a href="<%= request.getContextPath() %>/volunteer/profile?action=edit" class="button">Edit Profile</a>
-        <a href="<%= request.getContextPath() %>/volunteer/history.jsp" class="button">View Volunteer History</a>
+        <a href="<%= request.getContextPath() %>/VolunteerHistory" class="button back-btn">Volunteer History</a>
         <a href="<%= request.getContextPath() %>/volunteer/index_1.jsp" class="button back-btn">Back to Homepage</a>
     </div>
 </div>

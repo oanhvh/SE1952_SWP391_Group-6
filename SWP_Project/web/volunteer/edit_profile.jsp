@@ -15,7 +15,6 @@
             margin: 0;
             padding: 0;
         }
-
         .edit-container {
             max-width: 800px;
             margin: 60px auto;
@@ -24,26 +23,22 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             padding: 40px 50px;
         }
-
         h2 {
             text-align: center;
             color: #001F60;
             font-size: 28px;
             margin-bottom: 25px;
         }
-
         form {
             display: flex;
             flex-direction: column;
             gap: 18px;
         }
-
         label {
             font-weight: 600;
             color: #001F60;
             margin-bottom: 4px;
         }
-
         input[type="text"],
         input[type="email"],
         input[type="date"] {
@@ -55,12 +50,10 @@
             outline: none;
             transition: 0.3s;
         }
-
         input:focus {
             border-color: #001F60;
             box-shadow: 0 0 5px rgba(0,31,96,0.3);
         }
-
         .message {
             margin: 15px 0;
             padding: 12px;
@@ -71,14 +64,12 @@
             text-align: center;
             font-weight: 500;
         }
-
         .buttons {
             display: flex;
             justify-content: center;
             gap: 15px;
             margin-top: 25px;
         }
-
         button,
         a.button {
             padding: 10px 25px;
@@ -91,31 +82,17 @@
             text-decoration: none;
             transition: 0.3s;
         }
-
         button {
             background-color: #e74c3c;
         }
-
         button:hover {
             background-color: #c0392b;
         }
-
         a.button {
             background-color: #001F60;
         }
-
         a.button:hover {
             background-color: #003399;
-        }
-
-        @media (max-width: 768px) {
-            .edit-container {
-                padding: 25px 20px;
-            }
-
-            h2 {
-                font-size: 22px;
-            }
         }
     </style>
 </head>
@@ -129,6 +106,9 @@
     <% } %>
 
     <form action="<%= request.getContextPath() %>/volunteer/profile" method="post">
+        <!-- Thêm action để servlet nhận diện -->
+        <input type="hidden" name="action" value="updateProfile">
+
         <label>Full Name</label>
         <input type="text" name="fullName" value="<%= user.getFullName() != null ? user.getFullName() : "" %>">
 
@@ -139,7 +119,7 @@
         <input type="text" name="phone" value="<%= user.getPhone() != null ? user.getPhone() : "" %>">
 
         <label>Date of Birth</label>
-        <input type="date" name="dateOfBirth" value="<%= user.getDateOfBirth() != null ? user.getDateOfBirth() : "" %>">
+        <input type="date" name="dateOfBirth" value="<%= user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : "" %>">
 
         <label>Avatar URL</label>
         <input type="text" name="avatar" value="<%= user.getAvatar() != null ? user.getAvatar() : "" %>">
