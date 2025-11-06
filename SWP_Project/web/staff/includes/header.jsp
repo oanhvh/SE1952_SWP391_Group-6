@@ -44,6 +44,10 @@
 <button id="sidebarToggle" class="sidebar-toggle">☰</button>
 <div class="sidebar" id="managerSidebar">
     <ul>
-        <li><a href="activation.jsp">...</a></li>
+        <li><a href="<%= request.getContextPath() %>/event?action=create">Add Event</a></li>
+        <li><a href="updateEvent.jsp">Update Event</a></li>
+        <li><a href="listEvent.jsp">List Event</a></li>
+        <li><a href="viewEvent.jsp">View Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/staff/applications">View Applications</a></li>
     </ul>
 </div>

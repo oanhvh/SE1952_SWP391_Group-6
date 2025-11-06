@@ -12,13 +12,13 @@
         <title>Event List</title>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="css/style.css" />
-        <link rel="stylesheet" href="css/responsive.css" />
+        <link rel="stylesheet" href="../css/responsive.css" />
         <link rel="icon" href="images/fevicon.png" type="image/gif" />
-        <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css" />
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
-        <link rel="stylesheet" href="css/owl.carousel.min.css" />
-        <link rel="stylesheet" href="css/owl.theme.default.min.css" />
-        <link rel="stylesheet" href="css/sidebar.css" />
+        <link rel="stylesheet" href="../css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="../css/sidebar.css" />
         <style>
             .event-image {
                 width: 100%;
@@ -92,7 +92,7 @@
                 <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
                     <div class="row mb-3">
                         <div class="col-sm-12 text-end">
-                            <a href="${pageContext.request.contextPath}/staff/createEvent.jsp" class="btn btn-success">
+                            <a href="${pageContext.request.contextPath}/event?action=create" class="btn btn-success">
                                 <i class="fa fa-plus"></i> Create New Event
                             </a>
                         </div>
@@ -171,7 +171,7 @@
                                 <h4>No events available at the moment.</h4>
                                 <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
                                     <p class="mt-3">
-                                        <a href="${pageContext.request.contextPath}/staff/createEvent.jsp" class="btn btn-success">
+                                        <a href="${pageContext.request.contextPath}/event?action=create" class="btn btn-success">
                                             Create Your First Event
                                         </a>
                                     </p>

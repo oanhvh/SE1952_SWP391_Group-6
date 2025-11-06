@@ -1,11 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="entity.Users" %>
+<%@ page import="dao.NotificationsDAO" %>
 <%
     Users user = (Users) session.getAttribute("authUser");
     String role = (String) session.getAttribute("role");
     String displayName = (user != null && user.getFullName() != null && !user.getFullName().isEmpty()) ? user.getFullName() : (user != null ? user.getUsername() : "");
     if (displayName == null) displayName = "";
     if (role == null) role = "";
+    int unreadNoti = 0;
+    if (user != null && "Volunteer".equalsIgnoreCase(role)) {
+        try {
+            NotificationsDAO ndao = new NotificationsDAO();
+            Integer vid = ndao.getVolunteerIdByUserId(user.getUserID());
+            if (vid != null) unreadNoti = ndao.getUnreadCountForVolunteer(vid);
+        } catch (Exception ignore) {}
+    }
 %>
 <!-- header section start -->
 <div class="header_section"></div>
@@ -23,7 +32,15 @@
             <li class="nav-item"><a class="nav-link" href="contact.jsp">Contact Us</a></li>
             <li class="nav-item"><a class="nav-link" href="mission.jsp">Our Mission</a></li>
         </ul>
-        <div class="ml-auto">
+        <div class="ml-auto d-flex align-items-center">
+            <% if (user != null && "Volunteer".equalsIgnoreCase(role)) { %>
+            <a href="<%= request.getContextPath() %>/notifications" class="btn btn-light position-relative mr-3" title="Notifications">
+                <span style="font-size:18px;">🔔</span>
+                <% if (unreadNoti > 0) { %>
+                    <span class="badge badge-danger" style="position:absolute; top:-5px; right:-5px;"><%= unreadNoti %></span>
+                <% } %>
+            </a>
+            <% } %>
             <div class="dropdown">
                 <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span style="font-weight:600;"><%= displayName %></span>

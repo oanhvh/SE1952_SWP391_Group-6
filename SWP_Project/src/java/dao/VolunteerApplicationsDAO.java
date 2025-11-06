@@ -43,7 +43,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
 
     public List<VolunteerApplications> getAllVolunteerApplications() {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = "SELECT * FROM VolunteerApplication";
+        String sql = "SELECT * FROM VolunteerApplications";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 VolunteerApplications app = extractVolunteerApplications(rs);
@@ -56,7 +56,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
 
     public void addVolunteerApplication(VolunteerApplications app) {
-        String sql = "INSERT INTO VolunteerApplication (VolunteerID, EventID, Status, ApplicationDate, ApprovalDate, ApprovedByStaffID) "
+        String sql = "INSERT INTO VolunteerApplications (VolunteerID, EventID, Status, ApplicationDate, ApprovalDate, ApprovedByStaffID) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, app.getVolunteerID());
@@ -83,7 +83,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
 
     public void updateVolunteerApplication(VolunteerApplications app) {
-        String sql = "UPDATE VolunteerApplication SET VolunteerID = ?, EventID = ?, Status = ?, "
+        String sql = "UPDATE VolunteerApplications SET VolunteerID = ?, EventID = ?, Status = ?, "
                 + "ApplicationDate = ?, ApprovalDate = ?, ApprovedByStaffID = ? WHERE ApplicationID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, app.getVolunteerID());
@@ -111,7 +111,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
 
     public void deleteVolunteerApplication(int applicationID) {
-        String sql = "DELETE FROM VolunteerApplication WHERE ApplicationID = ?";
+        String sql = "DELETE FROM VolunteerApplications WHERE ApplicationID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, applicationID);
             pstmt.executeUpdate();
@@ -122,7 +122,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
 
     public List<VolunteerApplications> getVolunteerApplicationsByStatus(String status) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = "SELECT * FROM VolunteerApplication WHERE Status = ?";
+        String sql = "SELECT * FROM VolunteerApplications WHERE Status = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, status);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -139,7 +139,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
 
     public List<VolunteerApplications> getApplicationsByVolunteer(int volunteerID) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = "SELECT * FROM VolunteerApplication WHERE VolunteerID = ?";
+        String sql = "SELECT * FROM VolunteerApplications WHERE VolunteerID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, volunteerID);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -155,7 +155,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
 
     public void updateStatus(int applicationID, String status, Integer approvedByStaffID) {
-        String sql = "UPDATE VolunteerApplication SET Status = ?, ApprovalDate = ?, ApprovedByStaffID = ? WHERE ApplicationID = ?";
+        String sql = "UPDATE VolunteerApplications SET Status = ?, ApprovalDate = ?, ApprovedByStaffID = ? WHERE ApplicationID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, status);
             pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
@@ -168,6 +168,56 @@ public class VolunteerApplicationsDAO extends DBUtils {
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // Review application: approve/reject, set staff comment, create notification for volunteer
+    public boolean reviewApplication(int applicationId, int staffUserId, boolean approve, String staffComment) {
+        String sqlSelect = "SELECT VolunteerID, EventID FROM VolunteerApplications WHERE ApplicationID = ?";
+        String sqlUpdate = "UPDATE VolunteerApplications SET Status = ?, ApprovalDate = ?, ApprovedByStaffID = ?, StaffComment = ? WHERE ApplicationID = ?";
+        String sqlNoti = "INSERT INTO Notifications (Title, Message, ReceiverID, IsRead, CreatedAt, Type, EventID) VALUES (?, ?, ?, 0, SYSUTCDATETIME(), 'Application', ?)";
+
+        try (Connection con = DBUtils.getConnection1();
+             PreparedStatement psSel = con.prepareStatement(sqlSelect);
+             PreparedStatement psUpd = con.prepareStatement(sqlUpdate);
+             PreparedStatement psNoti = con.prepareStatement(sqlNoti)) {
+
+            con.setAutoCommit(false);
+
+            psSel.setInt(1, applicationId);
+            ResultSet rs = psSel.executeQuery();
+            if (!rs.next()) {
+                con.rollback();
+                return false;
+            }
+            int volunteerId = rs.getInt("VolunteerID");
+            int eventId = rs.getInt("EventID");
+
+            String newStatus = approve ? "Approved" : "Rejected";
+            psUpd.setString(1, newStatus);
+            psUpd.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            psUpd.setInt(3, staffUserId);
+            psUpd.setString(4, staffComment);
+            psUpd.setInt(5, applicationId);
+            int updated = psUpd.executeUpdate();
+            if (updated <= 0) {
+                con.rollback();
+                return false;
+            }
+
+            String title = approve ? "Đơn ứng tuyển được duyệt" : "Đơn ứng tuyển bị từ chối";
+            String message = approve ? "Đơn của bạn đã được duyệt." : ("Đơn của bạn đã bị từ chối." + (staffComment != null && !staffComment.isEmpty() ? " Lý do: " + staffComment : ""));
+            psNoti.setString(1, title);
+            psNoti.setString(2, message);
+            psNoti.setInt(3, volunteerId);
+            psNoti.setInt(4, eventId);
+            psNoti.executeUpdate();
+
+            con.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
     
