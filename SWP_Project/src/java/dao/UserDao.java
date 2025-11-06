@@ -535,16 +535,16 @@ public class UserDao extends DBUtils {
     public List<Skills> getSkillsByUserID(int userID) {
     List<Skills> list = new ArrayList<>();
 
-    String sql = """
-        SELECT
-            s.SkillID,
-            s.SkillName,
-            s.Description
-        FROM VolunteerSkills vs
-        JOIN Volunteer v ON vs.VolunteerID = v.VolunteerID
-        JOIN Skills s ON vs.SkillID = s.SkillID
-        WHERE v.UserID = ?
-    """;
+        String sql =
+                "SELECT "
+                        + "s.SkillID, "
+                        + "s.SkillName, "
+                        + "s.Description "
+                        + "FROM VolunteerSkills vs "
+                        + "JOIN Volunteer v ON vs.VolunteerID = v.VolunteerID "
+                        + "JOIN Skills s ON vs.SkillID = s.SkillID "
+                        + "WHERE v.UserID = ?";
+
 
     try (Connection con = DBUtils.getConnection1();
          PreparedStatement ps = con.prepareStatement(sql)) {

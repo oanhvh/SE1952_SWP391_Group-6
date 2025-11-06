@@ -26,7 +26,7 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuButton">
                 <li><a class="dropdown-item" href="ProfileController">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="LogoutController">Logout</a></li>
+                <li><a class="dropdown-item text-danger" href="logout">Logout</a></li>
             </ul>
         </div>
     </div>
