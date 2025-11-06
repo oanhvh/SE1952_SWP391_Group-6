@@ -119,6 +119,14 @@
                                     <span class="small">Already have an account? </span>
                                     <a href="login.jsp" class="small">Login here</a>
                                 </div>
+
+                                <!-- Google Register Button -->
+                                <div class="d-grid gap-2 mt-3">
+                                    <a href="<%= request.getContextPath() %>/auth/google" class="btn btn-outline-danger d-flex align-items-center justify-content-center" style="text-decoration: none;">
+                                        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_ios_64dp.png" alt="Google logo" style="width: 20px; height: 20px; margin-right: 8px;">
+                                        <span>Đăng ký với Google</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -183,8 +191,8 @@
                         updateStrength(pwd.value);
                     });
                 }
-                if(toggle && pwd){
-                    toggle.addEventListener('click', function(){
+                if (toggle && pwd) {
+                    toggle.addEventListener('click', function () {
                         var show = pwd.type === 'password';
                         pwd.type = show ? 'text' : 'password';
                         toggle.classList.toggle('fa-eye', show);
@@ -264,8 +272,4 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> origin/mainV1
