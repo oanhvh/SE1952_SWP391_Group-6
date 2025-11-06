@@ -53,7 +53,7 @@ public class ApplyEventController extends HttpServlet {
 
         // ✅ Kiểm tra trùng sự kiện hoặc trùng ngày
         if (dao.hasAppliedForEvent(userId, eventId)) {
-            request.setAttribute("error", "Bạn đã đăng ký sự kiện này rồi!");
+            request.setAttribute("error", "You've already applied this event!");
             request.getRequestDispatcher("/volunteer/events.jsp").forward(request, response);
             return;
         }

@@ -14,6 +14,7 @@ public class CancelApplyController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
         Users authUser = (Users) session.getAttribute("authUser");
 
@@ -24,19 +25,27 @@ public class CancelApplyController extends HttpServlet {
 
         try {
             int applicationId = Integer.parseInt(request.getParameter("applicationId"));
-            
-            VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
-            boolean canceled = dao.cancelApplication(applicationId);
+            String cancelReason = request.getParameter("cancelReason"); // có thể null nếu Pending
 
-            if (canceled) {
-                session.setAttribute("cancelMsg", "✅ Hủy đăng ký thành công!");
-            } else {
-                session.setAttribute("cancelMsg", "⚠️ Chỉ có thể hủy khi trạng thái là 'Pending'.");
+            VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
+            String result = dao.cancelApplication(applicationId, cancelReason);
+
+            switch (result) {
+                case "PENDING_CANCELLED" -> 
+                    session.setAttribute("cancelMsg", "✅ Cancel application");
+                case "APPROVED_CANCELLED" -> 
+                    session.setAttribute("cancelMsg", "✅ Cancel application.");
+                case "REJECTED" -> 
+                    session.setAttribute("cancelMsg", "⚠️ Rejected.");
+                case "NOT_FOUND" -> 
+                    session.setAttribute("cancelMsg", "❌ Can not found");
+                default -> 
+                    session.setAttribute("cancelMsg", "❌ Can not cancel");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            session.setAttribute("cancelMsg", "❌ Đã xảy ra lỗi khi hủy apply.");
+            session.setAttribute("cancelMsg", "❌ Error.");
         }
 
         response.sendRedirect("ApplyEventController");

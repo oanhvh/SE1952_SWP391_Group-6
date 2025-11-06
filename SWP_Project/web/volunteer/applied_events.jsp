@@ -1,9 +1,3 @@
-<%-- 
-    Document   : applied_events
-    Created on : Nov 1, 2025, 1:06:40 PM
-    Author     : admin
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="entity.VolunteerApplications" %>
@@ -49,10 +43,6 @@
         nav a:hover {
             color: #1a237e;
         }
-        .user-info {
-            font-weight: 600;
-            color: #1a237e;
-        }
 
         .banner {
             background: url('<%= request.getContextPath() %>/assets/images/applied_banner.jpg') center/cover no-repeat;
@@ -77,7 +67,6 @@
         .container {
             max-width: 1000px;
             margin: 50px auto;
-            padding: 0 20px;
             background: white;
             border-radius: 12px;
             box-shadow: 0 3px 8px rgba(0,0,0,0.08);
@@ -120,6 +109,16 @@
             background-color: #8e1b1b;
         }
 
+        textarea {
+            width: 95%;
+            height: 70px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            padding: 6px;
+            resize: vertical;
+        }
+
         .msg {
             font-weight: bold;
             color: #2e7d32;
@@ -157,9 +156,16 @@
             padding: 20px;
             margin-top: 60px;
         }
+
+        .comment {
+            color: #555;
+            font-style: italic;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
+
 <% if (cancelMsg != null) { %>
 <script>
     window.onload = function() {
@@ -179,16 +185,16 @@
     <% } %>
 
     <% if (appliedEvents == null || appliedEvents.isEmpty()) { %>
-        <p class="no-event">Bạn chưa đăng ký sự kiện nào.</p>
+        <p class="no-event">You haven't applied</p>
     <% } else { %>
         <table>
             <thead>
                 <tr>
-                    <th>Tên sự kiện</th>
-                    <th>Địa điểm</th>
-                    <th>Thời gian</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
+                    <th>Events</th>
+                    <th>Location</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -198,17 +204,32 @@
                     <td><%= e.getEventName() %></td>
                     <td><%= e.getLocation() %></td>
                     <td><%= e.getStartDate() %> — <%= e.getEndDate() %></td>
-                    <td><%= va.getStatus() %></td>
+                    <td>
+                        <%= va.getStatus() %>
+                        <% if ("Rejected".equalsIgnoreCase(va.getStatus()) && va.getStaffComment() != null) { %>
+                            <div class="comment">💬 Reason <%= va.getStaffComment() %></div>
+                        <% } %>
+                    </td>
                     <td>
                         <% if ("Pending".equalsIgnoreCase(va.getStatus())) { %>
                             <form action="<%= request.getContextPath() %>/CancelApplyController" method="post" style="display:inline;">
                                 <input type="hidden" name="applicationId" value="<%= va.getApplicationID() %>">
-                                <button type="submit" class="btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy apply sự kiện này không?');">
-                                    Hủy Apply
+                                <button type="submit" class="btn-cancel" onclick="return confirm('You sure want to cancel?');">
+                                    Cancel apply
                                 </button>
                             </form>
+
+                        <% } else if ("Approved".equalsIgnoreCase(va.getStatus())) { %>
+                            <form action="<%= request.getContextPath() %>/CancelApplyController" method="post" style="display:inline;">
+                                <input type="hidden" name="applicationId" value="<%= va.getApplicationID() %>">
+                                <textarea name="cancelReason" placeholder="Nhập lý do bạn muốn hủy..." required></textarea>
+                                <button type="submit" class="btn-cancel" onclick="return confirm('You wants to cancel an approved event?');">
+                                    Can not come
+                                </button>
+                            </form>
+
                         <% } else { %>
-                            <span style="color: #888;">Không thể hủy</span>
+                            <span style="color: #888;">Cannot cancel</span>
                         <% } %>
                     </td>
                 </tr>

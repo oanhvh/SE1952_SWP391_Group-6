@@ -118,7 +118,7 @@
     <div class="container">
         <% if (historyList == null || historyList.isEmpty()) { %>
             <div class="alert alert-info text-center mt-4">
-                Bạn chưa hoàn thành sự kiện nào.
+                Nothing
             </div>
         <% } else { %>
             <% for (VolunteerApplications va : historyList) {
@@ -126,15 +126,15 @@
             <div class="event-card">
                 <div class="event-details">
                     <h5><%= e.getEventName() %></h5>
-                    <p>📍 <strong>Địa điểm:</strong> <%= e.getLocation() %></p>
-                    <p>🕒 <strong>Thời gian:</strong> <%= e.getStartDate() %> - <%= e.getEndDate() %></p>
+                    <p>📍 <strong>Location:</strong> <%= e.getLocation() %></p>
+                    <p>🕒 <strong>Time:</strong> <%= e.getStartDate() %> - <%= e.getEndDate() %></p>
                     <div class="event-status">
                         <% if ("Completed".equalsIgnoreCase(va.getStatus())) { %>
-                            <span class="badge bg-success">Hoàn thành</span>
+                            <span class="badge bg-success">Completed</span>
                         <% } else if ("Pending".equalsIgnoreCase(va.getStatus())) { %>
-                            <span class="badge bg-warning text-dark">Đang chờ</span>
+                            <span class="badge bg-warning text-dark">Pending</span>
                         <% } else if ("Rejected".equalsIgnoreCase(va.getStatus())) { %>
-                            <span class="badge bg-danger">Từ chối</span>
+                            <span class="badge bg-danger">Rejected</span>
                         <% } else { %>
                             <span class="badge bg-secondary"><%= va.getStatus() %></span>
                         <% } %>
@@ -145,7 +145,7 @@
         <% } %>
 
         <div class="text-center">
-            <a href="<%= request.getContextPath() %>/volunteer/profile" class="btn-back">⬅ Quay lại trang cá nhân</a>
+            <a href="<%= request.getContextPath() %>/volunteer/profile" class="btn-back">⬅ Back to profile</a>
         </div>
     </div>
 

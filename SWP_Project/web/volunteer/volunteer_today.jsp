@@ -9,7 +9,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Sự kiện hôm nay | DONI Charity</title>
+    <title>Today's job | DONI Charity</title>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <style>
         body {
@@ -134,7 +134,7 @@
     <div class="container">
         <% if (todayEvents == null || todayEvents.isEmpty()) { %>
             <div class="alert alert-info text-center">
-                Hôm nay bạn không có sự kiện nào.
+                Nothing today.
             </div>
         <% } else { %>
             <% for (VolunteerApplications va : todayEvents) { 
@@ -142,15 +142,15 @@
             <div class="event-card">
                 <div class="event-info">
                     <h5><%= e.getEventName() %></h5>
-                    <p>📍 <strong>Địa điểm:</strong> <%= e.getLocation() %></p>
-                    <p>🕒 <strong>Thời gian:</strong> <%= e.getStartDate() %> - <%= e.getEndDate() %></p>
+                    <p>📍 <strong>Location:</strong> <%= e.getLocation() %></p>
+                    <p>🕒 <strong>Time:</strong> <%= e.getStartDate() %> - <%= e.getEndDate() %></p>
                     <div class="status">
                         <% if ("Completed".equalsIgnoreCase(va.getStatus())) { %>
-                            <span class="badge bg-success">Hoàn thành</span>
+                            <span class="badge bg-success">Completed</span>
                         <% } else if ("Pending".equalsIgnoreCase(va.getStatus())) { %>
-                            <span class="badge bg-warning text-dark">Đang chờ</span>
+                            <span class="badge bg-warning text-dark">Pending</span>
                         <% } else if ("Approved".equalsIgnoreCase(va.getStatus())) { %>
-                            <span class="badge bg-primary">Đã duyệt</span>
+                            <span class="badge bg-primary">Approved</span>
                         <% } else { %>
                             <span class="badge bg-secondary"><%= va.getStatus() %></span>
                         <% } %>
@@ -161,7 +161,7 @@
                     <% if (!"Completed".equalsIgnoreCase(va.getStatus())) { %>
                         <form action="<%= request.getContextPath() %>/CompleteEventController" method="post" style="display:inline;">
                             <input type="hidden" name="applicationId" value="<%= va.getApplicationID() %>">
-                            <button type="submit" class="btn-complete btn-sm">Đã hoàn thành</button>
+                            <button type="submit" class="btn-complete btn-sm">Complete</button>
                         </form>
                     <% } else { %>
                         <span class="text-success fw-bold fs-5">✔</span>
@@ -172,7 +172,7 @@
         <% } %>
 
         <div class="text-center">
-            <a href="<%= request.getContextPath() %>/volunteer/index_1.jsp" class="btn-back">← Trở về trang chủ</a>
+            <a href="<%= request.getContextPath() %>/volunteer/index_1.jsp" class="btn-back">← Back to homepage</a>
         </div>
     </div>
 

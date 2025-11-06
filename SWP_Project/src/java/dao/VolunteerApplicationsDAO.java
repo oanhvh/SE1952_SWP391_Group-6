@@ -257,37 +257,78 @@ public boolean applyEventByUserId(int userID, int eventID, String motivation, St
     }
 
     // ✅ Hủy đơn (chỉ khi đang pending)
-    public boolean cancelApplication(int applicationId) {
-    String sqlDeleteSkills = "DELETE FROM EventApplicationSkills WHERE ApplicationID = ?";
-    String sqlDeleteApp = "DELETE FROM VolunteerApplications WHERE ApplicationID = ? AND Status = 'Pending'";
+   public String cancelApplication(int applicationId, String cancelReason) {
+        String sqlSelect = "SELECT Status, StaffComment FROM VolunteerApplications WHERE ApplicationID = ?";
+        String sqlDeleteSkills = "DELETE FROM EventApplicationSkills WHERE ApplicationID = ?";
+        String sqlDeleteApp = "DELETE FROM VolunteerApplications WHERE ApplicationID = ? AND Status = 'Pending'";
+        String sqlUpdateCancel = """
+            UPDATE VolunteerApplications
+            SET Status = 'Cancelled',
+                Motivation = CONCAT(ISNULL(Motivation, ''), CHAR(13) + CHAR(10), '--- Cancelled Reason: ', ?)
+            WHERE ApplicationID = ? AND Status = 'Approved'
+        """;
 
-    try (Connection con = DBUtils.getConnection1();
-         PreparedStatement ps1 = con.prepareStatement(sqlDeleteSkills);
-         PreparedStatement ps2 = con.prepareStatement(sqlDeleteApp)) {
+        try (Connection con = DBUtils.getConnection1();
+             PreparedStatement psSelect = con.prepareStatement(sqlSelect);
+             PreparedStatement psDelSkill = con.prepareStatement(sqlDeleteSkills);
+             PreparedStatement psDelApp = con.prepareStatement(sqlDeleteApp);
+             PreparedStatement psUpdate = con.prepareStatement(sqlUpdateCancel)) {
 
-        con.setAutoCommit(false); // Bắt đầu transaction
+            con.setAutoCommit(false);
 
-        // Xóa kỹ năng liên quan
-        ps1.setInt(1, applicationId);
-        ps1.executeUpdate();
+            psSelect.setInt(1, applicationId);
+            ResultSet rs = psSelect.executeQuery();
+            if (!rs.next()) {
+                con.rollback();
+                return "NOT_FOUND";
+            }
 
-        // Xóa đơn apply nếu đang Pending
-        ps2.setInt(1, applicationId);
-        int rows = ps2.executeUpdate();
+            String status = rs.getString("Status");
+            String staffComment = rs.getString("StaffComment");
 
-        if (rows > 0) {
-            con.commit();
-            return true; // Hủy thành công
-        } else {
-            con.rollback(); // Không xóa được → rollback
-            return false;
+            if ("Pending".equalsIgnoreCase(status)) {
+                psDelSkill.setInt(1, applicationId);
+                psDelSkill.executeUpdate();
+
+                psDelApp.setInt(1, applicationId);
+                int rows = psDelApp.executeUpdate();
+
+                if (rows > 0) {
+                    con.commit();
+                    return "PENDING_CANCELLED";
+                } else {
+                    con.rollback();
+                    return "ERROR";
+                }
+
+            } else if ("Approved".equalsIgnoreCase(status)) {
+                psUpdate.setString(1, cancelReason != null ? cancelReason : "Không có lý do");
+                psUpdate.setInt(2, applicationId);
+
+                int rows = psUpdate.executeUpdate();
+                if (rows > 0) {
+                    con.commit();
+                    return "APPROVED_CANCELLED";
+                } else {
+                    con.rollback();
+                    return "ERROR";
+                }
+
+            } else if ("Rejected".equalsIgnoreCase(status)) {
+                System.out.println("Application was rejected. Staff comment: " + staffComment);
+                con.rollback();
+                return "REJECTED";
+            }
+
+            con.rollback();
+            return "ERROR";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR";
         }
-
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-    return false;
-}
+
 
 
     // ✅ Lấy danh sách sự kiện tình nguyện hôm nay cho volunteer

@@ -4,7 +4,9 @@
  */
 package dao;
 
+import entity.Skills;
 import entity.Users;
+import entity.VolunteerSkills;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -505,4 +507,39 @@ public class UserDao extends DBUtils {
         }
         return false;
     }
+    
+    public List<Skills> getSkillsByUserID(int userID) {
+    List<Skills> list = new ArrayList<>();
+
+    String sql = """
+        SELECT 
+            s.SkillID,
+            s.SkillName,
+            s.Description
+        FROM VolunteerSkills vs
+        JOIN Volunteer v ON vs.VolunteerID = v.VolunteerID
+        JOIN Skills s ON vs.SkillID = s.SkillID
+        WHERE v.UserID = ?
+    """;
+
+    try (Connection con = DBUtils.getConnection1();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, userID);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Skills skill = new Skills();
+            skill.setSkillID(rs.getInt("SkillID"));
+            skill.setSkillName(rs.getString("SkillName"));
+            skill.setDescription(rs.getString("Description"));
+
+            list.add(skill);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
+
 }

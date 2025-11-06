@@ -1,6 +1,9 @@
 package controller;
 
 import dao.UserDao;
+import dao.SkillsDAO;
+import dao.VolunteerSkillsDAO;
+import entity.Skills;
 import entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,10 +14,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
-/**
- * 
- */
 @WebServlet(name = "ProfileController", urlPatterns = {
     "/ProfileController",
     "/manager/profile",
@@ -24,6 +25,8 @@ import java.time.format.DateTimeFormatter;
 public class ProfileController extends HttpServlet {
 
     private final UserDao userDao = new UserDao();
+    private final SkillsDAO skillsDAO = new SkillsDAO();
+    private final VolunteerSkillsDAO volunteerSkillsDAO = new VolunteerSkillsDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -33,19 +36,30 @@ public class ProfileController extends HttpServlet {
         Users user = (session != null) ? (Users) session.getAttribute("authUser") : null;
         String role = (session != null) ? (String) session.getAttribute("role") : null;
 
-        // Nếu chưa đăng nhập → quay lại login
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
         String action = request.getParameter("action");
-        String scope = resolveScope(request, role); // Xác định thư mục JSP theo vai trò
+        String scope = resolveScope(request, role);
 
         request.setAttribute("user", user);
 
+        // lấy kỹ năng hiện tại của user
+        List<Skills> userSkills = userDao.getSkillsByUserID(user.getUserID());
+        request.setAttribute("skills", userSkills);
+
         if ("edit".equalsIgnoreCase(action)) {
             request.getRequestDispatcher("/" + scope + "/edit_profile.jsp").forward(request, response);
+
+        } else if ("editSkills".equalsIgnoreCase(action)) {
+            // lấy tất cả skill trong DB để hiển thị checkbox
+            List<Skills> allSkills = skillsDAO.getAllSkills();
+            request.setAttribute("allSkills", allSkills);
+            request.setAttribute("userSkills", userSkills);
+            request.getRequestDispatcher("/" + scope + "/update_skills.jsp").forward(request, response);
+
         } else {
             request.getRequestDispatcher("/" + scope + "/profile.jsp").forward(request, response);
         }
@@ -64,43 +78,63 @@ public class ProfileController extends HttpServlet {
             return;
         }
 
-        // Nhận dữ liệu từ form chỉnh sửa
-        String fullName = request.getParameter("fullName");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
-        String avatar = request.getParameter("avatar");
-        String dobStr = request.getParameter("dateOfBirth");
+        String action = request.getParameter("action");
 
-        LocalDate dob = null;
-        if (dobStr != null && !dobStr.trim().isEmpty()) {
-            try {
-                dob = LocalDate.parse(dobStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            } catch (Exception e) {
-                request.setAttribute("error", "Invalid date format (yyyy-MM-dd)");
-                forwardToEdit(request, response, user, role);
-                return;
+        // ---------------- UPDATE PROFILE ----------------
+        if ("updateProfile".equalsIgnoreCase(action)) {
+            String fullName = request.getParameter("fullName");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            String avatar = request.getParameter("avatar");
+            String dobStr = request.getParameter("dateOfBirth");
+
+            LocalDate dob = null;
+            if (dobStr != null && !dobStr.trim().isEmpty()) {
+                try {
+                    dob = LocalDate.parse(dobStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                } catch (Exception e) {
+                    request.setAttribute("error", "Invalid date format (yyyy-MM-dd)");
+                    forwardToEdit(request, response, user, role);
+                    return;
+                }
             }
-        }
 
-        // Cập nhật thông tin người dùng
-        user.setFullName(fullName);
-        user.setEmail(email);
-        user.setPhone(phone);
-        user.setAvatar(avatar);
-        user.setDateOfBirth(dob);
-        user.setUpdatedAt(java.time.LocalDateTime.now());
+            user.setFullName(fullName);
+            user.setEmail(email);
+            user.setPhone(phone);
+            user.setAvatar(avatar);
+            user.setDateOfBirth(dob);
+            user.setUpdatedAt(java.time.LocalDateTime.now());
 
-        boolean success = userDao.updateProfile(user);
+            boolean success = userDao.updateProfile(user);
 
-        if (success) {
-            session.setAttribute("authUser", user);
+            if (success) {
+                session.setAttribute("authUser", user);
+                request.setAttribute("user", user);
+                request.setAttribute("skills", userDao.getSkillsByUserID(user.getUserID()));
+                request.setAttribute("success", "Profile updated successfully!");
+                forwardToProfile(request, response, user, role);
+            } else {
+                request.setAttribute("user", user);
+                request.setAttribute("skills", userDao.getSkillsByUserID(user.getUserID()));
+                request.setAttribute("error", "Update failed. Please try again.");
+                forwardToEdit(request, response, user, role);
+            }
+
+        // ---------------- UPDATE SKILLS ----------------
+        } else if ("updateSkills".equalsIgnoreCase(action)) {
+            String[] selectedSkillIDs = request.getParameterValues("skillIDs");
+
+            // Cập nhật kỹ năng cho volunteer (xóa cũ → thêm mới)
+            volunteerSkillsDAO.updateSkillsForUser(user.getUserID(), selectedSkillIDs);
+
+            // Load lại dữ liệu để hiển thị
+            List<Skills> updatedSkills = userDao.getSkillsByUserID(user.getUserID());
+            request.setAttribute("skills", updatedSkills);
             request.setAttribute("user", user);
-            request.setAttribute("success", "Profile updated successfully!");
+            request.setAttribute("success", "Skills updated successfully!");
+
             forwardToProfile(request, response, user, role);
-        } else {
-            request.setAttribute("user", user);
-            request.setAttribute("error", "Update failed. Please try again.");
-            forwardToEdit(request, response, user, role);
         }
     }
 
@@ -118,14 +152,11 @@ public class ProfileController extends HttpServlet {
         request.getRequestDispatcher("/" + scope + "/edit_profile.jsp").forward(request, response);
     }
 
-    /**
-     * Xác định thư mục JSP theo đường dẫn hoặc role trong session
-     */
     private String resolveScope(HttpServletRequest request, String role) {
         String path = request.getServletPath();
         if (path.startsWith("/manager/") || "Manager".equalsIgnoreCase(role)) return "manager";
         if (path.startsWith("/staff/") || "Staff".equalsIgnoreCase(role)) return "staff";
         if (path.startsWith("/volunteer/") || "Volunteer".equalsIgnoreCase(role)) return "volunteer";
-        return "volunteer"; // fallback mặc định
+        return "volunteer";
     }
 }
