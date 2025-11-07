@@ -34,7 +34,7 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="<%= request.getContextPath() %>/manager/change_password.jsp">Change password</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout" onclick="return confirm('Would you like to log out?');">Sign out</a>
+                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout" onclick="return confirm('Confirm logout?');">Sign out</a>
                 </div>
             </div>
         </div>
@@ -45,5 +45,7 @@
 <div class="sidebar" id="managerSidebar">
     <ul>
         <li><a href="activation.jsp">Create activation code</a></li>
+        <li><a href="addCategory.jsp">Add Category</a></li>
+        <li><a href="${pageContext.request.contextPath}/category?action=list">List Category</a></li>
     </ul>
 </div>

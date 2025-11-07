@@ -30,18 +30,18 @@ public class CancelApplyController extends HttpServlet {
             VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
             String result = dao.cancelApplication(applicationId, cancelReason);
 
-            switch (result) {
-                case "PENDING_CANCELLED" -> 
-                    session.setAttribute("cancelMsg", "✅ Cancel application");
-                case "APPROVED_CANCELLED" -> 
-                    session.setAttribute("cancelMsg", "✅ Cancel application.");
-                case "REJECTED" -> 
-                    session.setAttribute("cancelMsg", "⚠️ Rejected.");
-                case "NOT_FOUND" -> 
-                    session.setAttribute("cancelMsg", "❌ Can not found");
-                default -> 
-                    session.setAttribute("cancelMsg", "❌ Can not cancel");
-            }
+//            switch (result) {
+//                case "PENDING_CANCELLED" ->
+//                    session.setAttribute("cancelMsg", "✅ Cancel application");
+//                case "APPROVED_CANCELLED" ->
+//                    session.setAttribute("cancelMsg", "✅ Cancel application.");
+//                case "REJECTED" ->
+//                    session.setAttribute("cancelMsg", "⚠️ Rejected.");
+//                case "NOT_FOUND" ->
+//                    session.setAttribute("cancelMsg", "❌ Can not found");
+//                default ->
+//                    session.setAttribute("cancelMsg", "❌ Can not cancel");
+//            }
 
         } catch (Exception e) {
             e.printStackTrace();

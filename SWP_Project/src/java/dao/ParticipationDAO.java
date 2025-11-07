@@ -20,20 +20,20 @@ public class ParticipationDAO {
     // ========== LẤY DANH SÁCH TẤT CẢ CÓ PHÂN TRANG ==========
     public List<Participation> getAllParticipations(int pageIndex, int pageSize) {
         List<Participation> list = new ArrayList<>();
-        String sql = """
-            SELECT * FROM (
-                SELECT ROW_NUMBER() OVER (ORDER BY va.ApplicationDate DESC) AS RowNum,
-                       va.ApplicationID, u.FullName AS VolunteerName, e.EventName,
-                       va.Status, va.ApplicationDate, sUser.FullName AS ApprovedByStaffName
-                FROM VolunteerApplications va
-                JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-                JOIN Users u ON v.UserID = u.UserID
-                JOIN Event e ON va.EventID = e.EventID
-                LEFT JOIN Staff s ON va.ApprovedByStaffID = s.StaffID
-                LEFT JOIN Users sUser ON s.UserID = sUser.UserID
-            ) AS Temp
-            WHERE RowNum BETWEEN (? - 1) * ? + 1 AND ? * ?
-        """;
+        String sql =
+                "SELECT * FROM (" +
+                        "    SELECT ROW_NUMBER() OVER (ORDER BY va.ApplicationDate DESC) AS RowNum, " +
+                        "           va.ApplicationID, u.FullName AS VolunteerName, e.EventName, " +
+                        "           va.Status, va.ApplicationDate, sUser.FullName AS ApprovedByStaffName " +
+                        "    FROM VolunteerApplications va " +
+                        "    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID " +
+                        "    JOIN Users u ON v.UserID = u.UserID " +
+                        "    JOIN Event e ON va.EventID = e.EventID " +
+                        "    LEFT JOIN Staff s ON va.ApprovedByStaffID = s.StaffID " +
+                        "    LEFT JOIN Users sUser ON s.UserID = sUser.UserID " +
+                        ") AS Temp " +
+                        "WHERE RowNum BETWEEN (? - 1) * ? + 1 AND ? * ?";
+
 
         try (Connection conn = DBUtils.getConnection1();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -82,12 +82,16 @@ public class ParticipationDAO {
 
     public List<String> getAllApproverNames() {
         List<String> list = new ArrayList<>();
-        String sql = """
-            SELECT DISTINCT u.FullName FROM Users u
-            JOIN Staff s ON u.UserID = s.UserID
-            WHERE s.StaffID IN (SELECT DISTINCT ApprovedByStaffID FROM VolunteerApplications WHERE ApprovedByStaffID IS NOT NULL)
-            ORDER BY u.FullName
-        """;
+        String sql =
+                "SELECT DISTINCT u.FullName FROM Users u " +
+                        "JOIN Staff s ON u.UserID = s.UserID " +
+                        "WHERE s.StaffID IN ( " +
+                        "    SELECT DISTINCT ApprovedByStaffID " +
+                        "    FROM VolunteerApplications " +
+                        "    WHERE ApprovedByStaffID IS NOT NULL " +
+                        ") " +
+                        "ORDER BY u.FullName";
+
         try (Connection conn = DBUtils.getConnection1();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -101,17 +105,18 @@ public class ParticipationDAO {
                                                String approverName, String fromDate, String toDate) {
         List<Participation> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("""
-            SELECT va.ApplicationID, u.FullName AS VolunteerName, e.EventName, va.Status, va.ApplicationDate,
-                   sUser.FullName AS ApprovedByStaffName
-            FROM VolunteerApplications va
-            JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-            JOIN Users u ON v.UserID = u.UserID
-            JOIN Event e ON va.EventID = e.EventID
-            LEFT JOIN Staff s ON va.ApprovedByStaffID = s.StaffID
-            LEFT JOIN Users sUser ON s.UserID = sUser.UserID
-            WHERE 1=1
-        """);
+        StringBuilder sql = new StringBuilder(
+                "SELECT va.ApplicationID, u.FullName AS VolunteerName, e.EventName, va.Status, va.ApplicationDate, " +
+                        "       sUser.FullName AS ApprovedByStaffName " +
+                        "FROM VolunteerApplications va " +
+                        "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID " +
+                        "JOIN Users u ON v.UserID = u.UserID " +
+                        "JOIN Event e ON va.EventID = e.EventID " +
+                        "LEFT JOIN Staff s ON va.ApprovedByStaffID = s.StaffID " +
+                        "LEFT JOIN Users sUser ON s.UserID = sUser.UserID " +
+                        "WHERE 1=1"
+        );
+
 
         List<Object> params = new ArrayList<>();
 

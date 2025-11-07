@@ -29,6 +29,7 @@ import java.io.File;
 import java.nio.file.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import entity.Users;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
@@ -83,6 +84,9 @@ public class EventController extends HttpServlet {
             case "status":
                 updateStatus(request, response);
                 break;
+            case "create":
+                showCreateForm(request, response);
+                break;
             default:
                 listEvents(request, response);
                 break;
@@ -131,10 +135,9 @@ public class EventController extends HttpServlet {
 
     private void listEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        List<Event> eventList = eventService.getAllEvents();
-        List<Event> eventList = eventService.getEventsByStatus("Active");
+        List<Event> eventList = eventService.getAllEvents();
         request.setAttribute("eventList", eventList);
-        request.getRequestDispatcher("listEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("staff/listEvent.jsp").forward(request, response);
     }
 
     private void showDetail(HttpServletRequest request, HttpServletResponse response)
@@ -142,7 +145,7 @@ public class EventController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
         request.setAttribute("event", event);
-        request.getRequestDispatcher("viewEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("staff/viewEvent.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -157,35 +160,64 @@ public class EventController extends HttpServlet {
 
     private void addEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
+        HttpSession session = request.getSession(true);
+
+        // Fallback: derive userId from authUser if not explicitly set
+        Integer userIdAttr = null;
+        Object uidObj = session.getAttribute("userId");
+        if (uidObj instanceof Integer) {
+            userIdAttr = (Integer) uidObj;
+        } else if (uidObj instanceof String) {
+            try { userIdAttr = Integer.valueOf((String) uidObj); } catch (NumberFormatException ignore) {}
+        }
+        if (userIdAttr == null) {
+            Users authUser = (Users) session.getAttribute("authUser");
+            if (authUser != null) {
+                session.setAttribute("userId", authUser.getUserID());
+                userIdAttr = authUser.getUserID();
+            }
+        }
+        if (userIdAttr == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
+        Event event = null;
         try {
-            int userId = (int) session.getAttribute("userId");
-            int staffId = staffDAO.getStaffIdByUserId(userId);
-            int managerId = staffDAO.getManagerIdByUserId(userId);
+            int userId = userIdAttr;
+            Integer staffId = staffDAO.getStaffIdByUserId(userId);
+            Integer managerId = staffDAO.getManagerIdByUserId(userId);
 
-            Event event = buildEventFromRequest(request, false);
+            if (managerId == null || managerId <= 0) {
+                throw new IllegalArgumentException("Your Staff record has no Manager assigned. Please contact Manager to be assigned before creating events.");
+            }
+
+            event = buildEventFromRequest(request, false);
             event.setCreatedByStaffID(staffId);
             event.setManagerID(managerId);
             event.setCreatedAt(LocalDateTime.now());
 
             eventService.addEvent(event);
             response.sendRedirect(request.getContextPath() + "/event?action=list");
-
+            
         } catch (IllegalArgumentException e) {
             List<Category> categoryList = categoryDAO.getAllCategory();
             request.setAttribute("categoryList", categoryList);
+            if (event == null) {
+                try { event = buildEventFromRequest(request, false); } catch (Exception ignore) {}
+            }
+            request.setAttribute("event", event);
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             List<Category> categoryList = categoryDAO.getAllCategory();
             request.setAttribute("categoryList", categoryList);
-            request.setAttribute("error", "Unexpected error while adding event");
+            if (event == null) {
+                try { event = buildEventFromRequest(request, false); } catch (Exception ignore) {}
+            }
+            request.setAttribute("event", event);
+            request.setAttribute("error", "Create failed: " + e.getMessage());
             request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
         }
     }
@@ -216,8 +248,42 @@ public class EventController extends HttpServlet {
         event.setDescription(request.getParameter("description"));
         event.setLocation(request.getParameter("location"));
 
-        event.setStartDate(LocalDateTime.parse(request.getParameter("startDate"), FORMATTER));
-        event.setEndDate(LocalDateTime.parse(request.getParameter("endDate"), FORMATTER));
+        String startRaw = request.getParameter("startDate");
+        String endRaw = request.getParameter("endDate");
+        if (startRaw == null || startRaw.isBlank()) {
+            Part p = request.getPart("startDate");
+            if (p != null) {
+                byte[] bytes = p.getInputStream().readAllBytes();
+                startRaw = new String(bytes, java.nio.charset.StandardCharsets.UTF_8).trim();
+            }
+        }
+        if (endRaw == null || endRaw.isBlank()) {
+            Part p = request.getPart("endDate");
+            if (p != null) {
+                byte[] bytes = p.getInputStream().readAllBytes();
+                endRaw = new String(bytes, java.nio.charset.StandardCharsets.UTF_8).trim();
+            }
+        }
+        if (startRaw == null || startRaw.isBlank()) {
+            throw new IllegalArgumentException("Start date is required");
+        }
+        if (endRaw == null || endRaw.isBlank()) {
+            throw new IllegalArgumentException("End date is required");
+        }
+        LocalDateTime startDt;
+        LocalDateTime endDt;
+        if (startRaw.contains("T")) {
+            startDt = LocalDateTime.parse(startRaw);
+        } else {
+            startDt = LocalDateTime.parse(startRaw, FORMATTER);
+        }
+        if (endRaw.contains("T")) {
+            endDt = LocalDateTime.parse(endRaw);
+        } else {
+            endDt = LocalDateTime.parse(endRaw, FORMATTER);
+        }
+        event.setStartDate(startDt);
+        event.setEndDate(endDt);
         event.setStatus(request.getParameter("status"));
         event.setCapacity(Integer.parseInt(request.getParameter("capacity")));
 //        event.setImage(request.getParameter("image"));
@@ -258,7 +324,12 @@ public class EventController extends HttpServlet {
         }
 
         if (isUpdate && request.getParameter("createdAt") != null && !request.getParameter("createdAt").isBlank()) {
-            event.setCreatedAt(LocalDateTime.parse(request.getParameter("createdAt"), FORMATTER));
+            String createdRaw = request.getParameter("createdAt");
+            if (createdRaw.contains("T")) {
+                event.setCreatedAt(LocalDateTime.parse(createdRaw));
+            } else {
+                event.setCreatedAt(LocalDateTime.parse(createdRaw, FORMATTER));
+            }
         }
         return event;
     }
@@ -277,5 +348,12 @@ public class EventController extends HttpServlet {
         String status = request.getParameter("status");
         eventService.updateEventStatus(id, status);
         response.sendRedirect(request.getContextPath() + "/event?action=list");
+    }
+
+    private void showCreateForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Category> categoryList = categoryDAO.getAllCategory();
+        request.setAttribute("categoryList", categoryList);
+        request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
     }
 }

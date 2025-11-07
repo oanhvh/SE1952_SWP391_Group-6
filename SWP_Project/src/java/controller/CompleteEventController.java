@@ -12,6 +12,7 @@ import java.io.IOException;
 
 @WebServlet("/CompleteEventController")
 public class CompleteEventController extends HttpServlet {
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -23,4 +24,3 @@ public class CompleteEventController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/VolunteerTodayController");
     }
 }
-

@@ -40,7 +40,10 @@ public class EventService {
 
     public void addEvent(Event event) {
         validateEvent(event, true);
-        eventDAO.addEvent(event);
+        boolean ok = eventDAO.addEvent(event);
+        if (!ok) {
+            throw new RuntimeException("Insert event returned false");
+        }
     }
 
     public void updateEvent(Event event) {

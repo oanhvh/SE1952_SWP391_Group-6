@@ -23,6 +23,9 @@
                 <ul class="nav flex-column mt-2">
                     <li><a class="nav-link text-dark" href="ListAccount">View Account List</a></li>
                     <li><a class="nav-link text-dark" href="AddAccountController">Add New Account</a></li>
+                    <li><a class="nav-link text-dark" href="<%= request.getContextPath() %>/admin/manager_create.jsp">Create Manager</a></li>
+                    <li><a class="nav-link text-dark" href="<%= request.getContextPath() %>/admin/admin_create.jsp">Create Admin</a></li>
+                    <li><a class="nav-link text-dark" href="<%= request.getContextPath() %>/admin/skills_list.jsp">List Skills</a></li>
                 </ul>
             </div>
         </li>

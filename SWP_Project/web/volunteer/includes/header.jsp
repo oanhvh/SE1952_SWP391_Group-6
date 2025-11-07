@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="entity.Users" %>
+<%@ page import="dao.NotificationsDAO" %>
 <%
     Users user = (Users) session.getAttribute("authUser");
     String role = (String) session.getAttribute("role");
@@ -16,6 +17,14 @@
     }
 
     if (role == null) role = "";
+    int unreadNoti = 0;
+    if (user != null) {
+        try {
+            NotificationsDAO ndao = new NotificationsDAO();
+            Integer vid = ndao.getVolunteerIdByUserId(user.getUserID());
+            if (vid != null) unreadNoti = ndao.getUnreadCountForVolunteer(vid);
+        } catch (Exception ignore) {}
+    }
 %>
 
 <!-- ========================= -->
@@ -45,7 +54,13 @@
         </ul>
 
         <!-- Menu người dùng -->
-        <div class="ml-auto">
+        <div class="ml-auto d-flex align-items-center">
+            <a href="<%= request.getContextPath() %>/notifications" class="btn btn-light position-relative mr-3" title="Thông báo" style="margin-right:12px;">
+                <span style="font-size:18px;">🔔</span>
+                <% if (unreadNoti > 0) { %>
+                    <span class="badge badge-danger" style="position:absolute; top:-5px; right:-5px;"><%= unreadNoti %></span>
+                <% } %>
+            </a>
             <div class="dropdown">
                 <button class="btn btn-light dropdown-toggle" type="button" id="userMenu"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -57,7 +72,7 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="<%= request.getContextPath() %>/volunteer/change_password.jsp">Change password</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout" onclick="return confirm('Would you like to log out?');">Sign out</a>
+                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout" onclick="return confirm('Confirm logout?');">Sign out</a>
                 </div>
             </div>
         </div>

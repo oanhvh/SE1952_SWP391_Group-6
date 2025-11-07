@@ -10,18 +10,18 @@
 <!-- header section start -->
 <div class="header_section"></div>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="index_1.jsp"><img src="../images/logo.png"></a>
+    <a class="navbar-brand" href="<%= request.getContextPath() %>/staff/index_1.jsp"><img src="<%= request.getContextPath() %>/images/logo.png"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active"><a class="nav-link" href="index_1.jsp">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="about.jsp">About</a></li>
-            <li class="nav-item"><a class="nav-link" href="donate.jsp">Donate</a></li>
-            <li class="nav-item"><a class="nav-link" href="news.jsp">News</a></li>
-            <li class="nav-item"><a class="nav-link" href="contact.jsp">Contact Us</a></li>
-            <li class="nav-item"><a class="nav-link" href="mission.jsp">Our Mission</a></li>
+            <li class="nav-item active"><a class="nav-link" href="<%= request.getContextPath() %>/staff/index_1.jsp">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/staff/about.jsp">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/staff/donate.jsp">Donate</a></li>
+            <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/staff/news.jsp">News</a></li>
+            <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/staff/contact.jsp">Contact Us</a></li>
+            <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/staff/mission.jsp">Our Mission</a></li>
         </ul>
         <div class="ml-auto">
             <div class="dropdown">
@@ -34,7 +34,7 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="<%= request.getContextPath() %>/staff/change_password.jsp">Change password</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout" onclick="return confirm('Would you like to log out?');">Sign out</a>
+                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout" onclick="return confirm('Confirm logout?');">Sign out</a>
                 </div>
             </div>
         </div>
@@ -44,6 +44,12 @@
 <button id="sidebarToggle" class="sidebar-toggle">☰</button>
 <div class="sidebar" id="managerSidebar">
     <ul>
-        <li><a href="activation.jsp">...</a></li>
+        <li><a href="<%= request.getContextPath() %>/event?action=create">Add Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/event?action=list">Update Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/event?action=list">List Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/event?action=list">View Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/staff/applications">View Applications</a></li>
     </ul>
 </div>
+
+
