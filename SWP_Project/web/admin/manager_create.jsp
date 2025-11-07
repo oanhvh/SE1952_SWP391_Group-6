@@ -21,7 +21,7 @@
     <body class="login-page">
         <div class="topbar d-flex align-items-center">
             <div class="container d-flex justify-content-between align-items-center">
-                <a class="brand text-decoration-none" href="<%=request.getContextPath()%>/admin/dashboard.jsp">
+                <a class="brand text-decoration-none" href="<%=request.getContextPath()%>/admin/listAccount.jsp">
                     <img src="<%=request.getContextPath()%>/images/logo.png" alt="logo"/>
                     <span class="text-white">Create Manager</span>
                 </a>

@@ -10,15 +10,15 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Event List</title>
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="css/style.css" />
-        <link rel="stylesheet" href="../css/responsive.css" />
-        <link rel="icon" href="images/fevicon.png" type="image/gif" />
-        <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
-        <link rel="stylesheet" href="../css/owl.carousel.min.css" />
-        <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
-        <link rel="stylesheet" href="../css/sidebar.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
         <style>
             .event-image {
                 width: 100%;
@@ -128,10 +128,7 @@
                                     
                                     <div class="mb-2">
                                         <small><strong><i class="fa fa-clock-o"></i> Date:</strong></small>
-                                        <p class="mb-1">
-                                            <fmt:formatDate value="${event.startDate}" pattern="dd/MM/yyyy HH:mm"/> - 
-                                            <fmt:formatDate value="${event.endDate}" pattern="dd/MM/yyyy HH:mm"/>
-                                        </p>
+                                        <p class="mb-1">${event.startDate} - ${event.endDate}</p>
                                     </div>
                                     
                                     <div class="mb-3">
@@ -185,14 +182,14 @@
         
         <jsp:include page="includes/footer.jsp" />
         
-        <script src="js/jquery.min.js"></script>
-        <script src="js/popper.min.js"></script>
-        <script src="js/bootstrap.bundle.min.js"></script>
-        <script src="js/jquery-3.0.0.min.js"></script>
-        <script src="js/plugin.js"></script>
-        <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-        <script src="js/custom.js"></script>
-        <script src="js/owl.carousel.js"></script>
+        <script src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/jquery-3.0.0.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/plugin.js"></script>
+        <script src="${pageContext.request.contextPath}/js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/custom.js"></script>
+        <script src="${pageContext.request.contextPath}/js/owl.carousel.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
     </body>
 </html>

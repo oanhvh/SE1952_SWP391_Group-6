@@ -34,7 +34,7 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="<%= request.getContextPath() %>/manager/change_password.jsp">Change password</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout" onclick="return confirm('Would you like to log out?');">Sign out</a>
+                    <a class="dropdown-item" href="<%= request.getContextPath() %>/logout" onclick="return confirm('Confirm logout?');">Sign out</a>
                 </div>
             </div>
         </div>

@@ -20,10 +20,6 @@ public class NotificationsController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        if (session == null || session.getAttribute("authUser") == null) {
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
-            return;
-        }
         Users user = (Users) session.getAttribute("authUser");
         String role = (String) session.getAttribute("role");
         // Hiện tại hỗ trợ volunteer bell UI
@@ -34,6 +30,8 @@ public class NotificationsController extends HttpServlet {
         }
 
         String servletPath = req.getServletPath();
+        
+        //xem danh sách thông báo (50 thông báo mới nhất 5+)
         if ("/notifications".equals(servletPath)) {
             List<NotificationItem> items = notificationsDAO.listForVolunteer(volunteerId, 50);
             int unread = notificationsDAO.getUnreadCountForVolunteer(volunteerId);
@@ -43,18 +41,20 @@ public class NotificationsController extends HttpServlet {
             return;
         }
 
-        // mark single as read via ?id=...
+        //đánh dấu 1 thông báo đã đọc
         if ("/notifications/mark".equals(servletPath)) {
             String idStr = req.getParameter("id");
             try {
                 int id = Integer.parseInt(idStr);
                 notificationsDAO.markAsRead(id, volunteerId);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+                //im lặng nếu lỗi không crash
+            }
             resp.sendRedirect(req.getContextPath() + "/notifications");
             return;
         }
 
-        // mark all
+        // đánh dấu đã đọc all
         if ("/notifications/mark-all".equals(servletPath)) {
             notificationsDAO.markAllAsRead(volunteerId);
             resp.sendRedirect(req.getContextPath() + "/notifications");

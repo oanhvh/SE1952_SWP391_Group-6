@@ -6,6 +6,8 @@ package dao;
 
 import entity.Event;
 import entity.VolunteerApplications;
+import entity.ApplicationReviewRow;
+import service.EmailService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,6 +50,53 @@ public class VolunteerApplicationsDAO extends DBUtils {
             while (rs.next()) {
                 VolunteerApplications app = extractVolunteerApplications(rs);
                 list.add(app);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Data for staff review list with volunteer full name and event name
+    public List<ApplicationReviewRow> getApplicationsForReviewByStatus(String status) {
+        List<ApplicationReviewRow> list = new ArrayList<>();
+        String sql = """
+            SELECT va.ApplicationID,
+                   u.FullName AS VolunteerFullName,
+                   e.EventName,
+                   va.Status,
+                   va.ApplicationDate,
+                   va.Motivation,
+                   va.Experience,
+                   (
+                       SELECT STRING_AGG(s.SkillName, ', ')
+                       FROM EventApplicationSkills eas
+                       JOIN Skills s ON s.SkillID = eas.SkillID
+                       WHERE eas.ApplicationID = va.ApplicationID
+                   ) AS SkillsCsv
+            FROM VolunteerApplications va
+            JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+            JOIN Users u ON v.UserID = u.UserID
+            JOIN Event e ON va.EventID = e.EventID
+            WHERE va.Status = ?
+            ORDER BY va.ApplicationDate DESC
+        """;
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ApplicationReviewRow row = new ApplicationReviewRow();
+                    row.setApplicationID(rs.getInt("ApplicationID"));
+                    row.setVolunteerFullName(rs.getString("VolunteerFullName"));
+                    row.setEventName(rs.getString("EventName"));
+                    row.setStatus(rs.getString("Status"));
+                    Timestamp t = rs.getTimestamp("ApplicationDate");
+                    if (t != null) row.setApplicationDate(t.toLocalDateTime());
+                    row.setMotivation(rs.getString("Motivation"));
+                    row.setExperience(rs.getString("Experience"));
+                    row.setSkills(rs.getString("SkillsCsv"));
+                    list.add(row);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -173,7 +222,12 @@ public class VolunteerApplicationsDAO extends DBUtils {
 
     // Review application: approve/reject, set staff comment, create notification for volunteer
     public boolean reviewApplication(int applicationId, int staffUserId, boolean approve, String staffComment) {
-        String sqlSelect = "SELECT VolunteerID, EventID FROM VolunteerApplications WHERE ApplicationID = ?";
+        String sqlSelect = "SELECT va.VolunteerID, va.EventID, e.EventName, e.Location, u.Email "
+                + "FROM VolunteerApplications va "
+                + "JOIN Event e ON va.EventID = e.EventID "
+                + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID "
+                + "JOIN Users u ON v.UserID = u.UserID "
+                + "WHERE va.ApplicationID = ?";
         String sqlUpdate = "UPDATE VolunteerApplications SET Status = ?, ApprovalDate = ?, ApprovedByStaffID = ?, StaffComment = ? WHERE ApplicationID = ?";
         String sqlNoti = "INSERT INTO Notifications (Title, Message, ReceiverID, IsRead, CreatedAt, Type, EventID) VALUES (?, ?, ?, 0, SYSUTCDATETIME(), 'Application', ?)";
 
@@ -192,6 +246,9 @@ public class VolunteerApplicationsDAO extends DBUtils {
             }
             int volunteerId = rs.getInt("VolunteerID");
             int eventId = rs.getInt("EventID");
+            String eventName = rs.getString("EventName");
+            String location = rs.getString("Location");
+            String volunteerEmail = rs.getString("Email");
 
             String newStatus = approve ? "Approved" : "Rejected";
             psUpd.setString(1, newStatus);
@@ -205,8 +262,16 @@ public class VolunteerApplicationsDAO extends DBUtils {
                 return false;
             }
 
-            String title = approve ? "Đơn ứng tuyển được duyệt" : "Đơn ứng tuyển bị từ chối";
-            String message = approve ? "Đơn của bạn đã được duyệt." : ("Đơn của bạn đã bị từ chối." + (staffComment != null && !staffComment.isEmpty() ? " Lý do: " + staffComment : ""));
+            String title = (approve ? "Đơn ứng tuyển được duyệt" : "Đơn ứng tuyển bị từ chối") +
+                           (eventName != null && !eventName.isEmpty() ? (" - " + eventName) : "");
+            String message = approve
+                    ? String.format("Đơn của bạn cho sự kiện '%s'%s đã được duyệt.",
+                                     eventName != null ? eventName : "",
+                                     (location != null && !location.isEmpty() ? " tại " + location : ""))
+                    : String.format("Đơn của bạn cho sự kiện '%s'%s đã bị từ chối.%s",
+                                     eventName != null ? eventName : "",
+                                     (location != null && !location.isEmpty() ? " tại " + location : ""),
+                                     (staffComment != null && !staffComment.isEmpty() ? " Lý do: " + staffComment : ""));
             psNoti.setString(1, title);
             psNoti.setString(2, message);
             psNoti.setInt(3, volunteerId);
@@ -214,6 +279,18 @@ public class VolunteerApplicationsDAO extends DBUtils {
             psNoti.executeUpdate();
 
             con.commit();
+
+            // Attempt to send email notification (non-blocking to DB result)
+            try {
+                if (volunteerEmail != null && !volunteerEmail.isEmpty()) {
+                    String subject = title;
+                    String body = message;
+                    EmailService.sendEmail(volunteerEmail, subject, body);
+                }
+            } catch (Exception mailEx) {
+                // Do not rollback DB; just log the failure
+                mailEx.printStackTrace();
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();

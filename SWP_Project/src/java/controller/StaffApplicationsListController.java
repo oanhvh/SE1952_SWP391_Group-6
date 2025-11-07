@@ -1,7 +1,7 @@
 package controller;
 
 import dao.VolunteerApplicationsDAO;
-import entity.VolunteerApplications;
+import entity.ApplicationReviewRow;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,17 +20,21 @@ public class StaffApplicationsListController extends HttpServlet {
         HttpSession session = request.getSession(false);
         Object roleObj = (session != null) ? session.getAttribute("role") : null;
         String role = roleObj != null ? roleObj.toString() : null;
-        if (role == null || !("Staff".equalsIgnoreCase(role) || "Manager".equalsIgnoreCase(role))) {
+        if (role == null || !("Staff".equalsIgnoreCase(role))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return;
         }
-
+        
+        //lấy tham số lọc trạng thái, mặc định là Pending
         String status = request.getParameter("status");
-        if (status == null || status.isBlank()) status = "Pending";
-
+        if (status == null || status.isBlank()) {
+            status = "Pending";
+        }
+        
+        //Đưa dữ liệu vào request để JSP hiển thị
         VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
-        List<VolunteerApplications> apps = dao.getVolunteerApplicationsByStatus(status);
-        request.setAttribute("applications", apps);
+        List<ApplicationReviewRow> rows = dao.getApplicationsForReviewByStatus(status);
+        request.setAttribute("rows", rows);
         request.setAttribute("filterStatus", status);
         request.getRequestDispatcher("/staff/applications_list.jsp").forward(request, response);
     }
