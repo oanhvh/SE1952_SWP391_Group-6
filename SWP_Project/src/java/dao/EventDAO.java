@@ -86,7 +86,7 @@ public class EventDAO {
         return eventList;
     }
 
-    public void addEvent(Event event) {
+    public boolean addEvent(Event event) {
         String sql = "INSERT INTO Event (ManagerID, CreatedByStaffID, EventName, Description, Location, StartDate, EndDate, Status, Capacity, Image, CategoryID, CreatedAt) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -106,9 +106,13 @@ public class EventDAO {
             pstmt.setString(10, event.getImage());
             pstmt.setInt(11, event.getCategoryID());
             pstmt.setTimestamp(12, Timestamp.valueOf(event.getCreatedAt()));
-            pstmt.executeUpdate();
+            int rows = pstmt.executeUpdate();
+            if (rows <= 0) {
+                throw new SQLException("No rows inserted for Event");
+            }
+            return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to insert Event: " + e.getMessage(), e);
         }
     }
 

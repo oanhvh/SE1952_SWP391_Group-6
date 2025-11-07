@@ -48,7 +48,7 @@ public class ViewEventController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Không thể tải danh sách sự kiện. Vui lòng thử lại sau.");
+            request.setAttribute("error", "Unable to load event list. Please try again later.");
             request.getRequestDispatcher("/volunteer/events.jsp").forward(request, response);
         }
     }

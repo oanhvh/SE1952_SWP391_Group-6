@@ -121,7 +121,7 @@ public class ProfileController extends HttpServlet {
                 forwardToEdit(request, response, user, role);
             }
 
-        // ---------------- UPDATE SKILLS ----------------
+            // ---------------- UPDATE SKILLS ----------------
         } else if ("updateSkills".equalsIgnoreCase(action)) {
             String[] selectedSkillIDs = request.getParameterValues("skillIDs");
 
@@ -139,7 +139,6 @@ public class ProfileController extends HttpServlet {
     }
 
     // ===================== Helper Methods =====================
-
     private void forwardToProfile(HttpServletRequest request, HttpServletResponse response, Users user, String role)
             throws ServletException, IOException {
         String scope = resolveScope(request, role);
@@ -154,9 +153,15 @@ public class ProfileController extends HttpServlet {
 
     private String resolveScope(HttpServletRequest request, String role) {
         String path = request.getServletPath();
-        if (path.startsWith("/manager/") || "Manager".equalsIgnoreCase(role)) return "manager";
-        if (path.startsWith("/staff/") || "Staff".equalsIgnoreCase(role)) return "staff";
-        if (path.startsWith("/volunteer/") || "Volunteer".equalsIgnoreCase(role)) return "volunteer";
+        if (path.startsWith("/manager/") || "Manager".equalsIgnoreCase(role)) {
+            return "manager";
+        }
+        if (path.startsWith("/staff/") || "Staff".equalsIgnoreCase(role)) {
+            return "staff";
+        }
+        if (path.startsWith("/volunteer/") || "Volunteer".equalsIgnoreCase(role)) {
+            return "volunteer";
+        }
         return "volunteer";
     }
 }

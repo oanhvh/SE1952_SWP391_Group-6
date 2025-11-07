@@ -31,15 +31,15 @@ public class CancelApplyController extends HttpServlet {
             String result = dao.cancelApplication(applicationId, cancelReason);
 
             switch (result) {
-                case "PENDING_CANCELLED" -> 
+                case "PENDING_CANCELLED" ->
                     session.setAttribute("cancelMsg", "✅ Cancel application");
-                case "APPROVED_CANCELLED" -> 
+                case "APPROVED_CANCELLED" ->
                     session.setAttribute("cancelMsg", "✅ Cancel application.");
-                case "REJECTED" -> 
+                case "REJECTED" ->
                     session.setAttribute("cancelMsg", "⚠️ Rejected.");
-                case "NOT_FOUND" -> 
+                case "NOT_FOUND" ->
                     session.setAttribute("cancelMsg", "❌ Can not found");
-                default -> 
+                default ->
                     session.setAttribute("cancelMsg", "❌ Can not cancel");
             }
 

@@ -74,20 +74,20 @@ public class CreateAdminController extends HttpServlet {
         try (Connection conn = DBUtils.getConnection1()) {
             conn.setAutoCommit(false);
             // Force Admin regardless of provided param
-                Users u = new Users();
-                u.setUsername(username);
-                u.setPasswordHash(password);
-                u.setRole("Admin");
-                u.setStatus("Active");
-                u.setFullName(fullName);
-                u.setEmail(email);
-                u.setPhone(phone);
+            Users u = new Users();
+            u.setUsername(username);
+            u.setPasswordHash(password);
+            u.setRole("Admin");
+            u.setStatus("Active");
+            u.setFullName(fullName);
+            u.setEmail(email);
+            u.setPhone(phone);
 
-                userDao.createUser(conn, u, true);
-                conn.commit();
-                // PRG redirect with success flag
-                response.sendRedirect(request.getContextPath() + "/admin/admin_create.jsp?success=1");
-                return;
+            userDao.createUser(conn, u, true);
+            conn.commit();
+            // PRG redirect with success flag
+            response.sendRedirect(request.getContextPath() + "/admin/admin_create.jsp?success=1");
+            return;
 
         } catch (Exception ex) {
             ex.printStackTrace();
