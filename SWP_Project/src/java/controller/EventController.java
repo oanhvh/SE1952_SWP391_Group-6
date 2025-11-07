@@ -135,7 +135,8 @@ public class EventController extends HttpServlet {
 
     private void listEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Event> eventList = eventService.getAllEvents();
+//        List<Event> eventList = eventService.getAllEvents();
+        List<Event> eventList = eventService.getEventsByStatus("Active");
         request.setAttribute("eventList", eventList);
         request.getRequestDispatcher("staff/listEvent.jsp").forward(request, response);
     }
@@ -168,7 +169,10 @@ public class EventController extends HttpServlet {
         if (uidObj instanceof Integer) {
             userIdAttr = (Integer) uidObj;
         } else if (uidObj instanceof String) {
-            try { userIdAttr = Integer.valueOf((String) uidObj); } catch (NumberFormatException ignore) {}
+            try {
+                userIdAttr = Integer.valueOf((String) uidObj);
+            } catch (NumberFormatException ignore) {
+            }
         }
         if (userIdAttr == null) {
             Users authUser = (Users) session.getAttribute("authUser");
@@ -199,12 +203,15 @@ public class EventController extends HttpServlet {
 
             eventService.addEvent(event);
             response.sendRedirect(request.getContextPath() + "/event?action=list");
-            
+
         } catch (IllegalArgumentException e) {
             List<Category> categoryList = categoryDAO.getAllCategory();
             request.setAttribute("categoryList", categoryList);
             if (event == null) {
-                try { event = buildEventFromRequest(request, false); } catch (Exception ignore) {}
+                try {
+                    event = buildEventFromRequest(request, false);
+                } catch (Exception ignore) {
+                }
             }
             request.setAttribute("event", event);
             request.setAttribute("error", e.getMessage());
@@ -214,7 +221,10 @@ public class EventController extends HttpServlet {
             List<Category> categoryList = categoryDAO.getAllCategory();
             request.setAttribute("categoryList", categoryList);
             if (event == null) {
-                try { event = buildEventFromRequest(request, false); } catch (Exception ignore) {}
+                try {
+                    event = buildEventFromRequest(request, false);
+                } catch (Exception ignore) {
+                }
             }
             request.setAttribute("event", event);
             request.setAttribute("error", "Create failed: " + e.getMessage());
