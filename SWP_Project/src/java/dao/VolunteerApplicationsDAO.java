@@ -194,12 +194,11 @@ public boolean applyEventByUserId(int userID, int eventID, String motivation, St
     int volunteerID = getVolunteerIdByUserId(userID);
     if (volunteerID == -1) return false;
 
-    String sql = "";
-//        """
-//        INSERT INTO VolunteerApplications
-//        (VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)
-//        VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)
-//    """;
+    String sql = """
+        INSERT INTO VolunteerApplications
+        (VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)
+        VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)
+    """;
 
     try (Connection conn = DBUtils.getConnection1();
          PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -220,15 +219,14 @@ public boolean applyEventByUserId(int userID, int eventID, String motivation, St
     // ✅ Lấy danh sách đã apply
     public List<VolunteerApplications> getApplicationsByUserId(int userID) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = "";
-//            """
-//            SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
-//            FROM VolunteerApplications va
-//            JOIN Event e ON va.EventID = e.EventID
-//            JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-//            WHERE v.UserID = ?
-//            ORDER BY va.ApplicationDate DESC
-//        """;
+        String sql = """
+            SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
+            FROM VolunteerApplications va
+            JOIN Event e ON va.EventID = e.EventID
+            JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+            WHERE v.UserID = ?
+            ORDER BY va.ApplicationDate DESC
+        """;
 
         try (Connection conn = DBUtils.getConnection1();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -263,13 +261,12 @@ public boolean applyEventByUserId(int userID, int eventID, String motivation, St
         String sqlSelect = "SELECT Status, StaffComment FROM VolunteerApplications WHERE ApplicationID = ?";
         String sqlDeleteSkills = "DELETE FROM EventApplicationSkills WHERE ApplicationID = ?";
         String sqlDeleteApp = "DELETE FROM VolunteerApplications WHERE ApplicationID = ? AND Status = 'Pending'";
-        String sqlUpdateCancel = "";
-//            """
-//            UPDATE VolunteerApplications
-//            SET Status = 'Cancelled',
-//                Motivation = CONCAT(ISNULL(Motivation, ''), CHAR(13) + CHAR(10), '--- Cancelled Reason: ', ?)
-//            WHERE ApplicationID = ? AND Status = 'Approved'
-//        """;
+        String sqlUpdateCancel = """
+            UPDATE VolunteerApplications
+            SET Status = 'Cancelled',
+                Motivation = CONCAT(ISNULL(Motivation, ''), CHAR(13) + CHAR(10), '--- Cancelled Reason: ', ?)
+            WHERE ApplicationID = ? AND Status = 'Approved'
+        """;
 
         try (Connection con = DBUtils.getConnection1();
              PreparedStatement psSelect = con.prepareStatement(sqlSelect);
@@ -337,17 +334,16 @@ public boolean applyEventByUserId(int userID, int eventID, String motivation, St
     // ✅ Lấy danh sách sự kiện tình nguyện hôm nay cho volunteer
 public List<VolunteerApplications> getTodayEventsByUserId(int userID) {
     List<VolunteerApplications> list = new ArrayList<>();
-    String sql = "";
-//        """
-//        SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
-//        FROM VolunteerApplications va
-//        JOIN Event e ON va.EventID = e.EventID
-//        JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-//        WHERE v.UserID = ?
-//          AND va.Status = 'Approved'
-//          AND CAST(GETDATE() AS DATE) BETWEEN CAST(e.StartDate AS DATE) AND CAST(e.EndDate AS DATE)
-//        ORDER BY e.StartDate
-//    """;
+    String sql = """
+        SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
+        FROM VolunteerApplications va
+        JOIN Event e ON va.EventID = e.EventID
+        JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+        WHERE v.UserID = ?
+          AND va.Status = 'Approved'
+          AND CAST(GETDATE() AS DATE) BETWEEN CAST(e.StartDate AS DATE) AND CAST(e.EndDate AS DATE)
+        ORDER BY e.StartDate
+    """;
 
     try (Connection conn = DBUtils.getConnection1();
          PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -395,15 +391,14 @@ public boolean markAsCompleted(int applicationId) {
     // Lấy danh sách các event đã hoàn thành (Completed)
 public List<VolunteerApplications> getCompletedApplicationsByUserId(int userID) {
     List<VolunteerApplications> list = new ArrayList<>();
-    String sql = "";
-//        """
-//        SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
-//        FROM VolunteerApplications va
-//        JOIN Event e ON va.EventID = e.EventID
-//        JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-//        WHERE v.UserID = ? AND va.Status = 'Completed'
-//        ORDER BY va.ApplicationDate DESC
-//    """;
+    String sql = """
+        SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
+        FROM VolunteerApplications va
+        JOIN Event e ON va.EventID = e.EventID
+        JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+        WHERE v.UserID = ? AND va.Status = 'Completed'
+        ORDER BY va.ApplicationDate DESC
+    """;
 
     try (Connection conn = DBUtils.getConnection1();
          PreparedStatement ps = conn.prepareStatement(sql)) {
