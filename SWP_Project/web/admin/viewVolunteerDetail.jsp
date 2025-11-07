@@ -16,6 +16,15 @@
     <div class="container mt-5">
         <div class="detail-container">
             <h4 class="mb-4 fw-bold">Volunteer Detail</h4>
+            <div class="mb-3">
+                <label class="form-label">Avatar</label><br>
+                <c:if test="${not empty volunteer.user.avatar}">
+                    <img src="${volunteer.user.avatar}" alt="Avatar" style="max-width:100px; display:block; margin-bottom:10px;"/>
+                </c:if>
+                <c:if test="${empty volunteer.user.avatar}">
+                    <img src="images/default-avatar.png" alt="No Avatar" style="max-width:100px; display:block; margin-bottom:10px;"/>
+                </c:if>
+            </div>
             <hr>
             <c:if test="${not empty message}">
                 <div class="alert alert-success">${message}</div>

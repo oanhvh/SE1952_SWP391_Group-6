@@ -101,7 +101,7 @@ public class UserService {
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
-        Part avatarPart = request.getPart("avatar");
+        Part avatarPart = request.getPart("avatarFile");
 
         String avatarPath = null;
         if (avatarPart != null && avatarPart.getSize() > 0) {
@@ -112,10 +112,9 @@ public class UserService {
             }
 
             String fileName = Paths.get(avatarPart.getSubmittedFileName()).getFileName().toString();
-            String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
-            String filePath = uploadPath + File.separator + uniqueFileName;
+            String filePath = uploadPath + File.separator + fileName;
             avatarPart.write(filePath);
-            avatarPath = "uploads/avatars/" + uniqueFileName;
+            avatarPath = "images/" + fileName;
         }
 
         UserDao userDao = new UserDao();

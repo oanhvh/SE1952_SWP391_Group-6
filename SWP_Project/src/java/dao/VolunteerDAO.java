@@ -115,7 +115,7 @@ public class VolunteerDAO {
     public VolunteerUser getVolunteerById(int volunteerId) {
         String sql = "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, "
                 + "v.IsSponsor, "
-                + "u.UserID, u.Username, u.FullName, u.Email, u.Phone, u.Role, u.Status AS UserStatus "
+                + "u.UserID, u.avatar, u.Username, u.FullName, u.Email, u.Phone, u.Role, u.Status AS UserStatus "
                 + "FROM Volunteer v "
                 + "JOIN Users u ON v.UserID = u.UserID "
                 + "WHERE v.VolunteerID = ?";
@@ -134,6 +134,7 @@ public class VolunteerDAO {
                     user.setPhone(rs.getString("Phone"));
                     user.setRole(rs.getString("Role"));
                     user.setStatus(rs.getString("UserStatus"));
+                    user.setAvatar(rs.getString("avatar"));
 
                     VolunteerUser volunteer = new VolunteerUser();
                     volunteer.setVolunteerID(rs.getInt("VolunteerID"));

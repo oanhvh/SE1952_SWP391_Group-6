@@ -25,6 +25,7 @@
 
         <c:if test="${not empty user}">
             <form action="EditProfileController" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="username" value="${user.username}"/>
                 <input type="hidden" name="userId" value="${user.userID}"/>
 
                 <div class="mb-3">
@@ -56,7 +57,12 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a href="viewAccountDetail?userId=${user.userID}" class="btn btn-secondary">Cancel</a>
+
+            </form>
+
+            <form action="viewAccountDetail" method="post" style="display:inline;">
+                <input type="hidden" name="userId" value="${user.userID}"/>
+                <button type="submit" class="btn btn-secondary">Back to detail</button>
             </form>
 
         </c:if>

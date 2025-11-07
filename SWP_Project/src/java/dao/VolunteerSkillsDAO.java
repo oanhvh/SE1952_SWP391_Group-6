@@ -22,13 +22,14 @@ import java.util.List;
 public class VolunteerSkillsDAO {
     public List<Skills> getSkillsByUserID(int userID) {
     List<Skills> list = new ArrayList<>();
-    String sql = """
-        SELECT s.SkillID, s.SkillName, s.Description
-        FROM VolunteerSkills vs
-        JOIN Volunteer v ON vs.VolunteerID = v.VolunteerID
-        JOIN Skills s ON vs.SkillID = s.SkillID
-        WHERE v.UserID = ?
-    """;
+    String sql = "";
+//        """
+//        SELECT s.SkillID, s.SkillName, s.Description
+//        FROM VolunteerSkills vs
+//        JOIN Volunteer v ON vs.VolunteerID = v.VolunteerID
+//        JOIN Skills s ON vs.SkillID = s.SkillID
+//        WHERE v.UserID = ?
+//    """;
 
     try (Connection con = DBUtils.getConnection1();
          PreparedStatement ps = con.prepareStatement(sql)) {
@@ -51,14 +52,16 @@ public class VolunteerSkillsDAO {
 
 
 public void updateSkillsForUser(int userID, String[] selectedSkillIDs) {
-    String deleteSQL = """
-        DELETE FROM VolunteerSkills 
-        WHERE VolunteerID = (SELECT VolunteerID FROM Volunteer WHERE UserID = ?)
-    """;
-    String insertSQL = """
-        INSERT INTO VolunteerSkills (VolunteerID, SkillID, ProficiencyLevel)
-        VALUES ((SELECT VolunteerID FROM Volunteer WHERE UserID = ?), ?, 'Intermediate')
-    """;
+    String deleteSQL = "";
+//        """
+//        DELETE FROM VolunteerSkills
+//        WHERE VolunteerID = (SELECT VolunteerID FROM Volunteer WHERE UserID = ?)
+//    """;
+ String insertSQL = "";
+//    """
+//        INSERT INTO VolunteerSkills (VolunteerID, SkillID, ProficiencyLevel)
+//        VALUES ((SELECT VolunteerID FROM Volunteer WHERE UserID = ?), ?, 'Intermediate')
+//    """;
 
     try (Connection con = DBUtils.getConnection1()) {
         // Xóa kỹ năng cũ
