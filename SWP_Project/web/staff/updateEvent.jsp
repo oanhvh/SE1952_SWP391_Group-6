@@ -76,8 +76,12 @@
                 <input type="hidden" name="eventID" value="${event.eventID}">
                 <input type="hidden" name="oldImage" value="${event.image}">
 
-                <c:if test="${not empty event.createdAt}">
+                <%--<c:if test="${not empty event.createdAt}">
                     <input type="hidden" name="createdAt" value="<fmt:formatDate value='${event.createdAt}' pattern='dd-MM-yyyy HH:mm' />">
+                </c:if>--%>
+                <c:if test="${not empty event.createdAt}">
+                    <fmt:formatDate value="${event.createdAt}" pattern="dd-MM-yyyy HH:mm" var="formattedCreatedAt" />
+                    <input type="hidden" name="createdAt" value="${formattedCreatedAt}">
                 </c:if>
 
                 <div class="form-group mb-3">
@@ -149,11 +153,19 @@
                 <div class="form-group mb-3">
                     <label>Status <span class="text-danger">*</span></label>
                     <select class="form-control" name="status" required>
+                        <option value="Active" <c:if test="${event.status eq 'Active'}">selected</c:if>>Active</option>
+                        <option value="Inactive" <c:if test="${event.status eq 'Inactive'}">selected</c:if>>Inactive</option>
+                    </select>
+                </div>
+                
+                <%--<div class="form-group mb-3">
+                    <label>Status <span class="text-danger">*</span></label>
+                    <select class="form-control" name="status" required>
                         <option value="Pending" ${event.status == 'Pending' ? 'selected' : ''}>Pending</option>
                         <option value="Active" ${event.status == 'Active' ? 'selected' : ''}>Active</option>
                         <option value="Completed" ${event.status == 'Completed' ? 'selected' : ''}>Completed</option>
                     </select>
-                </div>
+                </div>--%>
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Update Event</button>

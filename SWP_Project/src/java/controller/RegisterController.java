@@ -62,7 +62,7 @@ public class RegisterController extends HttpServlet {
 
         try (Connection conn = DBUtils.getConnection1()) {
             conn.setAutoCommit(false);
-
+            
             //tạo tài khoản volunteer + user || staff + user
             if ("Volunteer".equalsIgnoreCase(role)) {
                 Users u = new Users();
@@ -76,6 +76,7 @@ public class RegisterController extends HttpServlet {
                 u.setLoginProvider("Local");
                 u.setIsEmailVerified(false);
                 u.setIsPhoneVerified(false);
+
                 int userId = userDao.createUser(conn, u, true);
 
                 volunteerDAO.createVolunteer(conn, userId); //tạo hồ sơ liên kết với user
@@ -120,18 +121,18 @@ public class RegisterController extends HttpServlet {
             errorForward(request, response, "Registration failed. Please try again.");
         }
     }
-
+    
     //xóa khoảng trắng
     private String param(HttpServletRequest req, String name) {
         String v = req.getParameter(name);
         return v != null ? v.trim() : null;
     }
-
+    
     //kiểm tra chuỗi rỗng
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }
-
+    
     private void errorForward(HttpServletRequest request, HttpServletResponse response, String message)
             throws ServletException, IOException {
         request.setAttribute("error", message);

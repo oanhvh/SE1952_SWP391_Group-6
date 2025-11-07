@@ -43,14 +43,13 @@ public class CreateManagerController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Only Admin can post
         HttpSession session = request.getSession(false);
         String sessionRole = session != null ? (String) session.getAttribute("role") : null;
         if (sessionRole == null || !"Admin".equalsIgnoreCase(sessionRole)) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
-        // Accept either 'type' or 'role' but force Manager
+        // lấy tham số từ form
         String type = param(request, "type");
         String roleParam = param(request, "role");
         String username = param(request, "username");
@@ -58,7 +57,7 @@ public class CreateManagerController extends HttpServlet {
         String fullName = param(request, "fullName");
         String email = param(request, "email");
         String phone = param(request, "phone");
-        // Extra fields from JSP (optional for now)
+        // tên tổ chức
         String managerCode = param(request, "managerCode");
         String department = param(request, "department");
         String position = param(request, "position");
@@ -77,26 +76,26 @@ public class CreateManagerController extends HttpServlet {
 
         try (Connection conn = DBUtils.getConnection1()) {
             conn.setAutoCommit(false);
-            // Force Manager regardless of provided param
-                Users u = new Users();
-                u.setUsername(username);
-                u.setPasswordHash(password);
-                u.setRole("Manager");
-                u.setStatus("Active");
-                u.setFullName(fullName);
-                u.setEmail(email);
-                u.setPhone(phone);
+            // tạo User
+            Users u = new Users();
+            u.setUsername(username);
+            u.setPasswordHash(password);
+            u.setRole("Manager");
+            u.setStatus("Active");
+            u.setFullName(fullName);
+            u.setEmail(email);
+            u.setPhone(phone);
 
-                int userId = userDao.createUser(conn, u, true);
-                // Keep DAO call compatible with existing signature. Map available info.
-                String managerName = !isBlank(fullName) ? fullName : username;
-                String contactInfo = !isBlank(phone) ? phone : email;
-                String address = position; // temporary mapping; adjust DAO to proper fields later
-                managerDAO.createManager(conn, userId, managerName, contactInfo, address, null);
+            int userId = userDao.createUser(conn, u, true);
+            //tạo Manager profile
+            String managerName = !isBlank(fullName) ? fullName : username;
+            String contactInfo = !isBlank(phone) ? phone : email;
+            String address = position; // temporary mapping; adjust DAO to proper fields later
+            managerDAO.createManager(conn, userId, managerName, contactInfo, address, null);
 
-                conn.commit();
-                response.sendRedirect(request.getContextPath() + "/admin/manager_create.jsp?success=1");
-                return;
+            conn.commit();
+            response.sendRedirect(request.getContextPath() + "/admin/manager_create.jsp?success=1");
+            return;
 
         } catch (Exception ex) {
             ex.printStackTrace();

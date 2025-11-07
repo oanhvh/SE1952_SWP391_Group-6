@@ -30,7 +30,7 @@ import java.sql.ResultSet;
     "/account/change-password"
 })
 public class ChangePasswordController extends HttpServlet {
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,18 +40,17 @@ public class ChangePasswordController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        
+
         //kiếm tra quyền
         String scope = resolveScope(request);
         if (!isScopeAllowed(scope, session)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
-        
+
         forwardToScopeJsp(request, response, scope);
     }
-    
-    
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -130,7 +129,7 @@ public class ChangePasswordController extends HttpServlet {
             setErrorAndForward(request, response, "An error occurred, please try again");
         }
     }
-    
+
     private static String trimOrNull(String s) {
         return s == null ? null : s.trim();
     }

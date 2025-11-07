@@ -13,10 +13,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Create Event</title>
-        <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="../css/style.css" />
-        <link rel="stylesheet" href="../css/responsive.css" />
-        <link rel="stylesheet" href="../css/sidebar.css" />
         <style>
             .form-container {
                 max-width: 700px;
@@ -50,7 +46,6 @@
         </style>
     </head>
     <body>
-        <jsp:include page="includes/header.jsp" />
         <div class="form-container">
             <h3 class="text-center mb-4">Create New Event</h3>
 
@@ -205,14 +200,7 @@
                     return false;
                 }
 
-                // Convert format to dd-MM-yyyy HH:mm
-                const formatDate = (d) => {
-                    const pad = (n) => n < 10 ? '0' + n : n;
-                    return pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-                };
-
-                startEl.value = formatDate(start);
-                endEl.value = formatDate(end);
+                // Do not convert values; submit ISO from datetime-local for backend parsing
                 return true;
             }
         </script>
