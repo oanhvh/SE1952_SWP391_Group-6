@@ -191,8 +191,8 @@
                         updateStrength(pwd.value);
                     });
                 }
-                if(toggle && pwd){
-                    toggle.addEventListener('click', function(){
+                if (toggle && pwd) {
+                    toggle.addEventListener('click', function () {
                         var show = pwd.type === 'password';
                         pwd.type = show ? 'text' : 'password';
                         toggle.classList.toggle('fa-eye', show);
@@ -272,6 +272,10 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
+<<<<<<< HEAD
+</html>
+=======
 </html>
 
 
+>>>>>>> mainV1
