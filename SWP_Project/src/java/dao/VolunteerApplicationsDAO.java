@@ -4,9 +4,9 @@
  */
 package dao;
 
+import entity.ApplicationReviewRow;
 import entity.Event;
 import entity.VolunteerApplications;
-import entity.ApplicationReviewRow;
 import service.EmailService;
 
 import java.sql.Connection;
@@ -60,27 +60,28 @@ public class VolunteerApplicationsDAO extends DBUtils {
     // Data for staff review list with volunteer full name and event name
     public List<ApplicationReviewRow> getApplicationsForReviewByStatus(String status) {
         List<ApplicationReviewRow> list = new ArrayList<>();
-        String sql = """
-                    SELECT va.ApplicationID,
-                           u.FullName AS VolunteerFullName,
-                           e.EventName,
-                           va.Status,
-                           va.ApplicationDate,
-                           va.Motivation,
-                           va.Experience,
-                           (
-                               SELECT STRING_AGG(s.SkillName, ', ')
-                               FROM EventApplicationSkills eas
-                               JOIN Skills s ON s.SkillID = eas.SkillID
-                               WHERE eas.ApplicationID = va.ApplicationID
-                           ) AS SkillsCsv
-                    FROM VolunteerApplications va
-                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-                    JOIN Users u ON v.UserID = u.UserID
-                    JOIN Event e ON va.EventID = e.EventID
-                    WHERE va.Status = ?
-                    ORDER BY va.ApplicationDate DESC
-                """;
+        String sql =
+                """
+                            SELECT va.ApplicationID,
+                                   u.FullName AS VolunteerFullName,
+                                   e.EventName,
+                                   va.Status,
+                                   va.ApplicationDate,
+                                   va.Motivation,
+                                   va.Experience,
+                                   (
+                                       SELECT STRING_AGG(s.SkillName, ', ')
+                                       FROM EventApplicationSkills eas
+                                       JOIN Skills s ON s.SkillID = eas.SkillID
+                                       WHERE eas.ApplicationID = va.ApplicationID
+                                   ) AS SkillsCsv
+                            FROM VolunteerApplications va
+                            JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+                            JOIN Users u ON v.UserID = u.UserID
+                            JOIN Event e ON va.EventID = e.EventID
+                            WHERE va.Status = ?
+                            ORDER BY va.ApplicationDate DESC
+                        """;
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
             try (ResultSet rs = ps.executeQuery()) {
@@ -105,7 +106,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
 
     public void addVolunteerApplication(VolunteerApplications app) {
-        String sql = "INSERT INTO VolunteerApplication (VolunteerID, EventID, Status, ApplicationDate, ApprovalDate, ApprovedByStaffID) "
         String sql = "INSERT INTO VolunteerApplications (VolunteerID, EventID, Status, ApplicationDate, ApprovalDate, ApprovedByStaffID) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -133,7 +133,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
 
     public void updateVolunteerApplication(VolunteerApplications app) {
-        String sql = "UPDATE VolunteerApplication SET VolunteerID = ?, EventID = ?, Status = ?, "
         String sql = "UPDATE VolunteerApplications SET VolunteerID = ?, EventID = ?, Status = ?, "
                 + "ApplicationDate = ?, ApprovalDate = ?, ApprovedByStaffID = ? WHERE ApplicationID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -162,7 +161,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
 
     public void deleteVolunteerApplication(int applicationID) {
-        String sql = "DELETE FROM VolunteerApplication WHERE ApplicationID = ?";
         String sql = "DELETE FROM VolunteerApplications WHERE ApplicationID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, applicationID);
@@ -174,7 +172,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
 
     public List<VolunteerApplications> getVolunteerApplicationsByStatus(String status) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = "SELECT * FROM VolunteerApplication WHERE Status = ?";
         String sql = "SELECT * FROM VolunteerApplications WHERE Status = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, status);
