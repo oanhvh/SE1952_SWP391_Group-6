@@ -24,7 +24,7 @@
             </button>
 
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuButton">
-                <li><a class="dropdown-item" href="ProfileController">Profile</a></li>
+                <li><a class="dropdown-item" href="AdminProfileController">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="<%= request.getContextPath() %>/logout" onclick="return confirm('Confirm logout?');">Sign out</a></li>
             </ul>

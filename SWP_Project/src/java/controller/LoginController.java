@@ -79,14 +79,14 @@ public class LoginController extends HttpServlet {
         session.setAttribute("userId", user.getUserID());
 
         if ("Volunteer".equalsIgnoreCase(role)) {
-            session.setAttribute("volunteerId", user.getUserID()); 
+            session.setAttribute("volunteerId", user.getUserID());
             response.sendRedirect(request.getContextPath() + "/volunteer/index_1.jsp");
         } else if ("Staff".equalsIgnoreCase(role)) {
             response.sendRedirect(request.getContextPath() + "/staff/index_1.jsp");
         } else if ("Manager".equalsIgnoreCase(role)) {
             response.sendRedirect(request.getContextPath() + "/manager/index_1.jsp");
         } else if ("Admin".equalsIgnoreCase(role)) {
-            response.sendRedirect(request.getContextPath() + "/admin/listAccount.jsp");
+            response.sendRedirect(request.getContextPath() + "/ListAccount");
         } else {
             response.sendRedirect(request.getContextPath() + "/");
         }

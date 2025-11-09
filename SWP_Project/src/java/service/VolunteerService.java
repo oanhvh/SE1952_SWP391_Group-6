@@ -5,7 +5,6 @@ import entity.VolunteerUser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,7 +39,7 @@ public class VolunteerService {
         }
 
         request.setAttribute("volunteerList", volunteers);
-        request.getRequestDispatcher("volunteerList.jsp").forward(request, response);
+        request.getRequestDispatcher("admin/volunteerList.jsp").forward(request, response);
     }
 
     public void getVolunteerDetail(HttpServletRequest request, HttpServletResponse response)
@@ -62,7 +61,7 @@ public class VolunteerService {
                 e.printStackTrace();
             }
         }
-        request.getRequestDispatcher("viewVolunteerDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("admin/viewVolunteerDetail.jsp").forward(request, response);
     }
 
     public void updateVolunteerStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -97,6 +96,6 @@ public class VolunteerService {
             request.setAttribute("error", "Missing volunteer ID or status.");
         }
 
-        request.getRequestDispatcher("viewVolunteerDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("admin/viewVolunteerDetail.jsp").forward(request, response);
     }
 }

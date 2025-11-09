@@ -6,23 +6,20 @@ package dao;
 
 import entity.Skills;
 import entity.Users;
-import entity.VolunteerSkills;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.Statement;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.sql.SQLException;
 
 /**
- *
  * @author Duc
  */
 public class UserDao extends DBUtils {
@@ -83,7 +80,7 @@ public class UserDao extends DBUtils {
     }
 
     public Users getUserbyUsername(String Username) {
-        String sql = "SELECT * from Users where Username = ?";
+        String sql = "SELECT * FROM Users WHERE Username = ?";
         Users user = null;
 
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -163,7 +160,7 @@ public class UserDao extends DBUtils {
             throw new SQLException(e);
         }
     }
-    
+
     //Tìm trong database xem có user nào đã đăng ký với Google ID này chưa?
     private Users findByGoogleId(Connection cn, String googleId) throws SQLException {
         String sql = "SELECT TOP 1 * FROM Users WHERE GoogleID = ?";
@@ -181,7 +178,7 @@ public class UserDao extends DBUtils {
         }
         return null;
     }
-    
+
     //Tìm trong database xem có user nào đã đăng ký với email này chưa?
     private Users findByEmail(Connection cn, String email) throws SQLException {
         if (email == null || email.trim().isEmpty()) {
@@ -202,7 +199,7 @@ public class UserDao extends DBUtils {
         }
         return null;
     }
-    
+
     //User đã có tài khoản bằng email, nay muốn thêm đăng nhập bằng Google vào tài khoản đó
     private void linkGoogleToUser(Connection cn, int userId, String googleId, boolean emailVerified, String fullName, String avatar) throws SQLException {
         String sql = "UPDATE Users SET GoogleID = ?, LoginProvider = 'Google', "
@@ -218,7 +215,7 @@ public class UserDao extends DBUtils {
             ps.executeUpdate();
         }
     }
-    
+
     //Khi user đăng nhập lại bằng Google/Facebook, cập nhật thông tin mới nhất từ nhà cung cấp
     private void updateLoginMeta(Connection cn, int userId, String provider, boolean emailVerified, String fullName, String avatar) throws SQLException {
         String sql = "UPDATE Users SET LoginProvider = ?, "
@@ -234,7 +231,7 @@ public class UserDao extends DBUtils {
             ps.executeUpdate();
         }
     }
-    
+
     //Tạo tài khoản mới hoàn toàn cho user đăng nhập bằng Google lần đầu
     private int insertGoogleUser(Connection cn, String googleId, String email, String fullName, String avatar, boolean emailVerified) throws SQLException {
         String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, DateOfBirth, Phone, Avatar, "
@@ -327,7 +324,11 @@ public class UserDao extends DBUtils {
             pstmt.setString(4, user.getStatus());
             pstmt.setString(5, user.getFullName());
             pstmt.setString(6, user.getEmail());
-            pstmt.setDate(7, user.getDateOfBirth() != null ? Date.valueOf(user.getDateOfBirth()) : null);
+            if (user.getDateOfBirth() != null) {
+                pstmt.setDate(7, java.sql.Date.valueOf(user.getDateOfBirth()));
+            } else {
+                pstmt.setNull(7, java.sql.Types.DATE);
+            }
             pstmt.setString(8, user.getPhone());
             pstmt.setString(9, user.getAvatar());
             pstmt.setTimestamp(10, user.getCreatedAt() != null ? Timestamp.valueOf(user.getCreatedAt()) : null);
@@ -474,7 +475,7 @@ public class UserDao extends DBUtils {
     }
 
     public boolean updateProfile(Users user) {
-        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, DateOfBirth = ?, Avatar = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, DateOfBirth = ?, Avatar = ?, FacebookID = ?, ogleID = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getFullName());
             ps.setString(2, user.getEmail());
@@ -485,7 +486,22 @@ public class UserDao extends DBUtils {
                 ps.setNull(4, java.sql.Types.DATE);
             }
             ps.setString(5, user.getAvatar());
-            ps.setInt(6, user.getUserID());
+
+            // FacebookID (param 6)
+            if (user.getFacebookID() != null && !user.getFacebookID().trim().isEmpty()) {
+                ps.setString(6, user.getFacebookID());
+            } else {
+                ps.setNull(6, java.sql.Types.VARCHAR);
+            }
+
+            // GoogleID (param 7)
+            if (user.getGoogleID() != null && !user.getGoogleID().trim().isEmpty()) {
+                ps.setString(7, user.getGoogleID());
+            } else {
+                ps.setNull(7, java.sql.Types.VARCHAR);
+            }
+
+            ps.setInt(8, user.getUserID());
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -494,52 +510,98 @@ public class UserDao extends DBUtils {
     }
 
     public boolean updateProfileByUsername(Users user) {
-        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, UpdatedAt = ? WHERE Username = ?";
-        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, user.getFullName());
-            ps.setString(2, user.getEmail());
-            ps.setString(3, user.getPhone());
-            ps.setTimestamp(4, Timestamp.valueOf(user.getUpdatedAt()));
-            ps.setString(5, user.getUsername());
+        StringBuilder sql = new StringBuilder(
+                "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, UpdatedAt = ?"
+        );
+
+        if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+            sql.append(", Avatar = ?");
+        }
+        sql.append(" WHERE Username = ?");
+
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            ps.setString(index++, user.getFullName());
+            ps.setString(index++, user.getEmail());
+            ps.setString(index++, user.getPhone());
+            ps.setTimestamp(index++, Timestamp.valueOf(user.getUpdatedAt()));
+
+            if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+                ps.setString(index++, user.getAvatar());
+            }
+
+            ps.setString(index, user.getUsername());
             return ps.executeUpdate() > 0;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
-    
-    public List<Skills> getSkillsByUserID(int userID) {
-    List<Skills> list = new ArrayList<>();
 
-    String sql = """
-        SELECT 
-            s.SkillID,
-            s.SkillName,
-            s.Description
-        FROM VolunteerSkills vs
-        JOIN Volunteer v ON vs.VolunteerID = v.VolunteerID
-        JOIN Skills s ON vs.SkillID = s.SkillID
-        WHERE v.UserID = ?
-    """;
-
-    try (Connection con = DBUtils.getConnection1();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-        ps.setInt(1, userID);
-        ResultSet rs = ps.executeQuery();
-
-        while (rs.next()) {
-            Skills skill = new Skills();
-            skill.setSkillID(rs.getInt("SkillID"));
-            skill.setSkillName(rs.getString("SkillName"));
-            skill.setDescription(rs.getString("Description"));
-
-            list.add(skill);
+    public int getUserIdByUsername(String username) {
+        String sql = "SELECT UserID FROM Users WHERE Username = ?";
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("UserID");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return -1;
     }
 
-    return list;
-}
 
+    public List<Skills> getSkillsByUserID(int userID) {
+        List<Skills> list = new ArrayList<>();
+
+        String sql =
+                "SELECT "
+                        + "s.SkillID, "
+                        + "s.SkillName, "
+                        + "s.Description "
+                        + "FROM VolunteerSkills vs "
+                        + "JOIN Volunteer v ON vs.VolunteerID = v.VolunteerID "
+                        + "JOIN Skills s ON vs.SkillID = s.SkillID "
+                        + "WHERE v.UserID = ?";
+
+
+        try (Connection con = DBUtils.getConnection1();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userID);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Skills skill = new Skills();
+                skill.setSkillID(rs.getInt("SkillID"));
+                skill.setSkillName(rs.getString("SkillName"));
+                skill.setDescription(rs.getString("Description"));
+
+                list.add(skill);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public boolean isPhoneExisted(String phone) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE phone = ?";
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
