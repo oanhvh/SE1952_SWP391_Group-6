@@ -59,11 +59,11 @@ public class StaffApplicationReviewController extends HttpServlet {
         }
         
         //Gọi DAO để cập nhật trạng thái đơn
-        boolean ok = applicationsDAO.reviewApplication(applicationId, staffId, approve, staffComment);
+//        boolean ok = applicationsDAO.reviewApplication(applicationId, staffId, approve, staffComment);
         
         //Chuyển hướng về danh sách + thông báo
         String next = req.getContextPath() + "/staff/applications?status=Pending";
-        next += ok ? "&msg=" + (approve ? "approved" : "rejected") : "&error=update_failed";
+//        next += ok ? "&msg=" + (approve ? "approved" : "rejected") : "&error=update_failed";
         resp.sendRedirect(next);
     }
 }

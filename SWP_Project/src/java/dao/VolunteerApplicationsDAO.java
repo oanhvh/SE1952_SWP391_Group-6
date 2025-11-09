@@ -60,28 +60,28 @@ public class VolunteerApplicationsDAO extends DBUtils {
     // Data for staff review list with volunteer full name and event name
     public List<ApplicationReviewRow> getApplicationsForReviewByStatus(String status) {
         List<ApplicationReviewRow> list = new ArrayList<>();
-        String sql =
-                """
-                            SELECT va.ApplicationID,
-                                   u.FullName AS VolunteerFullName,
-                                   e.EventName,
-                                   va.Status,
-                                   va.ApplicationDate,
-                                   va.Motivation,
-                                   va.Experience,
-                                   (
-                                       SELECT STRING_AGG(s.SkillName, ', ')
-                                       FROM EventApplicationSkills eas
-                                       JOIN Skills s ON s.SkillID = eas.SkillID
-                                       WHERE eas.ApplicationID = va.ApplicationID
-                                   ) AS SkillsCsv
-                            FROM VolunteerApplications va
-                            JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-                            JOIN Users u ON v.UserID = u.UserID
-                            JOIN Event e ON va.EventID = e.EventID
-                            WHERE va.Status = ?
-                            ORDER BY va.ApplicationDate DESC
-                        """;
+        String sql = "";
+//                """
+//                            SELECT va.ApplicationID,
+//                                   u.FullName AS VolunteerFullName,
+//                                   e.EventName,
+//                                   va.Status,
+//                                   va.ApplicationDate,
+//                                   va.Motivation,
+//                                   va.Experience,
+//                                   (
+//                                       SELECT STRING_AGG(s.SkillName, ', ')
+//                                       FROM EventApplicationSkills eas
+//                                       JOIN Skills s ON s.SkillID = eas.SkillID
+//                                       WHERE eas.ApplicationID = va.ApplicationID
+//                                   ) AS SkillsCsv
+//                            FROM VolunteerApplications va
+//                            JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+//                            JOIN Users u ON v.UserID = u.UserID
+//                            JOIN Event e ON va.EventID = e.EventID
+//                            WHERE va.Status = ?
+//                            ORDER BY va.ApplicationDate DESC
+//                        """;
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
             try (ResultSet rs = ps.executeQuery()) {
@@ -322,11 +322,12 @@ public class VolunteerApplicationsDAO extends DBUtils {
         int volunteerID = getVolunteerIdByUserId(userID);
         if (volunteerID == -1) return false;
 
-        String sql = """
-                    INSERT INTO VolunteerApplications
-                    (VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)
-                    VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)
-                """;
+        String sql = "";
+//                    """
+//                    INSERT INTO VolunteerApplications
+//                    (VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)
+//                    VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)
+//                """;
 
         try (Connection conn = DBUtils.getConnection1();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -347,14 +348,15 @@ public class VolunteerApplicationsDAO extends DBUtils {
     // ✅ Lấy danh sách đã apply
     public List<VolunteerApplications> getApplicationsByUserId(int userID) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = """
-                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
-                    FROM VolunteerApplications va
-                    JOIN Event e ON va.EventID = e.EventID
-                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-                    WHERE v.UserID = ?
-                    ORDER BY va.ApplicationDate DESC
-                """;
+        String sql = "";
+//                    """
+//                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
+//                    FROM VolunteerApplications va
+//                    JOIN Event e ON va.EventID = e.EventID
+//                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+//                    WHERE v.UserID = ?
+//                    ORDER BY va.ApplicationDate DESC
+//                """;
 
         try (Connection conn = DBUtils.getConnection1();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -389,12 +391,13 @@ public class VolunteerApplicationsDAO extends DBUtils {
         String sqlSelect = "SELECT Status, StaffComment FROM VolunteerApplications WHERE ApplicationID = ?";
         String sqlDeleteSkills = "DELETE FROM EventApplicationSkills WHERE ApplicationID = ?";
         String sqlDeleteApp = "DELETE FROM VolunteerApplications WHERE ApplicationID = ? AND Status = 'Pending'";
-        String sqlUpdateCancel = """
-                    UPDATE VolunteerApplications
-                    SET Status = 'Cancelled',
-                        Motivation = CONCAT(ISNULL(Motivation, ''), CHAR(13) + CHAR(10), '--- Cancelled Reason: ', ?)
-                    WHERE ApplicationID = ? AND Status = 'Approved'
-                """;
+        String sqlUpdateCancel = "";
+//                    """
+//                    UPDATE VolunteerApplications
+//                    SET Status = 'Cancelled',
+//                        Motivation = CONCAT(ISNULL(Motivation, ''), CHAR(13) + CHAR(10), '--- Cancelled Reason: ', ?)
+//                    WHERE ApplicationID = ? AND Status = 'Approved'
+//                """;
 
         try (Connection con = DBUtils.getConnection1();
              PreparedStatement psSelect = con.prepareStatement(sqlSelect);
@@ -461,16 +464,17 @@ public class VolunteerApplicationsDAO extends DBUtils {
     // ✅ Lấy danh sách sự kiện tình nguyện hôm nay cho volunteer
     public List<VolunteerApplications> getTodayEventsByUserId(int userID) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = """
-                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
-                    FROM VolunteerApplications va
-                    JOIN Event e ON va.EventID = e.EventID
-                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-                    WHERE v.UserID = ?
-                      AND va.Status = 'Approved'
-                      AND CAST(GETDATE() AS DATE) BETWEEN CAST(e.StartDate AS DATE) AND CAST(e.EndDate AS DATE)
-                    ORDER BY e.StartDate
-                """;
+        String sql = "";
+//                    """
+//                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
+//                    FROM VolunteerApplications va
+//                    JOIN Event e ON va.EventID = e.EventID
+//                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+//                    WHERE v.UserID = ?
+//                      AND va.Status = 'Approved'
+//                      AND CAST(GETDATE() AS DATE) BETWEEN CAST(e.StartDate AS DATE) AND CAST(e.EndDate AS DATE)
+//                    ORDER BY e.StartDate
+//                """;
 
         try (Connection conn = DBUtils.getConnection1();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -518,14 +522,15 @@ public class VolunteerApplicationsDAO extends DBUtils {
     // Lấy danh sách các event đã hoàn thành (Completed)
     public List<VolunteerApplications> getCompletedApplicationsByUserId(int userID) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = """
-                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
-                    FROM VolunteerApplications va
-                    JOIN Event e ON va.EventID = e.EventID
-                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-                    WHERE v.UserID = ? AND va.Status = 'Completed'
-                    ORDER BY va.ApplicationDate DESC
-                """;
+        String sql ="";
+//                """
+//                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
+//                    FROM VolunteerApplications va
+//                    JOIN Event e ON va.EventID = e.EventID
+//                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
+//                    WHERE v.UserID = ? AND va.Status = 'Completed'
+//                    ORDER BY va.ApplicationDate DESC
+//                """;
 
         try (Connection conn = DBUtils.getConnection1();
              PreparedStatement ps = conn.prepareStatement(sql)) {

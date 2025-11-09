@@ -6,7 +6,6 @@ package dao;
 
 import entity.Skills;
 import entity.Users;
-import entity.VolunteerSkills;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -14,19 +13,13 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Timestamp;
-import java.sql.Date;
-import java.sql.Statement;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.sql.SQLException;
 
 /**
- *
  * @author Duc
  */
 public class UserDao extends DBUtils {
@@ -87,7 +80,7 @@ public class UserDao extends DBUtils {
     }
 
     public Users getUserbyUsername(String Username) {
-        String sql = "SELECT * from Users where Username = ?";
+        String sql = "SELECT * FROM Users WHERE Username = ?";
         Users user = null;
 
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -482,7 +475,7 @@ public class UserDao extends DBUtils {
     }
 
     public boolean updateProfile(Users user) {
-        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, DateOfBirth = ?, Avatar = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, DateOfBirth = ?, Avatar = ?, FacebookID = ?, ogleID = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getFullName());
             ps.setString(2, user.getEmail());
@@ -493,7 +486,22 @@ public class UserDao extends DBUtils {
                 ps.setNull(4, java.sql.Types.DATE);
             }
             ps.setString(5, user.getAvatar());
-            ps.setInt(6, user.getUserID());
+
+            // FacebookID (param 6)
+            if (user.getFacebookID() != null && !user.getFacebookID().trim().isEmpty()) {
+                ps.setString(6, user.getFacebookID());
+            } else {
+                ps.setNull(6, java.sql.Types.VARCHAR);
+            }
+
+            // GoogleID (param 7)
+            if (user.getGoogleID() != null && !user.getGoogleID().trim().isEmpty()) {
+                ps.setString(7, user.getGoogleID());
+            } else {
+                ps.setNull(7, java.sql.Types.VARCHAR);
+            }
+
+            ps.setInt(8, user.getUserID());
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -549,7 +557,7 @@ public class UserDao extends DBUtils {
 
 
     public List<Skills> getSkillsByUserID(int userID) {
-    List<Skills> list = new ArrayList<>();
+        List<Skills> list = new ArrayList<>();
 
         String sql =
                 "SELECT "
@@ -562,24 +570,38 @@ public class UserDao extends DBUtils {
                         + "WHERE v.UserID = ?";
 
 
-    try (Connection con = DBUtils.getConnection1();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-        ps.setInt(1, userID);
-        ResultSet rs = ps.executeQuery();
+        try (Connection con = DBUtils.getConnection1();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userID);
+            ResultSet rs = ps.executeQuery();
 
-        while (rs.next()) {
-            Skills skill = new Skills();
-            skill.setSkillID(rs.getInt("SkillID"));
-            skill.setSkillName(rs.getString("SkillName"));
-            skill.setDescription(rs.getString("Description"));
+            while (rs.next()) {
+                Skills skill = new Skills();
+                skill.setSkillID(rs.getInt("SkillID"));
+                skill.setSkillName(rs.getString("SkillName"));
+                skill.setDescription(rs.getString("Description"));
 
-            list.add(skill);
+                list.add(skill);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+
+        return list;
     }
 
-    return list;
-}
-
+    public boolean isPhoneExisted(String phone) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE phone = ?";
+        try (Connection conn = DBUtils.getConnection1();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

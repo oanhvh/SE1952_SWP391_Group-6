@@ -73,7 +73,7 @@
                                             <span class="badge bg-success">Active</span>
                                         </c:when>
                                         <c:otherwise>
-                                            <span class="badge bg-secondary">In Active</span>
+                                            <span class="badge bg-secondary">${v.user.status}</span>
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
