@@ -10,7 +10,16 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>${event.eventName} - Event Details</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/responsive.css" />
+        <link rel="icon" href="../images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="../css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="../css/sidebar.css" />
         <style>
             body {
                 background: #f5f6fa;
@@ -52,9 +61,18 @@
                 font-weight: 600;
                 font-size: 0.9rem;
             }
-            .status-Pending { background: #ffc107; color: #000; }
-            .status-Active { background: #28a745; color: #fff; }
-            .status-Completed { background: #6c757d; color: #fff; }
+            .status-Pending {
+                background: #ffc107;
+                color: #000;
+            }
+            .status-Active {
+                background: #28a745;
+                color: #fff;
+            }
+            .status-Completed {
+                background: #6c757d;
+                color: #fff;
+            }
             .no-image {
                 background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
                 height: 300px;
@@ -86,8 +104,8 @@
                     </c:when>
                     <c:otherwise>
                         <div class="no-image"><i class="fa fa-calendar"></i></div>
-                    </c:otherwise>
-                </c:choose>
+                        </c:otherwise>
+                    </c:choose>
             </div>
 
             <div class="event-body">
@@ -115,14 +133,14 @@
                 </c:if>
 
                 <div class="action-buttons">
-                    <a href="${pageContext.request.contextPath}/event?action=list" class="btn btn-secondary">
+                    <a href="${pageContext.request.contextPath}/staff/event?action=list" class="btn btn-secondary">
                         <i class="fa fa-arrow-left"></i> Back
                     </a>
                     <c:if test="${sessionScope.role == 'Staff' || sessionScope.role == 'Manager'}">
-                        <a href="${pageContext.request.contextPath}/event?action=edit&id=${event.eventID}" class="btn btn-warning">
+                        <a href="${pageContext.request.contextPath}/staff/event?action=edit&id=${event.eventID}" class="btn btn-warning">
                             <i class="fa fa-edit"></i> Edit
                         </a>
-                        <a href="${pageContext.request.contextPath}/event?action=delete&id=${event.eventID}" 
+                        <a href="${pageContext.request.contextPath}/staff/event?action=delete&id=${event.eventID}" 
                            class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this event?');">
                             <i class="fa fa-trash"></i> Delete
                         </a>
@@ -137,6 +155,14 @@
         </div>
 
         <jsp:include page="includes/footer.jsp" />
-        <script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
+        <script src="../js/jquery.min.js"></script>
+        <script src="../js/popper.min.js"></script>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script src="../js/jquery-3.0.0.min.js"></script>
+        <script src="../js/plugin.js"></script>
+        <script src="../js/role.js?v=2"></script>
+        <script src="../js/owl.carousel.js"></script>
+        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script src="../js/login.js"></script>
     </body>
 </html>

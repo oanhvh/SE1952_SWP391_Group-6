@@ -38,7 +38,7 @@ import entity.Users;
  *
  * @author DucNM
  */
-@WebServlet(name = "EventController", urlPatterns = {"/event"})
+@WebServlet(name = "EventController", urlPatterns = {"/staff/event"})
 public class EventController extends HttpServlet {
 
     private EventService eventService;
@@ -118,7 +118,7 @@ public class EventController extends HttpServlet {
                 updateEvent(request, response);
                 break;
             default:
-                response.sendRedirect("event?action=list");
+                response.sendRedirect("/staff/event?action=list");
                 break;
         }
     }
@@ -138,7 +138,7 @@ public class EventController extends HttpServlet {
 //        List<Event> eventList = eventService.getAllEvents();
         List<Event> eventList = eventService.getEventsByStatus("Active");
         request.setAttribute("eventList", eventList);
-        request.getRequestDispatcher("staff/listEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("/staff/listEvent.jsp").forward(request, response);
     }
 
     private void showDetail(HttpServletRequest request, HttpServletResponse response)
@@ -146,7 +146,7 @@ public class EventController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
         request.setAttribute("event", event);
-        request.getRequestDispatcher("staff/viewEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("/staff/viewEvent.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -154,9 +154,16 @@ public class EventController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
         List<Category> categoryList = categoryDAO.getAllCategory();
+
+        String formattedCreatedAt = "";
+        if (event.getCreatedAt() != null) {
+            formattedCreatedAt = event.getCreatedAt().format(FORMATTER);
+        }
+
         request.setAttribute("event", event);
         request.setAttribute("categoryList", categoryList);
-        request.getRequestDispatcher("staff/updateEvent.jsp").forward(request, response);
+        request.setAttribute("formattedCreatedAt", formattedCreatedAt);
+        request.getRequestDispatcher("/staff/updateEvent.jsp").forward(request, response);
     }
 
     private void addEvent(HttpServletRequest request, HttpServletResponse response)
@@ -202,7 +209,7 @@ public class EventController extends HttpServlet {
             event.setCreatedAt(LocalDateTime.now());
 
             eventService.addEvent(event);
-            response.sendRedirect(request.getContextPath() + "/event?action=list");
+            response.sendRedirect(request.getContextPath() + "/staff/event?action=list");
 
         } catch (IllegalArgumentException e) {
             List<Category> categoryList = categoryDAO.getAllCategory();
@@ -215,7 +222,7 @@ public class EventController extends HttpServlet {
             }
             request.setAttribute("event", event);
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
+            request.getRequestDispatcher("/staff/createEvent.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             List<Category> categoryList = categoryDAO.getAllCategory();
@@ -228,7 +235,7 @@ public class EventController extends HttpServlet {
             }
             request.setAttribute("event", event);
             request.setAttribute("error", "Create failed: " + e.getMessage());
-            request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
+            request.getRequestDispatcher("/staff/createEvent.jsp").forward(request, response);
         }
     }
 
@@ -237,14 +244,14 @@ public class EventController extends HttpServlet {
         try {
             Event event = buildEventFromRequest(request, true);
             eventService.updateEvent(event);
-            response.sendRedirect(request.getContextPath() + "/event?action=list");
+            response.sendRedirect(request.getContextPath() + "/staff/event?action=list");
         } catch (IllegalArgumentException e) {
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("staff/updateEvent.jsp").forward(request, response);
+            request.getRequestDispatcher("/staff/updateEvent.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Unexpected error while updating event");
-            request.getRequestDispatcher("staff/updateEvent.jsp").forward(request, response);
+            request.getRequestDispatcher("/staff/updateEvent.jsp").forward(request, response);
         }
     }
 
@@ -349,7 +356,7 @@ public class EventController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 //        eventService.deleteEvent(id);
         eventService.updateEventStatus(id, "Inactive");
-        response.sendRedirect(request.getContextPath() + "/event?action=list");
+        response.sendRedirect(request.getContextPath() + "/staff/event?action=list");
     }
 
     private void updateStatus(HttpServletRequest request, HttpServletResponse response)
@@ -357,13 +364,13 @@ public class EventController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         String status = request.getParameter("status");
         eventService.updateEventStatus(id, status);
-        response.sendRedirect(request.getContextPath() + "/event?action=list");
+        response.sendRedirect(request.getContextPath() + "/staff/event?action=list");
     }
 
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<Category> categoryList = categoryDAO.getAllCategory();
         request.setAttribute("categoryList", categoryList);
-        request.getRequestDispatcher("staff/createEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("/staff/createEvent.jsp").forward(request, response);
     }
 }
