@@ -46,6 +46,6 @@
     <ul>
         <li><a href="activation.jsp">Create activation code</a></li>
         <li><a href="addCategory.jsp">Add Category</a></li>
-        <li><a href="${pageContext.request.contextPath}/category?action=list">List Category</a></li>
+        <li><a href="${pageContext.request.contextPath}/manager/category?action=list">List Category</a></li>
     </ul>
 </div>

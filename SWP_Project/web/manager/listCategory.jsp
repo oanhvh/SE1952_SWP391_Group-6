@@ -12,10 +12,21 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Category List</title>
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/activation.css" />
+
+        <!-- DataTables CSS -->
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
         <style>
             body {
                 font-family: "Poppins", sans-serif;
@@ -90,11 +101,13 @@
     </head>
 
     <body>
+        <jsp:include page="/manager/includes/header.jsp" flush="true"/>
+
         <h1>Category List</h1>
 
         <div class="toolbar">
             <input type="text" id="searchBox" placeholder="Search category name...">
-            <button class="add-btn" onclick="window.location.href = '${pageContext.request.contextPath}/category?action=add'">
+            <button class="add-btn" onclick="window.location.href = '${pageContext.request.contextPath}/manager/category?action=add'">
                 + Add Category
             </button>
         </div>
@@ -124,25 +137,35 @@
             </tbody>
         </table>
 
+        <jsp:include page="/manager/includes/footer.jsp" flush="true"/>
+
+        <!-- JavaScript -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
+
         <script>
-            $(document).ready(function () {
-                const table = $('#categoryTable').DataTable({
-                    paging: true,
-                    info: false,
-                    searching: true,
-                    lengthChange: false
-                });
+                $(document).ready(function () {
+                    const table = $('#categoryTable').DataTable({
+                        paging: true,
+                        info: false,
+                        searching: true,
+                        lengthChange: false
+                    });
 
-                $('#searchBox').on('keyup', function () {
-                    table.column(1).search(this.value).draw();
-                });
+                    $('#searchBox').on('keyup', function () {
+                        table.column(1).search(this.value).draw();
+                    });
 
-                $('.delete-form').on('submit', function (e) {
-                    const confirmed = confirm('Are you sure you want to delete this category?');
-                    if (!confirmed)
-                        e.preventDefault();
+                    $('.delete-form').on('submit', function (e) {
+                        const confirmed = confirm('Are you sure you want to delete this category?');
+                        if (!confirmed)
+                            e.preventDefault();
+                    });
                 });
-            });
         </script>
+
+        <script src="${pageContext.request.contextPath}/js/role.js?v=2"></script>
     </body>
 </html>

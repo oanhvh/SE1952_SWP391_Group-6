@@ -18,7 +18,7 @@ import service.CategoryService;
  *
  * @author DucNM
  */
-@WebServlet(name = "CategoryController", urlPatterns = {"/category"})
+@WebServlet(name = "CategoryController", urlPatterns = {"/manager/category"})
 public class CategoryController extends HttpServlet {
 
     private CategoryService categoryService;
@@ -50,9 +50,6 @@ public class CategoryController extends HttpServlet {
             case "add":
                 showAddForm(request, response);
                 break;
-            case "edit":
-                showEditForm(request, response);
-                break;
             case "delete":
                 deleteCategory(request, response);
                 break;
@@ -82,9 +79,6 @@ public class CategoryController extends HttpServlet {
             case "add":
                 addCategory(request, response);
                 break;
-            case "update":
-                updateCategory(request, response);
-                break;
             default:
                 listCategories(request, response);
         }
@@ -103,25 +97,25 @@ public class CategoryController extends HttpServlet {
     private void listCategories(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("categories", categoryService.getAllCategories());
-        request.getRequestDispatcher("manager/listCategory.jsp").forward(request, response);
+        request.getRequestDispatcher("/manager/listCategory.jsp").forward(request, response);
     }
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("manager/addCategory.jsp").forward(request, response);
+        request.getRequestDispatcher("/manager/addCategory.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String idParam = request.getParameter("id");
         if (idParam == null || idParam.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/category?action=list");
+            response.sendRedirect(request.getContextPath() + "/manager/category?action=list");
             return;
         }
         int categoryID = Integer.parseInt(idParam);
         Category category = categoryService.getCategoryById(categoryID);
         request.setAttribute("category", category);
-        request.getRequestDispatcher("manager/editCategory.jsp").forward(request, response);
+        request.getRequestDispatcher("/manager/editCategory.jsp").forward(request, response);
     }
 
     private void addCategory(HttpServletRequest request, HttpServletResponse response)
@@ -135,28 +129,9 @@ public class CategoryController extends HttpServlet {
         if (error != null) {
             request.setAttribute("error", error);
             request.setAttribute("categoryName", name);
-            request.getRequestDispatcher("manager/addCategory.jsp").forward(request, response);
+            request.getRequestDispatcher("/manager/addCategory.jsp").forward(request, response);
         } else {
-            response.sendRedirect(request.getContextPath() + "/category?action=list");
-        }
-    }
-
-    private void updateCategory(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("categoryID"));
-        String name = request.getParameter("categoryName");
-
-        Category category = new Category();
-        category.setCategoryID(id);
-        category.setCategoryName(name);
-
-        String error = categoryService.updateCategory(category);
-        if (error != null) {
-            request.setAttribute("error", error);
-            request.setAttribute("category", category);
-            request.getRequestDispatcher("manager/editCategory.jsp").forward(request, response);
-        } else {
-            response.sendRedirect(request.getContextPath() + "/category?action=list");
+            response.sendRedirect(request.getContextPath() + "/manager/category?action=list");
         }
     }
 
@@ -164,6 +139,6 @@ public class CategoryController extends HttpServlet {
             throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         categoryService.deleteCategory(id);
-        response.sendRedirect(request.getContextPath() + "/category?action=list");
+        response.sendRedirect(request.getContextPath() + "/manager/category?action=list");
     }
 }

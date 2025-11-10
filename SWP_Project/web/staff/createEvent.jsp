@@ -14,6 +14,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Create Event</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
         <style>
             body {
                 background: #f4f6f9;
@@ -125,7 +134,7 @@
                     <select class="form-control" name="status" required>
                         <option value="Pending" ${event.status == 'Pending' ? 'selected' : ''}>Pending</option>
                         <option value="Active" ${event.status == 'Active' ? 'selected' : ''}>Active</option>
-                        <option value="Completed" ${event.status == 'Completed' ? 'selected' : ''}>Completed</option>
+                        <option value=" Completed" ${event.status == 'Completed' ? 'selected' : ''}>Completed</option>
                     </select>
                 </div>
 
@@ -136,6 +145,7 @@
             </form>
         </div>
 
+                
         <script>
             // Preview image before upload
             function previewImage(input) {
@@ -212,5 +222,6 @@
                 return true;
             }
         </script>
+        
     </body>
 </html>
