@@ -10,7 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.sql.SQLException;
 /**
  *
  * @author DucNM
@@ -67,5 +67,22 @@ public class CategoryDAO extends DBUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Category getCategoryById(int categoryId) {
+        Category category = null;
+        String sql = "SELECT * FROM Category WHERE CategoryID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                category = new Category();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return category;
     }
 }

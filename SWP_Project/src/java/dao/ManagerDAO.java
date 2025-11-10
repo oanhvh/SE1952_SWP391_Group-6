@@ -65,6 +65,24 @@ public class ManagerDAO {
         return null;
     }
 
+    public String getUserNameByManagerId(int managerId) {
+        String username = null;
+        String sql = "SELECT u.Username "
+                + "FROM Manager m "
+                + "JOIN Users u ON m.UserID = u.UserID "
+                + "WHERE m.ManagerID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, managerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    username = rs.getString("Username");
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return username;
+    }
 //    public List<Manager> getManagersByPage(int page) {
 //        List<Manager> list = new ArrayList<>();
 //        int pageSize = 5;

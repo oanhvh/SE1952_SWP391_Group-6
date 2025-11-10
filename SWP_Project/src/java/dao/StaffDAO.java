@@ -13,8 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class StaffDAO extends DBUtils{
-    
+public class StaffDAO extends DBUtils {
+
     //tạo Staff
     public void createStaff(Connection conn, int userId, int managerId, int employeeCodeId, boolean verified) throws Exception {
         String sql = "INSERT INTO Staff(UserID, ManagerID, Position, EmployeeCodeID, EmployeeCodeVerified, ContactInfo, JoinDate) "
@@ -27,14 +27,15 @@ public class StaffDAO extends DBUtils{
             ps.executeUpdate();
         }
     }
-    
+
     public Integer getStaffIdByUserId(int userId) {
         String sql = "SELECT StaffID FROM Staff WHERE UserID = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt("StaffID");
+                if (rs.next()) {
+                    return rs.getInt("StaffID");
+                }
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -44,12 +45,28 @@ public class StaffDAO extends DBUtils{
 
     public Integer getManagerIdByUserId(int userId) {
         String sql = "SELECT ManagerID FROM Staff WHERE UserID = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("ManagerID");
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getUserNameByStaffId(int staffId) {
+        String sql = "SELECT u.FullName FROM Users u "
+                + "JOIN Staff s ON u.UserID = s.UserID "
+                + "WHERE s.StaffID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("FullName");
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {

@@ -5,6 +5,7 @@
 package controller;
 
 import dao.CategoryDAO;
+import dao.ManagerDAO;
 import dao.StaffDAO;
 import entity.Category;
 import entity.Event;
@@ -44,6 +45,7 @@ public class EventController extends HttpServlet {
     private EventService eventService;
     private StaffDAO staffDAO;
     private CategoryDAO categoryDAO;
+    private ManagerDAO managerDAO;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     @Override
@@ -51,6 +53,7 @@ public class EventController extends HttpServlet {
         eventService = new EventService();
         staffDAO = new StaffDAO();
         categoryDAO = new CategoryDAO();
+        managerDAO = new ManagerDAO();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -145,7 +148,20 @@ public class EventController extends HttpServlet {
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
-        request.setAttribute("event", event);
+//        request.setAttribute("event", event);
+        if (event != null) {
+            Category category = categoryDAO.getCategoryById(event.getCategoryID());
+            String categoryName = (category != null) ? category.getCategoryName() : "Unknown";
+
+            String staffName = staffDAO.getUserNameByStaffId(event.getCreatedByStaffID());
+            String managerName = managerDAO.getUserNameByManagerId(event.getManagerID());
+
+            request.setAttribute("event", event);
+            request.setAttribute("categoryName", categoryName);
+            request.setAttribute("staffName", staffName);
+            request.setAttribute("managerName", managerName);
+        }
+
         request.getRequestDispatcher("/staff/viewEvent.jsp").forward(request, response);
     }
 
