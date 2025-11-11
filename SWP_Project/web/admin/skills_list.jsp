@@ -19,7 +19,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="mb-0">Skills</h3>
     <div>
-      <a href="<%= request.getContextPath() %>/admin/listAccount.jsp" class="btn btn-outline-secondary">Close</a>
+      <a href="<%= request.getContextPath() %>/ListAccount" class="btn btn-outline-secondary">Close</a>
     </div>
   </div>
 
