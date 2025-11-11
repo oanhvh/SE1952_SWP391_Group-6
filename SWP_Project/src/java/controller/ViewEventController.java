@@ -40,7 +40,7 @@ public class ViewEventController extends HttpServlet {
 
         try {
             // Lấy tất cả sự kiện có thể apply (hoặc tuỳ điều kiện)
-            List<Event> eventList = eventDao.getAllEvents();
+            List<Event> eventList = eventDao.getAllEvents1();
             request.setAttribute("eventList", eventList);
 
             // Forward sang trang JSP

@@ -59,28 +59,26 @@ public class VolunteerApplicationsDAO extends DBUtils {
     // Data for staff review list with volunteer full name and event name
     public List<ApplicationReviewRow> getApplicationsForReviewByStatus(String status) {
         List<ApplicationReviewRow> list = new ArrayList<>();
-        String sql = "";
-//                """
-//                            SELECT va.ApplicationID,
-//                                   u.FullName AS VolunteerFullName,
-//                                   e.EventName,
-//                                   va.Status,
-//                                   va.ApplicationDate,
-//                                   va.Motivation,
-//                                   va.Experience,
-//                                   (
-//                                       SELECT STRING_AGG(s.SkillName, ', ')
-//                                       FROM EventApplicationSkills eas
-//                                       JOIN Skills s ON s.SkillID = eas.SkillID
-//                                       WHERE eas.ApplicationID = va.ApplicationID
-//                                   ) AS SkillsCsv
-//                            FROM VolunteerApplications va
-//                            JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-//                            JOIN Users u ON v.UserID = u.UserID
-//                            JOIN Event e ON va.EventID = e.EventID
-//                            WHERE va.Status = ?
-//                            ORDER BY va.ApplicationDate DESC
-//                        """;
+        String sql
+                = "SELECT va.ApplicationID,\n"
+                + "       u.FullName AS VolunteerFullName,\n"
+                + "       e.EventName,\n"
+                + "       va.Status,\n"
+                + "       va.ApplicationDate,\n"
+                + "       va.Motivation,\n"
+                + "       va.Experience,\n"
+                + "       (\n"
+                + "           SELECT STRING_AGG(s.SkillName, ', ')\n"
+                + "           FROM EventApplicationSkills eas\n"
+                + "           JOIN Skills s ON s.SkillID = eas.SkillID\n"
+                + "           WHERE eas.ApplicationID = va.ApplicationID\n"
+                + "       ) AS SkillsCsv\n"
+                + "FROM VolunteerApplications va\n"
+                + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n"
+                + "JOIN Users u ON v.UserID = u.UserID\n"
+                + "JOIN Event e ON va.EventID = e.EventID\n"
+                + "WHERE va.Status = ?\n"
+                + "ORDER BY va.ApplicationDate DESC";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
             try (ResultSet rs = ps.executeQuery()) {
@@ -91,7 +89,9 @@ public class VolunteerApplicationsDAO extends DBUtils {
                     row.setEventName(rs.getString("EventName"));
                     row.setStatus(rs.getString("Status"));
                     Timestamp t = rs.getTimestamp("ApplicationDate");
-                    if (t != null) row.setApplicationDate(t.toLocalDateTime());
+                    if (t != null) {
+                        row.setApplicationDate(t.toLocalDateTime());
+                    }
                     row.setMotivation(rs.getString("Motivation"));
                     row.setExperience(rs.getString("Experience"));
                     row.setSkills(rs.getString("SkillsCsv"));
@@ -231,10 +231,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
         String sqlUpdate = "UPDATE VolunteerApplications SET Status = ?, ApprovalDate = ?, ApprovedByStaffID = ?, StaffComment = ? WHERE ApplicationID = ?";
         String sqlNoti = "INSERT INTO Notifications (Title, Message, ReceiverID, IsRead, CreatedAt, Type, EventID) VALUES (?, ?, ?, 0, SYSUTCDATETIME(), 'Application', ?)";
 
-        try (Connection con = DBUtils.getConnection1();
-             PreparedStatement psSel = con.prepareStatement(sqlSelect);
-             PreparedStatement psUpd = con.prepareStatement(sqlUpdate);
-             PreparedStatement psNoti = con.prepareStatement(sqlNoti)) {
+        try (Connection con = DBUtils.getConnection1(); PreparedStatement psSel = con.prepareStatement(sqlSelect); PreparedStatement psUpd = con.prepareStatement(sqlUpdate); PreparedStatement psNoti = con.prepareStatement(sqlNoti)) {
 
             con.setAutoCommit(false);
 
@@ -262,16 +259,16 @@ public class VolunteerApplicationsDAO extends DBUtils {
                 return false;
             }
 
-            String title = (approve ? "Đơn ứng tuyển được duyệt" : "Đơn ứng tuyển bị từ chối") +
-                    (eventName != null && !eventName.isEmpty() ? (" - " + eventName) : "");
+            String title = (approve ? "Đơn ứng tuyển được duyệt" : "Đơn ứng tuyển bị từ chối")
+                    + (eventName != null && !eventName.isEmpty() ? (" - " + eventName) : "");
             String message = approve
                     ? String.format("Đơn của bạn cho sự kiện '%s'%s đã được duyệt.",
-                    eventName != null ? eventName : "",
-                    (location != null && !location.isEmpty() ? " tại " + location : ""))
+                            eventName != null ? eventName : "",
+                            (location != null && !location.isEmpty() ? " tại " + location : ""))
                     : String.format("Đơn của bạn cho sự kiện '%s'%s đã bị từ chối.%s",
-                    eventName != null ? eventName : "",
-                    (location != null && !location.isEmpty() ? " tại " + location : ""),
-                    (staffComment != null && !staffComment.isEmpty() ? " Lý do: " + staffComment : ""));
+                            eventName != null ? eventName : "",
+                            (location != null && !location.isEmpty() ? " tại " + location : ""),
+                            (staffComment != null && !staffComment.isEmpty() ? " Lý do: " + staffComment : ""));
             psNoti.setString(1, title);
             psNoti.setString(2, message);
             psNoti.setInt(3, volunteerId);
@@ -301,8 +298,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
     // ✅ Lấy volunteerID từ userID
     private int getVolunteerIdByUserId(int userID) {
         String sql = "SELECT VolunteerID FROM Volunteer WHERE UserID = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userID);
             try (ResultSet rs = ps.executeQuery()) {
@@ -319,17 +315,21 @@ public class VolunteerApplicationsDAO extends DBUtils {
     // ✅ Apply event có thêm lý do và kinh nghiệm
     public boolean applyEventByUserId(int userID, int eventID, String motivation, String experience) {
         int volunteerID = getVolunteerIdByUserId(userID);
-        if (volunteerID == -1) return false;
+        if (volunteerID == -1) {
+            return false;
+        }
 
-        String sql = "";
+        String sql
+                = "INSERT INTO VolunteerApplications\n"
+                + "(VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)\n"
+                + "VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)";
 //                    """
 //                    INSERT INTO VolunteerApplications
 //                    (VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)
 //                    VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)
 //                """;
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, volunteerID);
             ps.setInt(2, eventID);
@@ -343,11 +343,16 @@ public class VolunteerApplicationsDAO extends DBUtils {
         }
     }
 
-
     // ✅ Lấy danh sách đã apply
     public List<VolunteerApplications> getApplicationsByUserId(int userID) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = "";
+        String sql
+                = "SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate\n"
+                + "FROM VolunteerApplications va\n"
+                + "JOIN Event e ON va.EventID = e.EventID\n"
+                + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n"
+                + "WHERE v.UserID = ?\n"
+                + "ORDER BY va.ApplicationDate DESC";
 //                    """
 //                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
 //                    FROM VolunteerApplications va
@@ -357,8 +362,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
 //                    ORDER BY va.ApplicationDate DESC
 //                """;
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userID);
             try (ResultSet rs = ps.executeQuery()) {
@@ -390,7 +394,11 @@ public class VolunteerApplicationsDAO extends DBUtils {
         String sqlSelect = "SELECT Status, StaffComment FROM VolunteerApplications WHERE ApplicationID = ?";
         String sqlDeleteSkills = "DELETE FROM EventApplicationSkills WHERE ApplicationID = ?";
         String sqlDeleteApp = "DELETE FROM VolunteerApplications WHERE ApplicationID = ? AND Status = 'Pending'";
-        String sqlUpdateCancel = "";
+        String sqlUpdateCancel
+                = "UPDATE VolunteerApplications\n"
+                + "SET Status = 'Cancelled',\n"
+                + "    Motivation = CONCAT(ISNULL(Motivation, ''), CHAR(13) + CHAR(10), '--- Cancelled Reason: ', ?)\n"
+                + "WHERE ApplicationID = ? AND Status = 'Approved'";
 //                    """
 //                    UPDATE VolunteerApplications
 //                    SET Status = 'Cancelled',
@@ -398,11 +406,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
 //                    WHERE ApplicationID = ? AND Status = 'Approved'
 //                """;
 
-        try (Connection con = DBUtils.getConnection1();
-             PreparedStatement psSelect = con.prepareStatement(sqlSelect);
-             PreparedStatement psDelSkill = con.prepareStatement(sqlDeleteSkills);
-             PreparedStatement psDelApp = con.prepareStatement(sqlDeleteApp);
-             PreparedStatement psUpdate = con.prepareStatement(sqlUpdateCancel)) {
+        try (Connection con = DBUtils.getConnection1(); PreparedStatement psSelect = con.prepareStatement(sqlSelect); PreparedStatement psDelSkill = con.prepareStatement(sqlDeleteSkills); PreparedStatement psDelApp = con.prepareStatement(sqlDeleteApp); PreparedStatement psUpdate = con.prepareStatement(sqlUpdateCancel)) {
 
             con.setAutoCommit(false);
 
@@ -459,11 +463,18 @@ public class VolunteerApplicationsDAO extends DBUtils {
         }
     }
 
-
     // ✅ Lấy danh sách sự kiện tình nguyện hôm nay cho volunteer
     public List<VolunteerApplications> getTodayEventsByUserId(int userID) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql = "";
+        String sql
+                = "SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate\n"
+                + "FROM VolunteerApplications va\n"
+                + "JOIN Event e ON va.EventID = e.EventID\n"
+                + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n"
+                + "WHERE v.UserID = ?\n"
+                + "  AND va.Status = 'Approved'\n"
+                + "  AND CAST(SYSUTCDATETIME() AS DATE) BETWEEN CAST(e.StartDate AS DATE) AND CAST(e.EndDate AS DATE)\n"
+                + "ORDER BY e.StartDate";
 //                    """
 //                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
 //                    FROM VolunteerApplications va
@@ -475,8 +486,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
 //                    ORDER BY e.StartDate
 //                """;
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userID);
             try (ResultSet rs = ps.executeQuery()) {
@@ -507,8 +517,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
     // ✅ Đánh dấu sự kiện đã hoàn thành
     public boolean markAsCompleted(int applicationId) {
         String sql = "UPDATE VolunteerApplications SET Status = 'Completed' WHERE ApplicationID = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, applicationId);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
@@ -517,11 +526,16 @@ public class VolunteerApplicationsDAO extends DBUtils {
         }
     }
 
-
     // Lấy danh sách các event đã hoàn thành (Completed)
     public List<VolunteerApplications> getCompletedApplicationsByUserId(int userID) {
         List<VolunteerApplications> list = new ArrayList<>();
-        String sql ="";
+        String sql
+                = "SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate\n"
+                + "FROM VolunteerApplications va\n"
+                + "JOIN Event e ON va.EventID = e.EventID\n"
+                + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n"
+                + "WHERE v.UserID = ? AND va.Status = 'Completed'\n"
+                + "ORDER BY va.ApplicationDate DESC";
 //                """
 //                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
 //                    FROM VolunteerApplications va
@@ -531,8 +545,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
 //                    ORDER BY va.ApplicationDate DESC
 //                """;
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userID);
             try (ResultSet rs = ps.executeQuery()) {
@@ -543,7 +556,9 @@ public class VolunteerApplicationsDAO extends DBUtils {
                     app.setEventID(rs.getInt("EventID"));
                     app.setStatus(rs.getString("Status"));
                     Timestamp t = rs.getTimestamp("ApplicationDate");
-                    if (t != null) app.setApplicationDate(t.toLocalDateTime());
+                    if (t != null) {
+                        app.setApplicationDate(t.toLocalDateTime());
+                    }
 
                     Event e = new Event();
                     e.setEventID(rs.getInt("EventID"));
@@ -551,8 +566,12 @@ public class VolunteerApplicationsDAO extends DBUtils {
                     e.setLocation(rs.getString("Location"));
                     Timestamp start = rs.getTimestamp("StartDate");
                     Timestamp end = rs.getTimestamp("EndDate");
-                    if (start != null) e.setStartDate(start.toLocalDateTime());
-                    if (end != null) e.setEndDate(end.toLocalDateTime());
+                    if (start != null) {
+                        e.setStartDate(start.toLocalDateTime());
+                    }
+                    if (end != null) {
+                        e.setEndDate(end.toLocalDateTime());
+                    }
                     app.setEvent(e);
 
                     list.add(app);
@@ -567,8 +586,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
     public boolean hasAppliedForEvent(int userID, int eventID) {
         int volunteerID = getVolunteerIdByUserId(userID);
         String sql = "SELECT COUNT(*) FROM VolunteerApplications WHERE VolunteerID = ? AND EventID = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, volunteerID);
             ps.setInt(2, eventID);
@@ -583,4 +601,3 @@ public class VolunteerApplicationsDAO extends DBUtils {
         return false;
     }
 }
-

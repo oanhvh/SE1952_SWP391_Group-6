@@ -18,7 +18,7 @@ public class StaffApplicationReviewController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);       
+        HttpSession session = req.getSession(false);
         Users user = (Users) session.getAttribute("authUser");
         String role = (String) session.getAttribute("role");
         if (role == null || !("Staff".equalsIgnoreCase(role))) {
@@ -29,7 +29,7 @@ public class StaffApplicationReviewController extends HttpServlet {
         String appIdStr = req.getParameter("applicationId");
         String action = req.getParameter("action"); // approve | reject
         String staffComment = req.getParameter("staffComment");
-        
+
         //chuyển đổi String -> int (ID không phải số báo lỗi)
         int applicationId;
         try {
@@ -38,7 +38,7 @@ public class StaffApplicationReviewController extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid applicationId");
             return;
         }
-        
+
         //xác nhận approve hay reject
         boolean approve;
         if ("approve".equalsIgnoreCase(action)) {
@@ -57,13 +57,13 @@ public class StaffApplicationReviewController extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/staff/applications?status=Pending&error=no_staff_id");
             return;
         }
-        
+
         //Gọi DAO để cập nhật trạng thái đơn
-//        boolean ok = applicationsDAO.reviewApplication(applicationId, staffId, approve, staffComment);
-        
+        boolean ok = applicationsDAO.reviewApplication(applicationId, staffId, approve, staffComment);
+
         //Chuyển hướng về danh sách + thông báo
         String next = req.getContextPath() + "/staff/applications?status=Pending";
-//        next += ok ? "&msg=" + (approve ? "approved" : "rejected") : "&error=update_failed";
+        next += ok ? "&msg=" + (approve ? "approved" : "rejected") : "&error=update_failed";
         resp.sendRedirect(next);
     }
 }
