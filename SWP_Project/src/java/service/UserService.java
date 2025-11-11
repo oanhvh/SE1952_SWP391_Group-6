@@ -20,6 +20,7 @@ import static dao.UserDao.sha256;
 import static service.CodeValidatorService.isNotAdmin;
 
 public class UserService {
+
     private final UserDao userDao = new UserDao();
     private final ManagerDAO managerDao = new ManagerDAO();
 
@@ -33,9 +34,9 @@ public class UserService {
         String phone = request.getParameter("phone");
         List<Users> userList;
 
-        if ((name != null && !name.trim().isEmpty()) ||
-                (role != null && !role.trim().isEmpty()) ||
-                (phone != null && !phone.trim().isEmpty())) {
+        if ((name != null && !name.trim().isEmpty())
+                || (role != null && !role.trim().isEmpty())
+                || (phone != null && !phone.trim().isEmpty())) {
             userList = userDao.searchUser(name, role, phone);
         } else {
             userList = userDao.getAllUsers();
@@ -165,15 +166,18 @@ public class UserService {
 
             // ✅ Validate username uniqueness
             if (userDao.isUsernameExisted(username)) {
-                request.setAttribute("errorMessage", "Username already exists!");
+                request.setAttribute("error", "Username already exists!");
                 request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
                 return;
             }
-            if (validatePhone(request, response, phone, userDao, "admin/AddAccount.jsp")) return;
+
+            if (validatePhone(request, response, phone, userDao, "admin/AddAccount.jsp")) {
+                return;
+            }
 
             // ✅ Validate email format
             if (email == null || email.isEmpty() || !email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
-                request.setAttribute("errorMessage", "Invalid email address!");
+                request.setAttribute("error", "Invalid email address!");
                 request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
                 return;
             }
@@ -191,13 +195,15 @@ public class UserService {
             try {
                 boolean emailSent = EmailService.sendEmail(email, subject, body);
                 if (!emailSent) {
-                    request.setAttribute("errorMessage", "Cannot verify email. Please check email configuration.");
+                    request.setAttribute("error", "Cannot verify email. Please check email configuration.");
                     request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
                     return;
                 }
             } catch (Exception e) {
+
                 e.printStackTrace();
-                request.setAttribute("errorMessage", "Cannot verify email. Please check email address or SMTP configuration.");
+
+                request.setAttribute("error", "Cannot verify email. Please check email address or SMTP configuration.");
                 request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
                 return;
             }
@@ -224,14 +230,14 @@ public class UserService {
 
             int addUserResult = userDao.addUser(user);
             if (addUserResult <= 0) {
-                request.setAttribute("errorMessage", "Failed to create user account.");
+                request.setAttribute("error", "Failed to create user account.");
                 request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
                 return;
             }
 
             int userId = userDao.getUserIdByUsername(username);
             if (userId <= 0) {
-                request.setAttribute("errorMessage", "Failed to retrieve new user ID.");
+                request.setAttribute("error", "Failed to retrieve new user ID.");
                 request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
                 return;
             }
@@ -251,16 +257,16 @@ public class UserService {
             int managerResult = managerDao.addManager(manager);
 
             if (managerResult > 0) {
-                request.setAttribute("successMessage", "Manager account created and verification email sent successfully!");
+                request.setAttribute("success", "Manager account created and verification email sent successfully!");
             } else {
-                request.setAttribute("errorMessage", "Failed to create manager record.");
+                request.setAttribute("error", "Failed to create manager record.");
             }
 
             request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred while creating the account.");
+            request.setAttribute("error", "An error occurred while creating the account.");
             request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
         }
     }
@@ -279,9 +285,9 @@ public class UserService {
         List<Manager> managerList;
 
         // If user typed any search field, filter data
-        if ((managerName != null && !managerName.trim().isEmpty()) ||
-                (phone != null && !phone.trim().isEmpty()) ||
-                (status != null && !status.trim().isEmpty())) {
+        if ((managerName != null && !managerName.trim().isEmpty())
+                || (phone != null && !phone.trim().isEmpty())
+                || (status != null && !status.trim().isEmpty())) {
             managerList = managerDao.searchManagers(managerName, phone, status);
         } else {
             managerList = managerDao.getAllManagers();
@@ -423,7 +429,6 @@ public class UserService {
         }
     }
 
-
     private static String setImage(HttpServletRequest request, Part avatarPart) throws IOException {
         String avatarPath = null;
         if (avatarPart != null && avatarPart.getSize() > 0) {
@@ -442,10 +447,10 @@ public class UserService {
     }
 
     private static boolean validatePhone(HttpServletRequest request,
-                                         HttpServletResponse response,
-                                         String phone,
-                                         UserDao userDao,
-                                         String page) throws ServletException, IOException {
+            HttpServletResponse response,
+            String phone,
+            UserDao userDao,
+            String page) throws ServletException, IOException {
         // ✅ Validate phone
         if (phone == null || phone.isEmpty()) {
             request.setAttribute("error", "Phone number cannot be empty!");

@@ -17,11 +17,11 @@
         <h2 class="mb-4">Add New Manager Account</h2>
 
         <!-- Display success/error messages -->
-        <c:if test="${not empty successMessage}">
-            <div class="alert alert-success">${successMessage}</div>
+        <c:if test="${not empty success}">
+            <div class="alert alert-success">${success}</div>
         </c:if>
-        <c:if test="${not empty errorMessage}">
-            <div class="alert alert-danger">${errorMessage}</div>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger">${error}</div>
         </c:if>
 
         <form action="AddAccountController" method="post" class="border p-4 rounded bg-light shadow-sm">
