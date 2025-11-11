@@ -11,7 +11,7 @@ package dao;
 
 import entity.Manager;
 import entity.Users;
-
+import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -65,7 +65,6 @@ public class ManagerDAO {
         }
         return null;
     }
-
 
     public int addManager(Manager manager) {
         String sql = "INSERT INTO Manager (UserID, ManagerName, ContactInfo, Address, RegistrationDate, CreatedByUserID) "
@@ -219,4 +218,22 @@ public class ManagerDAO {
         return list;
     }
 
+    public String getFullNameByManagerId(int managerId) {
+        String fullName = null;
+        String sql = "SELECT u.FullName "
+                + "FROM Manager m "
+                + "JOIN Users u ON m.UserID = u.UserID "
+                + "WHERE m.ManagerID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, managerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    fullName = rs.getString("FullName");
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return fullName;
+    }
 }

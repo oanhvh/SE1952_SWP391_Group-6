@@ -13,35 +13,52 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Create Event</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
         <style>
+            body {
+                background: #f4f6f9;
+                font-family: 'Segoe UI', sans-serif;
+            }
             .form-container {
                 max-width: 700px;
-                margin: 50px auto;
+                margin: 60px auto;
                 background: #fff;
-                padding: 35px;
-                border-radius: 12px;
-                box-shadow: 0 0 15px rgba(0,0,0,0.1);
+                padding: 40px;
+                border-radius: 15px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             }
-            .error-msg {
-                color: red;
-                font-size: 0.9rem;
-                margin-top: 5px;
+            .form-container h3 {
+                text-align: center;
+                margin-bottom: 30px;
+                color: #333;
             }
             .form-group label {
                 font-weight: 600;
+                margin-bottom: 6px;
             }
-            .image-preview {
-                margin-top: 10px;
-                max-width: 200px;
-                max-height: 200px;
-                display: none;
+            .error-msg {
+                color: #d9534f;
+                font-size: 0.9rem;
             }
             .image-preview img {
                 width: 100%;
-                height: auto;
+                max-width: 220px;
+                border-radius: 10px;
                 border: 1px solid #ddd;
-                border-radius: 4px;
-                padding: 5px;
+                margin-top: 10px;
+            }
+            .btn {
+                border-radius: 8px;
+                padding: 8px 20px;
             }
         </style>
     </head>
@@ -117,17 +134,18 @@
                     <select class="form-control" name="status" required>
                         <option value="Pending" ${event.status == 'Pending' ? 'selected' : ''}>Pending</option>
                         <option value="Active" ${event.status == 'Active' ? 'selected' : ''}>Active</option>
-                        <option value="Completed" ${event.status == 'Completed' ? 'selected' : ''}>Completed</option>
+                        <option value=" Completed" ${event.status == 'Completed' ? 'selected' : ''}>Completed</option>
                     </select>
                 </div>
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Create Event</button>
-                    <a href="${pageContext.request.contextPath}/event?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
+                    <a href="${pageContext.request.contextPath}/staff/event?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
                 </div>
             </form>
         </div>
 
+                
         <script>
             // Preview image before upload
             function previewImage(input) {
@@ -204,5 +222,6 @@
                 return true;
             }
         </script>
+        
     </body>
 </html>

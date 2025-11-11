@@ -19,7 +19,7 @@ import service.EventService;
  *
  * @author DucNM
  */
-@WebServlet(name = "DelEventController", urlPatterns = {"/delEvent"})
+@WebServlet(name = "DelEventController", urlPatterns = {"/staff/delEvent"})
 public class DelEventController extends HttpServlet {
 
     private EventService eventService;
@@ -114,7 +114,7 @@ public class DelEventController extends HttpServlet {
             throws ServletException, IOException {
         List<Event> eventList = eventService.getEventsByStatus("Inactive");
         request.setAttribute("eventList", eventList);
-        request.getRequestDispatcher("staff/listDelEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("/staff/listDelEvent.jsp").forward(request, response);
     }
 
     private void showDelDetail(HttpServletRequest request, HttpServletResponse response)
@@ -122,13 +122,13 @@ public class DelEventController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
         request.setAttribute("event", event);
-        request.getRequestDispatcher("staff/viewEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("/staff/viewEvent.jsp").forward(request, response);
     }
     
     private void restoreEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         eventService.updateEventStatus(id, "Active");
-        response.sendRedirect(request.getContextPath() + "/delEvent");
+        response.sendRedirect(request.getContextPath() + "/staff/delEvent");
     }
 }

@@ -10,15 +10,16 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Event List</title>
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
-        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/responsive.css" />
+        <link rel="icon" href="../images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css" />
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
+        <link rel="stylesheet" href="../css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="../css/sidebar.css" />
         <style>
             .event-image {
                 width: 100%;
@@ -92,7 +93,7 @@
                 <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
                     <div class="row mb-3">
                         <div class="col-sm-12 text-end">
-                            <a href="${pageContext.request.contextPath}/event?action=create" class="btn btn-success">
+                            <a href="${pageContext.request.contextPath}/staff/event?action=create" class="btn btn-success">
                                 <i class="fa fa-plus"></i> Create New Event
                             </a>
                         </div>
@@ -137,17 +138,17 @@
                                     </div>
                                     
                                     <div class="btn-actions">
-                                        <a href="${pageContext.request.contextPath}/event?action=detail&id=${event.eventID}" 
+                                        <a href="${pageContext.request.contextPath}/staff/event?action=detail&id=${event.eventID}" 
                                            class="btn btn-primary btn-sm flex-fill">
                                             <i class="fa fa-eye"></i> View Details
                                         </a>
                                         
                                         <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
-                                            <a href="${pageContext.request.contextPath}/event?action=edit&id=${event.eventID}" 
+                                            <a href="${pageContext.request.contextPath}/staff/event?action=edit&id=${event.eventID}" 
                                                class="btn btn-warning btn-sm">
                                                 <i class="fa fa-edit"></i> Edit
                                             </a>
-                                            <a href="${pageContext.request.contextPath}/event?action=delete&id=${event.eventID}" 
+                                            <a href="${pageContext.request.contextPath}/staff/event?action=delete&id=${event.eventID}" 
                                                class="btn btn-danger btn-sm"
                                                onclick="return confirm('Are you sure you want to delete this event?');">
                                                 <i class="fa fa-trash"></i> Delete
@@ -182,14 +183,18 @@
         
         <jsp:include page="includes/footer.jsp" />
         
-        <script src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/js/popper.min.js"></script>
-        <script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
-        <script src="${pageContext.request.contextPath}/js/jquery-3.0.0.min.js"></script>
-        <script src="${pageContext.request.contextPath}/js/plugin.js"></script>
-        <script src="${pageContext.request.contextPath}/js/jquery.mCustomScrollbar.concat.min.js"></script>
-        <script src="${pageContext.request.contextPath}/js/custom.js"></script>
-        <script src="${pageContext.request.contextPath}/js/owl.carousel.js"></script>
+        <script src="../js/jquery.min.js"></script>
+        <script src="../js/popper.min.js"></script>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script src="../js/jquery-3.0.0.min.js"></script>
+        <script src="../js/plugin.js"></script>
+        <script src="../js/role.js?v=2"></script>
+        <script src="../js/owl.carousel.js"></script>
+        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script src="../js/login.js"></script>
+        <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="../js/custom.js"></script>
+        <script src="../js/owl.carousel.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
     </body>
 </html>

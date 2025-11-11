@@ -44,10 +44,11 @@
 <button id="sidebarToggle" class="sidebar-toggle">☰</button>
 <div class="sidebar" id="managerSidebar">
     <ul>
-        <li><a href="<%= request.getContextPath() %>/event?action=create">Add Event</a></li>
-        <li><a href="<%= request.getContextPath() %>/event?action=list">Update Event</a></li>
-        <li><a href="<%= request.getContextPath() %>/event?action=list">List Event</a></li>
-        <li><a href="<%= request.getContextPath() %>/event?action=list">View Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/staff/event?action=create">Add Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/staff/event?action=list">Update Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/staff/event?action=list">List Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/staff/event?action=list">View Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/staff/delEvent?action=list">List Inactive Event</a></li>
         <li><a href="<%= request.getContextPath() %>/staff/applications">View Applications</a></li>
     </ul>
 </div>

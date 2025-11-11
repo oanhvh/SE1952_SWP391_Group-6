@@ -17,6 +17,11 @@
         <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="../css/style.css" />
         <link rel="stylesheet" href="../css/responsive.css" />
+        <link rel="icon" href="../images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="../css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
         <link rel="stylesheet" href="../css/sidebar.css" />
         <style>
             .form-container {
@@ -71,7 +76,7 @@
                 <div class="alert alert-danger">${error}</div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/event" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <form action="${pageContext.request.contextPath}/staff/event" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                 <input type="hidden" name="action" value="update">
                 <input type="hidden" name="eventID" value="${event.eventID}">
                 <input type="hidden" name="oldImage" value="${event.image}">
@@ -80,7 +85,6 @@
                     <input type="hidden" name="createdAt" value="<fmt:formatDate value='${event.createdAt}' pattern='dd-MM-yyyy HH:mm' />">
                 </c:if>--%>
                 <c:if test="${not empty event.createdAt}">
-                    <fmt:formatDate value="${event.createdAt}" pattern="dd-MM-yyyy HH:mm" var="formattedCreatedAt" />
                     <input type="hidden" name="createdAt" value="${formattedCreatedAt}">
                 </c:if>
 
@@ -169,7 +173,7 @@
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Update Event</button>
-                    <a href="${pageContext.request.contextPath}/event?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
+                    <a href="${pageContext.request.contextPath}/staff/event?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
                 </div>
             </form>
         </div>
@@ -270,5 +274,14 @@
                 return true;
             }
         </script>
+        <script src="../js/jquery.min.js"></script>
+        <script src="../js/popper.min.js"></script>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script src="../js/jquery-3.0.0.min.js"></script>
+        <script src="../js/plugin.js"></script>
+        <script src="../js/role.js?v=2"></script>
+        <script src="../js/owl.carousel.js"></script>
+        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script src="../js/login.js"></script>
     </body>
 </html>

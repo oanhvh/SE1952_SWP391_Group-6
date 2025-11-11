@@ -96,7 +96,7 @@
     <body>
         <div class="form-container">
             <h2>Add Category</h2>
-            <form action="${pageContext.request.contextPath}/category" method="post">
+            <form action="${pageContext.request.contextPath}/manager/category" method="post">
                 <input type="hidden" name="action" value="add">
 
                 <label for="categoryName">Category Name</label>
@@ -108,7 +108,7 @@
 
                 <div class="btn-container">
                     <button type="submit" class="btn btn-submit">Add</button>
-                    <a href="${pageContext.request.contextPath}/category?action=list" class="btn btn-cancel">Cancel</a>
+                    <a href="${pageContext.request.contextPath}/manager/category?action=list" class="btn btn-cancel">Cancel</a>
                 </div>
             </form>
         </div>
