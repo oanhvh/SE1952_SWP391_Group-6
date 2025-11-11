@@ -15,8 +15,8 @@ public class EmailService {
     // Đọc cấu hình từ biến môi trường để tránh hardcode secret
     private static final String SMTP_HOST = System.getenv().getOrDefault("SMTP_HOST", "smtp.gmail.com");
     private static final String SMTP_PORT = System.getenv().getOrDefault("SMTP_PORT", "587");
-    private static final String SMTP_USER = "phamsangvd1@gmail.com";
-    private static final String SMTP_PASS = "chzm epwl wcfl qokg";
+    private static final String SMTP_USER = System.getenv("SMTP_USER");
+    private static final String SMTP_PASS = System.getenv("SMTP_PASS");
     private static final String FROM_NAME = System.getenv().getOrDefault("FROM_NAME", "Group6_VMS");
     private static final String FROM_EMAIL = System.getenv().getOrDefault("FROM_EMAIL", SMTP_USER != null ? SMTP_USER : "");
 
