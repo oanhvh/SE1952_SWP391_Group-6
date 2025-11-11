@@ -17,14 +17,6 @@ import java.util.List;
  */
 public class SkillsDAO extends DBUtils {
 
-    private Skills extractSkill(ResultSet rs) throws Exception {
-        Skills skill = new Skills();
-        skill.setSkillID(rs.getInt("SkillID"));
-        skill.setSkillName(rs.getString("SkillName"));
-        skill.setDescription(rs.getString("Description"));
-        return skill;
-    }
-
     public List<Skills> getAllSkills() {
         List<Skills> skillList = new ArrayList<>();
         String sql = "SELECT * FROM Skills";
@@ -88,5 +80,13 @@ public class SkillsDAO extends DBUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private Skills extractSkill(ResultSet rs) throws Exception {
+        Skills skill = new Skills();
+        skill.setSkillID(rs.getInt("SkillID"));
+        skill.setSkillName(rs.getString("SkillName"));
+        skill.setDescription(rs.getString("Description"));
+        return skill;
     }
 }

@@ -22,7 +22,7 @@ public class NotificationsController extends HttpServlet {
         HttpSession session = req.getSession(false);
         Users user = (Users) session.getAttribute("authUser");
         String role = (String) session.getAttribute("role");
-        // Hiện tại hỗ trợ volunteer bell UI
+        //Chỉ hỗ trợ Volunteer
         Integer volunteerId = notificationsDAO.getVolunteerIdByUserId(user.getUserID());
         if (volunteerId == null) {
             resp.sendRedirect(req.getContextPath() + "/access-denied.jsp");

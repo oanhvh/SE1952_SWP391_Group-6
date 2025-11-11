@@ -30,7 +30,7 @@ public class CreateAdminController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Only Admin can access
+        // Kiểm tra role Admin
         HttpSession session = request.getSession(false);
         String role = session != null ? (String) session.getAttribute("role") : null;
         if (role == null || !"Admin".equalsIgnoreCase(role)) {
@@ -43,16 +43,13 @@ public class CreateAdminController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Only Admin can post
+        // kiểm tra Role Admin
         HttpSession session = request.getSession(false);
         String sessionRole = session != null ? (String) session.getAttribute("role") : null;
         if (sessionRole == null || !"Admin".equalsIgnoreCase(sessionRole)) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
-        // Accept either 'type' or 'role' but force Admin
-        String type = param(request, "type");
-        String roleParam = param(request, "role");
         String username = param(request, "username");
         String password = param(request, "password");
         String fullName = param(request, "fullName");
@@ -73,7 +70,6 @@ public class CreateAdminController extends HttpServlet {
 
         try (Connection conn = DBUtils.getConnection1()) {
             conn.setAutoCommit(false);
-            // Force Admin regardless of provided param
             Users u = new Users();
             u.setUsername(username);
             u.setPasswordHash(password);

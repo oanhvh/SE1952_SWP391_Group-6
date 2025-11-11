@@ -39,16 +39,7 @@ public class ChangePasswordController extends HttpServlet {
         if (auth == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
-        }
-
-        //kiếm tra quyền
-        String scope = resolveScope(request);
-        if (!isScopeAllowed(scope, session)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-
-        forwardToScopeJsp(request, response, scope);
+        }      
     }
 
     @Override
@@ -94,6 +85,8 @@ public class ChangePasswordController extends HttpServlet {
                     }
                 }
             }
+            
+            //kiểm tra xem tài khoản có tồn tại không
             if (storedHash == null) {
                 setErrorAndForward(request, response, "The account does not exist");
                 return;
@@ -110,6 +103,7 @@ public class ChangePasswordController extends HttpServlet {
                 setErrorAndForward(request, response, "The new password must not be the same as the current password");
                 return;
             }
+            
             String sqlUpdate = "UPDATE Users SET PasswordHash = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
             try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
                 ps.setString(1, newHash);
@@ -193,25 +187,5 @@ public class ChangePasswordController extends HttpServlet {
             throws ServletException, IOException {
         String candidate = "/" + scope + "/change_password.jsp";
         request.getRequestDispatcher(candidate).forward(request, response);
-    }
-
-    private static boolean isScopeAllowed(String scope, HttpSession session) {
-        if (session == null) {
-            return false;
-        }
-        String role = (String) session.getAttribute("role");
-        if (role == null) {
-            return false;
-        }
-        switch (scope) {
-            case "manager":
-                return role.equalsIgnoreCase("Manager");
-            case "staff":
-                return role.equalsIgnoreCase("Staff");
-            case "volunteer":
-                return role.equalsIgnoreCase("Volunteer");
-            default:
-                return true;
-        }
-    }
+    }   
 }

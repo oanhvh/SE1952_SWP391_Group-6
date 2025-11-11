@@ -49,6 +49,7 @@ public class RegisterController extends HttpServlet {
         String email = param(request, "email");
         String phone = param(request, "phone");
         String employeeCode = param(request, "employeeCode");
+        String dobStr = param(request, "dateOfBirth");
 
         if (isBlank(username) || isBlank(password) || isBlank(role)) {
             errorForward(request, response, "Please enter required information");
@@ -60,9 +61,26 @@ public class RegisterController extends HttpServlet {
             return;
         }
 
+        if (!isStrongPassword(password)) {
+            errorForward(request, response, "Password must be at least 8 characters and include uppercase, lowercase, and a number");
+            return;
+        }
+
+        java.time.LocalDate dob = null;
+        try {
+            if (isBlank(dobStr)) {
+                errorForward(request, response, "Date of Birth is required");
+                return;
+            }
+            dob = java.time.LocalDate.parse(dobStr);
+        } catch (Exception ex) {
+            errorForward(request, response, "Invalid Date of Birth format");
+            return;
+        }
+
         try (Connection conn = DBUtils.getConnection1()) {
             conn.setAutoCommit(false);
-            
+
             //tạo tài khoản volunteer + user || staff + user
             if ("Volunteer".equalsIgnoreCase(role)) {
                 Users u = new Users();
@@ -73,6 +91,7 @@ public class RegisterController extends HttpServlet {
                 u.setFullName(fullName);
                 u.setEmail(email);
                 u.setPhone(phone);
+                u.setDateOfBirth(dob);
                 u.setLoginProvider("Local");
                 u.setIsEmailVerified(false);
                 u.setIsPhoneVerified(false);
@@ -101,6 +120,7 @@ public class RegisterController extends HttpServlet {
                 u.setFullName(fullName);
                 u.setEmail(email);
                 u.setPhone(phone);
+                u.setDateOfBirth(dob);
                 u.setLoginProvider("Local");
                 u.setIsEmailVerified(false);
                 u.setIsPhoneVerified(false);
@@ -121,18 +141,18 @@ public class RegisterController extends HttpServlet {
             errorForward(request, response, "Registration failed. Please try again.");
         }
     }
-    
+
     //xóa khoảng trắng
     private String param(HttpServletRequest req, String name) {
         String v = req.getParameter(name);
         return v != null ? v.trim() : null;
     }
-    
+
     //kiểm tra chuỗi rỗng
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }
-    
+
     private void errorForward(HttpServletRequest request, HttpServletResponse response, String message)
             throws ServletException, IOException {
         request.setAttribute("error", message);
@@ -147,5 +167,12 @@ public class RegisterController extends HttpServlet {
         } catch (ServletException ex) {
             throw ex;
         }
+    }
+
+    private boolean isStrongPassword(String pwd) {
+        if (pwd == null) {
+            return false;
+        }
+        return pwd.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
     }
 }
