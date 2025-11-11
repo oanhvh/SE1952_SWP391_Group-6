@@ -138,9 +138,14 @@ public class EventController extends HttpServlet {
 
     private void listEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        List<Event> eventList = eventService.getAllEvents();
-        List<Event> eventList = eventService.getEventsByStatus("Active");
+        String status = request.getParameter("status");
+        List<Event> eventList = (status == null || status.isBlank())
+                ? eventService.getAllEvents()
+                : eventService.getEventsByStatus(status);
         request.setAttribute("eventList", eventList);
+        if (status != null && !status.isBlank()) {
+            request.setAttribute("filterStatus", status);
+        }
         request.getRequestDispatcher("/staff/listEvent.jsp").forward(request, response);
     }
 

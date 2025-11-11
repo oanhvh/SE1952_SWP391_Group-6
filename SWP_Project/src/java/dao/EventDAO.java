@@ -8,8 +8,6 @@ package dao;
  *
  * @author admin
  */
-
-
 import entity.Event;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -22,9 +20,7 @@ public class EventDAO {
         List<Event> list = new ArrayList<>();
         String sql = "SELECT * FROM Event ORDER BY StartDate DESC";
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Event e = new Event();
@@ -46,7 +42,8 @@ public class EventDAO {
         }
         return list;
     }
-     private Event extractEvent(ResultSet rs) throws Exception {
+
+    private Event extractEvent(ResultSet rs) throws Exception {
         Event event = new Event();
         event.setEventID(rs.getInt("EventID"));
         event.setManagerID(rs.getInt("ManagerID"));
@@ -61,13 +58,18 @@ public class EventDAO {
         event.setEventName(rs.getString("EventName"));
         event.setDescription(rs.getString("Description"));
         event.setLocation(rs.getString("Location"));
-        event.setStartDate(rs.getDate("StartDate"));
-        event.setEndDate(rs.getDate("EndDate"));
+        // Read DATETIME/DATETIME2 as Timestamp -> LocalDateTime (preserve time, avoid type mismatch)
+        Timestamp tsStart = rs.getTimestamp("StartDate");
+        event.setStartDate(tsStart != null ? tsStart.toLocalDateTime() : null);
+
+        Timestamp tsEnd = rs.getTimestamp("EndDate");
+        event.setEndDate(tsEnd != null ? tsEnd.toLocalDateTime() : null);
         event.setStatus(rs.getString("Status"));
         event.setCapacity(rs.getInt("Capacity"));
         event.setImage(rs.getString("Image"));
         event.setCategoryID(rs.getInt("CategoryID"));
-        event.setCreatedAt(rs.getTimestamp("CreatedAt").toLocalDateTime());
+        Timestamp tsCreated = rs.getTimestamp("CreatedAt");
+        event.setCreatedAt(tsCreated != null ? tsCreated.toLocalDateTime() : null);
 
         return event;
     }
@@ -195,6 +197,4 @@ public class EventDAO {
         return null;
     }
 
-
 }
-
