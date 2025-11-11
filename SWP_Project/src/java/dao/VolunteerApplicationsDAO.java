@@ -323,11 +323,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
                 = "INSERT INTO VolunteerApplications\n"
                 + "(VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)\n"
                 + "VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)";
-//                    """
-//                    INSERT INTO VolunteerApplications
-//                    (VolunteerID, EventID, Status, ApplicationDate, Motivation, Experience)
-//                    VALUES (?, ?, 'Pending', SYSUTCDATETIME(), ?, ?)
-//                """;
 
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -353,14 +348,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
                 + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n"
                 + "WHERE v.UserID = ?\n"
                 + "ORDER BY va.ApplicationDate DESC";
-//                    """
-//                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
-//                    FROM VolunteerApplications va
-//                    JOIN Event e ON va.EventID = e.EventID
-//                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-//                    WHERE v.UserID = ?
-//                    ORDER BY va.ApplicationDate DESC
-//                """;
 
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -399,12 +386,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
                 + "SET Status = 'Cancelled',\n"
                 + "    Motivation = CONCAT(ISNULL(Motivation, ''), CHAR(13) + CHAR(10), '--- Cancelled Reason: ', ?)\n"
                 + "WHERE ApplicationID = ? AND Status = 'Approved'";
-//                    """
-//                    UPDATE VolunteerApplications
-//                    SET Status = 'Cancelled',
-//                        Motivation = CONCAT(ISNULL(Motivation, ''), CHAR(13) + CHAR(10), '--- Cancelled Reason: ', ?)
-//                    WHERE ApplicationID = ? AND Status = 'Approved'
-//                """;
 
         try (Connection con = DBUtils.getConnection1(); PreparedStatement psSelect = con.prepareStatement(sqlSelect); PreparedStatement psDelSkill = con.prepareStatement(sqlDeleteSkills); PreparedStatement psDelApp = con.prepareStatement(sqlDeleteApp); PreparedStatement psUpdate = con.prepareStatement(sqlUpdateCancel)) {
 
@@ -475,16 +456,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
                 + "  AND va.Status = 'Approved'\n"
                 + "  AND CAST(SYSUTCDATETIME() AS DATE) BETWEEN CAST(e.StartDate AS DATE) AND CAST(e.EndDate AS DATE)\n"
                 + "ORDER BY e.StartDate";
-//                    """
-//                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
-//                    FROM VolunteerApplications va
-//                    JOIN Event e ON va.EventID = e.EventID
-//                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-//                    WHERE v.UserID = ?
-//                      AND va.Status = 'Approved'
-//                      AND CAST(GETDATE() AS DATE) BETWEEN CAST(e.StartDate AS DATE) AND CAST(e.EndDate AS DATE)
-//                    ORDER BY e.StartDate
-//                """;
 
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -536,14 +507,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
                 + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n"
                 + "WHERE v.UserID = ? AND va.Status = 'Completed'\n"
                 + "ORDER BY va.ApplicationDate DESC";
-//                """
-//                    SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate
-//                    FROM VolunteerApplications va
-//                    JOIN Event e ON va.EventID = e.EventID
-//                    JOIN Volunteer v ON va.VolunteerID = v.VolunteerID
-//                    WHERE v.UserID = ? AND va.Status = 'Completed'
-//                    ORDER BY va.ApplicationDate DESC
-//                """;
 
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 

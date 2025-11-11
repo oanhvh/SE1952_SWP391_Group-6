@@ -240,7 +240,7 @@
     <% if (events != null && !events.isEmpty()) {
            for (Event e : events) { %>
         <div class="event-card">
-            <img src="<%= e.getImage() %>" alt="Event Image">
+            <img src="<%= request.getContextPath() %>/<%= e.getImage() %>" alt="Event Image">
             <div class="event-details">
                 <h3><%= e.getEventName() %></h3>
                 <p><b>📍 Location:</b> <%= e.getLocation() %></p>
