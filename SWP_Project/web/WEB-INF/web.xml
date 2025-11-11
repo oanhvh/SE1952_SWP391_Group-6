@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>ListManagerAccountController</servlet-name>
         <servlet-class>controller.ListManagerAccountController</servlet-class>
@@ -9,7 +8,6 @@
         <servlet-name>ListManagerAccountController</servlet-name>
         <url-pattern>/ListManagerAccount</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>ViewManagerDetailController</servlet-name>
         <servlet-class>controller.ViewManagerDetailController</servlet-class>
@@ -18,7 +16,6 @@
         <servlet-name>ViewManagerDetailController</servlet-name>
         <url-pattern>/ViewManagerDetail</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>AdminProfileController</servlet-name>
         <servlet-class>controller.AdminProfileController</servlet-class>
@@ -27,7 +24,6 @@
         <servlet-name>AdminProfileController</servlet-name>
         <url-pattern>/AdminProfileController</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>ListAccount</servlet-name>
         <servlet-class>controller.ListAccountController</servlet-class>
@@ -56,7 +52,6 @@
         <servlet-name>UpdateVolunteerStatusController</servlet-name>
         <servlet-class>controller.UpdateVolunteerStatusController</servlet-class>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>ListAccount</servlet-name>
         <url-pattern>/ListAccount</url-pattern>
@@ -85,4 +80,7 @@
         <servlet-name>UpdateVolunteerStatusController</servlet-name>
         <url-pattern>/UpdateVolunteerStatus</url-pattern>
     </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

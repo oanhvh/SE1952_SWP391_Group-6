@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="entity.Event" %>
 <%@ page import="dao.EventDAO" %>
@@ -10,20 +10,61 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Doni Charity - Manager</title>
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/responsive.css" />
-    <link rel="icon" href="../images/fevicon.png" type="image/gif" />
-    <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css" />
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
-    <link rel="stylesheet" href="../css/owl.carousel.min.css" />
-    <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
-    <link rel="stylesheet" href="../css/sidebar.css" />
-    <link rel="stylesheet" type="text/css" href="../css/events-homepage.css"/>
+    <link rel="stylesheet" href="css/owl.carousel.min.css" />
+    <link rel="stylesheet" href="css/owl.theme.default.min.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" type="text/css" href="css/events-homepage.css"/>
+
   </head>
   <body>
-    <jsp:include page="includes/header.jsp" />
-
+      
+    <div class="header_section">
+        
+      </div><nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand"><a href="index.html"><img src="images/logo.png"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+               <ul class="navbar-nav mr-auto">
+                  <li class="nav-item active">
+                     <a class="nav-link" href="index.html">Home</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="about.html">About</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="donate.html">Donate</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="news.html">News</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="contact.html">Contact Us</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="mission.html">Our Mission</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="login.jsp">Login</a>
+                  </li>
+                 
+               </ul>
+               <form class="form-inline my-2 my-lg-0">
+                  <div class="search_icon"><a href="#"><img src="images/search-icon.png"></a></div>
+                  <button class="donate_btn" type="submit">Donate Now</button>
+               </form>
+            </div>
+         </nav>
+   
+    <!-- banner section end -->
+    
     <!-- banner section start -->
     <div class="banner_section layout_padding">
        <div class="container">
@@ -94,7 +135,7 @@
                   <div class="readmore_bt"><a href="about.html">Read more</a></div>
                </div>
                <div class="col-sm-4">
-                  <div class="about_img"><img src="../images/about-img.png"></div>
+                  <div class="about_img"><img src="images/about-img.png"></div>
                </div>
             </div>
          </div>
@@ -104,7 +145,7 @@
     <%--event--%>
 <div class="featured-cause">
     <h2>EVENTS</h2>
-    <p class="description">We need you here.</p>
+    <p class="description"></p>
 
 <%
     EventDAO dao = new EventDAO();
@@ -116,7 +157,7 @@
 %>
     <div class="cause-item" <%= (count > 2 ? "style='display:none'" : "") %>>
         <div class="cause-image">
-            <img src="<%= request.getContextPath() %>/<%= e.getImage() %>"  alt="<%= e.getEventName() %>">
+            <img src="<%= e.getImage() %>" alt="<%= e.getEventName() %>">
             <div class="cause-date">
                 <span class="day"><%= e.getStartDate().getDayOfMonth() %></span>
                 <span class="month"><%= e.getStartDate().getMonth().toString().substring(0,3) %></span>
@@ -155,13 +196,13 @@
       <!-- donate section start -->
       <div class="donate_section layout_padding">
          <div class="container">
-            <h1 class="donate_taital">Donate pepole Says </h1>
+            <h1 class="donate_taital">Donat pepole Says </h1>
             <div class="donate_taital_main">
                <div id="main_slider" class="carousel slide" data-ride="carousel">
                   <div class="carousel-inner">
                      <div class="carousel-item active">
                         <div class="donate_left">
-                           <div class="client_img"><img src="../images/client-img.png"></div>
+                           <div class="client_img"><img src="images/client-img.png"></div>
                         </div>
                         <div class="donate_right">
                            <h3 class="client_name_text">Mardo Merk</h3>
@@ -170,7 +211,7 @@
                      </div>
                      <div class="carousel-item">
                         <div class="donate_left">
-                           <div class="client_img"><img src="../images/client-img.png"></div>
+                           <div class="client_img"><img src="images/client-img.png"></div>
                         </div>
                         <div class="donate_right">
                            <h3 class="client_name_text">Mardo Merk</h3>
@@ -179,7 +220,7 @@
                      </div>
                      <div class="carousel-item">
                         <div class="donate_left">
-                           <div class="client_img"><img src="../images/client-img.png"></div>
+                           <div class="client_img"><img src="images/client-img.png"></div>
                         </div>
                         <div class="donate_right">
                            <h3 class="client_name_text">Mardo Merk</h3>
@@ -197,17 +238,70 @@
             </div>
          </div>
       </div>
-    
-    <jsp:include page="includes/footer.jsp" />
-
-    <script src="../js/jquery.min.js"></script>
-    <script src="../js/popper.min.js"></script>
-    <script src="../js/bootstrap.bundle.min.js"></script>
-    <script src="../js/jquery-3.0.0.min.js"></script>
-    <script src="../js/plugin.js"></script>
-    <script src="../js/role.js?v=2"></script>
-    <script src="../js/owl.carousel.js"></script>
+    <div class="footer_section layout_padding">
+         <div class="container">
+            <div class="row">
+               <div class="col-sm-6 col-md-6 col-lg-3">
+                  <div class="footer_logo"><img src="images/footer-logo.png"></div>
+               </div>
+               <div class="col-sm-6 col-md-6 col-lg-3">
+                  <h4 class="footer_taital">NAVIGATION</h4>
+                  <div class="footer_menu_main">
+                     <div class="footer_menu_left">
+                        <div class="footer_menu">
+                           <ul>
+                              <li><a href="index_1.html">Home</a></li>
+                              <li><a href="donate.html">Donate</a></li>
+                              <li><a href="contact.html">Contact us</a></li>
+                           </ul>
+                        </div>
+                     </div>
+                     <div class="footer_menu_right">
+                        <div class="footer_menu">
+                           <ul>
+                              <li><a href="about.html">About</a></li>
+                              <li><a href="news.html">News</a></li>
+                              <li><a href="mission.html">Our Mission</a></li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               
+               <div class="col-sm-6 col-md-6 col-lg-3">
+                  <h4 class="footer_taital">address</h4>
+                  <p class="footer_text">Ave NW, Washington</p>
+                  <p class="footer_text">+01 1234567890</p>
+                  <p class="footer_text">demo@gmail.com</p>
+               </div>
+            </div>
+            <div class="footer_section_2">
+               <div class="row">
+                  <div class="col-sm-4 col-md-4 col-lg-3">
+                     
+                  </div>
+                  
+               </div>
+            </div>
+         </div>
+      </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="js/plugin.js"></script>
+    <script src="js/role.js?v=2"></script>
+    <script src="js/owl.carousel.js"></script>
     <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
-    <script src="../js/login.js"></script>
+    <script src="js/login.js"></script>
+    <script>
+function showMore() {
+    var hiddenEvents = document.querySelectorAll(".cause-item[style*='display:none']");
+    hiddenEvents.forEach(function(item){
+        item.style.display = "flex";
+    });
+    document.getElementById("showMoreBtn").style.display = "none";
+}
+</script>
   </body>
 </html>
