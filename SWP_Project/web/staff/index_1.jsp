@@ -1,4 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="entity.Event" %>
+<%@ page import="dao.EventDAO" %>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,6 +19,7 @@
     <link rel="stylesheet" href="../css/owl.carousel.min.css" />
     <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
     <link rel="stylesheet" href="../css/sidebar.css" />
+    <link rel="stylesheet" type="text/css" href="../css/events-homepage.css"/>
   </head>
   <body>
     <jsp:include page="includes/header.jsp" />
@@ -35,356 +40,164 @@
                    <div class="row">
                       <div class="col-sm-12">
                          <h1 class="banner_taital">Help Poor Child</h1>
-                         <p class="banner_text">Suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going </p>
-                         <div class="read_bt"><a href="#">Read More</a></div>
+                         <p class="banner_text">Every child deserves a chance to learn, grow, and dream. Your small act of kindness can bring food, education, and hope to poor children in need. </p>
+                         
                       </div>
                    </div>
                 </div>
                 <div class="carousel-item">
                    <div class="col-sm-12">
-                      <h1 class="banner_taital">Help Poor Child</h1>
-                      <p class="banner_text">Suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going </p>
-                      <div class="read_bt"><a href="#">Read More</a></div>
+                      <h1 class="banner_taital">Help Patient In Need</h1>
+                      <p class="banner_text">Many patients struggle to afford treatment. Your support can help provide medicine, care, and a second chance at life for those in need. </p>
+                      
                    </div>
                 </div>
                 <div class="carousel-item">
                    <div class="col-sm-12">
-                      <h1 class="banner_taital">Help Poor Child</h1>
-                      <p class="banner_text">Suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going </p>
-                      <div class="read_bt"><a href="#">Read More</a></div>
+                      <h1 class="banner_taital">Help People Affected By Natural Disasters</h1>
+                      <p class="banner_text">Natural disasters destroy homes and lives in moments. Together, we can provide shelter, food, and comfort to families rebuilding from tragedy.</p>
+                      
                    </div>
                 </div>
                 <div class="carousel-item">
                    <div class="col-sm-12">
-                      <h1 class="banner_taital">Help Poor Child</h1>
-                      <p class="banner_text">Suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going </p>
-                      <div class="read_bt"><a href="#">Read More</a></div>
+                      <h1 class="banner_taital">Help The Environment</h1>
+                      <p class="banner_text">Protecting the planet starts with us. Join our mission to plant trees, reduce waste, and preserve nature for future generations. </p>
+                      
                    </div>
                 </div>
                 <div class="carousel-item">
                    <div class="col-sm-12">
-                      <h1 class="banner_taital">Help Poor Child</h1>
-                      <p class="banner_text">Suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going </p>
-                      <div class="read_bt"><a href="#">Read More</a></div>
+                      <h1 class="banner_taital">Help Everyone</h1>
+                      <p class="banner_text">Together, we can create a better world for all—where kindness, compassion, and equality guide every action we take.</p>
+                      
                    </div>
                 </div>
              </div>
           </div>
        </div>
        <div class="donation_box">
-          <h4 class="donation_taital">Contact For Donation</h4>
-          <div class="mail_box">
-             <input type="" class="mail_text" placeholder="Your Name" name="Your Name">
-             <input type="" class="mail_text" placeholder="Email" name="Email">
-             <input type="" class="mail_text" placeholder="Phone" name="Phone">
-          </div>
-          <div class="send_bt"><a href="#">Send</a></div>
+          
+          
        </div>
-       <div class="fundraise_section">
-          <div class="fundraise_section_main">
-             <div class="row">
-                <div class="col-lg-4">
-                   <div class="box_main">
-                      <div class="icon_1"><img src="../images/icon-1.png"></div>
-                      <h4 class="volunteer_text">VOLUNTEERS</h4>
-                      <p class="lorem_text">Lorem Ipsum generators on the Internet tend to repeat predefined</p>
-                      <div class="join_bt"><a href="../login.jsp">Join Now</a></div>
-                   </div>
-                </div>
-                <div class="col-lg-4">
-                   <div class="box_main active">
-                      <div class="icon_1"><img src="../images/icon-2.png"></div>
-                      <h4 class="volunteer_text">FUNDRAISE</h4>
-                      <p class="lorem_text">Lorem Ipsum generators on the Internet tend to repeat predefined</p>
-                      <div class="join_bt"><a href="#">Join Now</a></div>
-                   </div>
-                </div>
-                <div class="col-lg-4">
-                   <div class="box_main">
-                      <div class="icon_1"><img src="../images/icon-3.png"></div>
-                      <h4 class="volunteer_text">DONATION</h4>
-                      <p class="lorem_text">Lorem Ipsum generators on the Internet tend to repeat predefined</p>
-                      <div class="join_bt"><a href="#">Join Now</a></div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
+       
     </div>
     <!-- banner section end -->
 
     <!-- about section start -->
     <div class="about_section layout_padding">
-       <div class="container">
-          <div class="row">
-             <div class="col-sm-8">
-                <h2 class="about_taital">about Chrity</h2>
-                <p class="about_text">many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If youmany variations of passages of Lorem Ipsum 
-                   available, but the majority have suffered 
-                   alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you many
-                   variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, byinjected humour, or randomised words which don't look even slightly believable. If you
-                </p>
-                <div class="readmore_bt"><a href="#">Read more</a></div>
-             </div>
-             <div class="col-sm-4">
-                <div class="about_img"><img src="../images/about-img.png"></div>
-             </div>
-          </div>
-       </div>
-    </div>
+         <div class="container">
+            <div class="row">
+               <div class="col-sm-8">
+                  <h2 class="about_taital">About Charity</h2>
+                  <p class="about_text">Charity is the heart of humanity— a bridge that connects compassion with action, and transforms kindness into real change. Our charity organization was founded with a simple yet powerful mission: to bring hope, opportunity, and dignity to those who need it most </p>
+                  <div class="readmore_bt"><a href="about.html">Read more</a></div>
+               </div>
+               <div class="col-sm-4">
+                  <div class="about_img"><img src="../images/about-img.png"></div>
+               </div>
+            </div>
+         </div>
+      </div>
     <!-- about section end -->
+  
+    <%--event--%>
+<div class="featured-cause">
+    <h2>EVENTS</h2>
+    <p class="description">We need you here.</p>
 
-    <!-- mission section start -->
-    <div class="mission_section layout_padding">
-       <div class="container">
-          <div class="row">
-             <div class="col-sm-12">
-                <h1 class="mission_taital">Mission causes</h1>
-                <p class="mission_text">going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. </p>
-             </div>
-          </div>
-       </div>
-       <div class="mission_section_2">
-          <div class="row">
-             <div class="offset-md-2"></div>
-             <div class="col-md-5">
-                <div class="container_main">
-                   <img src="../images/img-1.png" alt="Avatar" class="image">
-                   <div class="overlay">
-                      <div class="text">
-                         <h4 class="some_text">whichalteration in some </h4>
-                         <p class="alteration_text">Alteration in some form, by injected humour, or randomised words whichalteration in some form, by injected humour, or randomised words which</p>
-                         <div class="btn_main">
-                            <div class="donate_bt"><a href="#">Read More</a></div>
-                            <div class="donate_bt"><a href="donate.jsp">Donate Now</a></div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-             <div class="col-md-5">
-                <div class="container_main">
-                   <img src="../images/img-2.png" alt="Avatar" class="image">
-                   <div class="overlay">
-                      <div class="text">
-                         <h4 class="some_text">whichalteration in some </h4>
-                         <p class="alteration_text">Alteration in some form, by injected humour, or randomised words whichalteration in some form, by injected humour, or randomised words which</p>
-                         <div class="btn_main">
-                            <div class="donate_bt"><a href="#">Read More</a></div>
-                            <div class="donate_bt"><a href="donate.jsp">Donate Now</a></div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-       <div class="mission_section_2">
-          <div class="row">
-             <div class="col-md-5">
-                <div class="container_main">
-                   <img src="../images/img-3.png" alt="Avatar" class="image">
-                   <div class="overlay">
-                      <div class="text">
-                         <h4 class="some_text">whichalteration in some </h4>
-                         <p class="alteration_text">Alteration in some form, by injected humour, or randomised words whichalteration in some form, by injected humour, or randomised words which</p>
-                         <div class="btn_main">
-                            <div class="donate_bt"><a href="#">Read More</a></div>
-                            <div class="donate_bt"><a href="donate.html">Donate Now</a></div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-             <div class="col-md-5">
-                <div class="container_main">
-                   <img src="../images/img-4.png" alt="Avatar" class="image">
-                   <div class="overlay">
-                      <div class="text">
-                         <h4 class="some_text">whichalteration in some </h4>
-                         <p class="alteration_text">Alteration in some form, by injected humour, or randomised words whichalteration in some form, by injected humour, or randomised words which</p>
-                         <div class="btn_main">
-                            <div class="donate_bt"><a href="#">Read More</a></div>
-                            <div class="donate_bt"><a href="donate.html">Donate Now</a></div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-             <div class="offset-md-2"></div>
-          </div>
-       </div>
-       <div class="mission_section_2">
-          <div class="row">
-             <div class="offset-md-2"></div>
-             <div class="col-md-5">
-                <div class="container_main">
-                   <img src="../images/img-5.png" alt="Avatar" class="image">
-                   <div class="overlay">
-                      <div class="text">
-                         <h4 class="some_text">whichalteration in some </h4>
-                         <p class="alteration_text">Alteration in some form, by injected humour, or randomised words whichalteration in some form, by injected humour, or randomised words which</p>
-                         <div class="btn_main">
-                            <div class="donate_bt"><a href="#">Read More</a></div>
-                            <div class="donate_bt"><a href="donate.html">Donate Now</a></div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-             <div class="col-md-5">
-                <div class="container_main">
-                   <img src="../images/img-6.png" alt="Avatar" class="image">
-                   <div class="overlay">
-                      <div class="text">
-                         <h4 class="some_text">whichalteration in some </h4>
-                         <p class="alteration_text">Alteration in some form, by injected humour, or randomised words whichalteration in some form, by injected humour, or randomised words which</p>
-                         <div class="btn_main">
-                            <div class="donate_bt"><a href="#">Read More</a></div>
-                            <div class="donate_bt"><a href="donate.html">Donate Now</a></div>
-                         </div>
-                      </div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
+<%
+    EventDAO dao = new EventDAO();
+    List<Event> allEvents = dao.getAllEvents1();
+    if(allEvents != null && !allEvents.isEmpty()) {
+        int count = 0;
+        for(Event e : allEvents) {
+            count++;
+%>
+    <div class="cause-item" <%= (count > 2 ? "style='display:none'" : "") %>>
+        <div class="cause-image">
+            <img src="<%= request.getContextPath() %>/<%= e.getImage() %>"  alt="<%= e.getEventName() %>">
+            <div class="cause-date">
+                <span class="day"><%= e.getStartDate().getDayOfMonth() %></span>
+                <span class="month"><%= e.getStartDate().getMonth().toString().substring(0,3) %></span>
+            </div>
+        </div>
+        <div class="cause-info">
+            <h3><%= e.getEventName() %></h3>
+            <p><%= e.getDescription() %></p>
+            
+            <div class="buttons">
+                <a href="#" class="read-more">READ MORE</a>
+                <a href="#" class="donate-now">DONATE NOW</a>
+            </div>
+        </div>
     </div>
-    <!-- mission section end -->
-
-    <!-- news section start -->
-    <div class="news_section layout_padding">
-       <div class="container">
-          <div class="row">
-             <div class="col-sm-12">
-                <h1 class="news_taital">FEATURED CAUSE</h1>
-                <p class="news_text">going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. </p>
-             </div>
-          </div>
-          <div class="news_section_2">
-             <div class="row">
-                <div class="col-md-6">
-                   <div class="news_img"><img src="../images/news-img.png"></div>
-                </div>
-                <div class="col-md-6">
-                   <h1 class="give_taital">GIVE EDUCATION</h1>
-                   <p class="ipsum_text">variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by<br>
-                      injected humour, or randomised v<br>
-                      ariations of passages of Lorem Ipsum <br>
-                      available, but the majority have suffered alteration in some form, by injected humour, or randomised 
-                   </p>
-                   <h5 class="raised_text">Raised: $60,010     <span class="goal_text">Goal: $70,000</span></h5>
-                   <div class="donate_btn_main">
-                      <div class="readmore_btn"><a href="#">Read More</a></div>
-                      <div class="readmore_btn_1"><a href="donate.jsp">Donate Now</a></div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-    </div>
-    <!-- news section end -->
-
-    <!-- events section start -->
-    <div class="events_section layout_padding">
-       <div class="container">
-          <div class="row">
-             <div class="col-sm-12">
-                <h1 class="news_taital">FEATURED CAUSE</h1>
-                <p class="news_text">going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. </p>
-             </div>
-          </div>
-          <div class="events_section_2">
-             <div class="row">
-                <div class="col-md-5">
-                   <div class="img_7"><img src="../images/img-7.png" class="img_7"></div>
-                   <div class="date_bt">
-                      <div class="date_text active"><a href="#">01</a></div>
-                      <div class="date_text"><a href="#">FEB</a></div>
-                   </div>
-                </div>
-                <div class="col-md-7">
-                   <h1 class="give_taital_1">The Internet tend to repeat</h1>
-                   <p class="ipsum_text_1">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literatureContrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature</p>
-                   <h5 class="raised_text_1">Raised: $60,010 <span class="goal_text">Goal: $70,000</span></h5>
-                   <div class="donate_btn_main">
-                      <div class="readmore_btn"><a href="#">Read More</a></div>
-                      <div class="readmore_btn_1"><a href="donate.jsp">Donate Now</a></div>
-                   </div>
-                </div>
-             </div>
-          </div>
-          <div class="events_section_2">
-             <div class="row">
-                <div class="col-md-5">
-                   <div class="img_7"><img src="../images/img-8.png" class="img_7"></div>
-                   <div class="date_bt">
-                      <div class="date_text active"><a href="#">10</a></div>
-                      <div class="date_text"><a href="#">FEB</a></div>
-                   </div>
-                </div>
-                <div class="col-md-7">
-                   <h1 class="give_taital_1">The Internet tend to repeat</h1>
-                   <p class="ipsum_text_1">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literatureContrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature</p>
-                   <h5 class="raised_text_1">Raised: $60,010     <span class="goal_text">Goal: $70,000</span></h5>
-                   <div class="donate_btn_main">
-                      <div class="readmore_btn"><a href="#">Read More</a></div>
-                      <div class="readmore_btn_1"><a href="donate.html">Donate Now</a></div>
-                   </div>
-                </div>
-             </div>
-          </div>
-       </div>
-    </div>
-    <!-- events section end -->
-
-    <!-- donate section start -->
-    <div class="donate_section layout_padding">
-       <div class="container">
-          <h1 class="donate_taital">Donat pepole Says </h1>
-          <div class="donate_taital_main">
-             <div id="main_slider" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner">
-                   <div class="carousel-item active">
-                      <div class="donate_left">
-                         <div class="client_img"><img src="../images/client-img.png"></div>
-                      </div>
-                      <div class="donate_right">
-                         <h3 class="client_name_text">Mardo Merk</h3>
-                         <p class="dummy_text">If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefinedIf you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined</p>
-                      </div>
-                   </div>
-                   <div class="carousel-item">
-                      <div class="donate_left">
-                         <div class="client_img"><img src="../images/client-img.png"></div>
-                      </div>
-                      <div class="donate_right">
-                         <h3 class="client_name_text">Mardo Merk</h3>
-                         <p class="dummy_text">If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefinedIf you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined</p>
-                      </div>
-                   </div>
-                   <div class="carousel-item">
-                      <div class="donate_left">
-                         <div class="client_img"><img src="../images/client-img.png"></div>
-                      </div>
-                      <div class="donate_right">
-                         <h3 class="client_name_text">Mardo Merk</h3>
-                         <p class="dummy_text">If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefinedIf you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined</p>
-                      </div>
-                   </div>
-                </div>
-                <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
-                <i class="fa fa-angle-right"></i>
-                </a>
-                <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
-                <i class="fa fa-angle-left"></i>
-                </a>
-             </div>
-          </div>
-       </div>
-    </div>
-    <!-- donate section end -->
-
+<%
+        } // end for
+%>
+    <% if(allEvents.size() > 3) { %>
+<div style="text-align:center;">
+    <a id="showMoreBtn" href="news.html" 
+       >
+        More Events
+    </a>
+</div>
+    <% } %>
+<%
+    } else {
+%>
+    <p>Chưa có sự kiện nào.</p>
+<%
+    }
+%>
+</div>
+      <!-- events section end -->
+      <!-- donate section start -->
+      <div class="donate_section layout_padding">
+         <div class="container">
+            <h1 class="donate_taital">Donate pepole Says </h1>
+            <div class="donate_taital_main">
+               <div id="main_slider" class="carousel slide" data-ride="carousel">
+                  <div class="carousel-inner">
+                     <div class="carousel-item active">
+                        <div class="donate_left">
+                           <div class="client_img"><img src="../images/client-img.png"></div>
+                        </div>
+                        <div class="donate_right">
+                           <h3 class="client_name_text">Mardo Merk</h3>
+                           <p class="dummy_text">If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefinedIf you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined</p>
+                        </div>
+                     </div>
+                     <div class="carousel-item">
+                        <div class="donate_left">
+                           <div class="client_img"><img src="../images/client-img.png"></div>
+                        </div>
+                        <div class="donate_right">
+                           <h3 class="client_name_text">Mardo Merk</h3>
+                           <p class="dummy_text">If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefinedIf you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined</p>
+                        </div>
+                     </div>
+                     <div class="carousel-item">
+                        <div class="donate_left">
+                           <div class="client_img"><img src="../images/client-img.png"></div>
+                        </div>
+                        <div class="donate_right">
+                           <h3 class="client_name_text">Mardo Merk</h3>
+                           <p class="dummy_text">If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefinedIf you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined</p>
+                        </div>
+                     </div>
+                  </div>
+                  <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
+                  <i class="fa fa-angle-right"></i>
+                  </a>
+                  <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
+                  <i class="fa fa-angle-left"></i>
+                  </a>
+               </div>
+            </div>
+         </div>
+      </div>
+    
     <jsp:include page="includes/footer.jsp" />
 
     <script src="../js/jquery.min.js"></script>
