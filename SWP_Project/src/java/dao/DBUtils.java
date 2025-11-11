@@ -8,7 +8,7 @@ public class DBUtils {
 
     private static final String DB = "Team6_SWP391_VMS";
     private static final String USER_NAME = "sa";
-    private static final String PASSWORD = "Mssql@123";
+    private static final String PASSWORD = "123";
 
     public static Connection getConnection1() throws ClassNotFoundException, SQLException {
         Connection conn = null;
@@ -22,6 +22,7 @@ public class DBUtils {
 
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        int a = 1;
         System.out.println(getConnection1().toString());
     }
 }

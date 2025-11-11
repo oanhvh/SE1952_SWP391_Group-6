@@ -95,7 +95,6 @@ public class UserService {
             response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
             return;
         }
-
         request.setCharacterEncoding("UTF-8");
         String username = request.getParameter("username");
         String fullName = request.getParameter("fullName");

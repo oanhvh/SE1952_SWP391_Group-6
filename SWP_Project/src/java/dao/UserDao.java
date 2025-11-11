@@ -475,7 +475,7 @@ public class UserDao extends DBUtils {
     }
 
     public boolean updateProfile(Users user) {
-        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, DateOfBirth = ?, Avatar = ?, FacebookID = ?, ogleID = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, DateOfBirth = ?, Avatar = ?, FacebookID = ?, GoogleID = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getFullName());
             ps.setString(2, user.getEmail());
@@ -505,6 +505,7 @@ public class UserDao extends DBUtils {
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e);
             return false;
         }
     }
