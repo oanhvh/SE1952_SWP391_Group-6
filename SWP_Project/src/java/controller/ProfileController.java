@@ -1,0 +1,167 @@
+package controller;
+
+import dao.UserDao;
+import dao.SkillsDAO;
+import dao.VolunteerSkillsDAO;
+import entity.Skills;
+import entity.Users;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+@WebServlet(name = "ProfileController", urlPatterns = {
+    "/ProfileController",
+    "/manager/profile",
+    "/staff/profile",
+    "/volunteer/profile"
+})
+public class ProfileController extends HttpServlet {
+
+    private final UserDao userDao = new UserDao();
+    private final SkillsDAO skillsDAO = new SkillsDAO();
+    private final VolunteerSkillsDAO volunteerSkillsDAO = new VolunteerSkillsDAO();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        Users user = (session != null) ? (Users) session.getAttribute("authUser") : null;
+        String role = (session != null) ? (String) session.getAttribute("role") : null;
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
+        String action = request.getParameter("action");
+        String scope = resolveScope(request, role);
+
+        request.setAttribute("user", user);
+
+        // lấy kỹ năng hiện tại của user
+        List<Skills> userSkills = userDao.getSkillsByUserID(user.getUserID());
+        request.setAttribute("skills", userSkills);
+
+        if ("edit".equalsIgnoreCase(action)) {
+            request.getRequestDispatcher("/" + scope + "/edit_profile.jsp").forward(request, response);
+
+        } else if ("editSkills".equalsIgnoreCase(action)) {
+            // lấy tất cả skill trong DB để hiển thị checkbox
+            List<Skills> allSkills = skillsDAO.getAllSkills();
+            request.setAttribute("allSkills", allSkills);
+            request.setAttribute("userSkills", userSkills);
+            request.getRequestDispatcher("/" + scope + "/update_skills.jsp").forward(request, response);
+
+        } else {
+            request.getRequestDispatcher("/" + scope + "/profile.jsp").forward(request, response);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        Users user = (session != null) ? (Users) session.getAttribute("authUser") : null;
+        String role = (session != null) ? (String) session.getAttribute("role") : null;
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
+        String action = request.getParameter("action");
+
+        // ---------------- UPDATE PROFILE ----------------
+        if ("updateProfile".equalsIgnoreCase(action)) {
+            String fullName = request.getParameter("fullName");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            String avatar = request.getParameter("avatar");
+            String dobStr = request.getParameter("dateOfBirth");
+
+            LocalDate dob = null;
+            if (dobStr != null && !dobStr.trim().isEmpty()) {
+                try {
+                    dob = LocalDate.parse(dobStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                } catch (Exception e) {
+                    request.setAttribute("error", "Invalid date format (yyyy-MM-dd)");
+                    forwardToEdit(request, response, user, role);
+                    return;
+                }
+            }
+
+            user.setFullName(fullName);
+            user.setEmail(email);
+            user.setPhone(phone);
+            user.setAvatar(avatar);
+            user.setDateOfBirth(dob);
+            user.setUpdatedAt(java.time.LocalDateTime.now());
+
+            boolean success = userDao.updateProfile(user);
+
+            if (success) {
+                session.setAttribute("authUser", user);
+                request.setAttribute("user", user);
+                request.setAttribute("skills", userDao.getSkillsByUserID(user.getUserID()));
+                request.setAttribute("success", "Profile updated successfully!");
+                forwardToProfile(request, response, user, role);
+            } else {
+                request.setAttribute("user", user);
+                request.setAttribute("skills", userDao.getSkillsByUserID(user.getUserID()));
+                request.setAttribute("error", "Update failed. Please try again.");
+                forwardToEdit(request, response, user, role);
+            }
+
+            // ---------------- UPDATE SKILLS ----------------
+        } else if ("updateSkills".equalsIgnoreCase(action)) {
+            String[] selectedSkillIDs = request.getParameterValues("skillIDs");
+
+            // Cập nhật kỹ năng cho volunteer (xóa cũ → thêm mới)
+            volunteerSkillsDAO.updateSkillsForUser(user.getUserID(), selectedSkillIDs);
+
+            // Load lại dữ liệu để hiển thị
+            List<Skills> updatedSkills = userDao.getSkillsByUserID(user.getUserID());
+            request.setAttribute("skills", updatedSkills);
+            request.setAttribute("user", user);
+            request.setAttribute("success", "Skills updated successfully!");
+
+            forwardToProfile(request, response, user, role);
+        }
+    }
+
+    // ===================== Helper Methods =====================
+    private void forwardToProfile(HttpServletRequest request, HttpServletResponse response, Users user, String role)
+            throws ServletException, IOException {
+        String scope = resolveScope(request, role);
+        request.getRequestDispatcher("/" + scope + "/profile.jsp").forward(request, response);
+    }
+
+    private void forwardToEdit(HttpServletRequest request, HttpServletResponse response, Users user, String role)
+            throws ServletException, IOException {
+        String scope = resolveScope(request, role);
+        request.getRequestDispatcher("/" + scope + "/edit_profile.jsp").forward(request, response);
+    }
+
+    private String resolveScope(HttpServletRequest request, String role) {
+        String path = request.getServletPath();
+        if (path.startsWith("/manager/") || "Manager".equalsIgnoreCase(role)) {
+            return "manager";
+        }
+        if (path.startsWith("/staff/") || "Staff".equalsIgnoreCase(role)) {
+            return "staff";
+        }
+        if (path.startsWith("/volunteer/") || "Volunteer".equalsIgnoreCase(role)) {
+            return "volunteer";
+        }
+        return "volunteer";
+    }
+}

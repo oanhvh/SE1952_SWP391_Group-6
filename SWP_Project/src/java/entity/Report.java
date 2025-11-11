@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 public class Report {
 
     private int reportID;
-    private Organization org;
-    private Event event;
-    private Users generatedByUser;
+    private Integer managerID;
+    private Integer eventID;
+    private Integer generatedByUserID;
     private String reportType;
     private String reportDetails;
     private LocalDateTime generatedDate;
@@ -23,12 +23,11 @@ public class Report {
     public Report() {
     }
 
-    public Report(int reportID, Organization org, Event event, Users generatedByUser, String reportType,
-            String reportDetails, LocalDateTime generatedDate) {
+    public Report(int reportID, Integer managerID, Integer eventID, Integer generatedByUserID, String reportType, String reportDetails, LocalDateTime generatedDate) {
         this.reportID = reportID;
-        this.org = org;
-        this.event = event;
-        this.generatedByUser = generatedByUser;
+        this.managerID = managerID;
+        this.eventID = eventID;
+        this.generatedByUserID = generatedByUserID;
         this.reportType = reportType;
         this.reportDetails = reportDetails;
         this.generatedDate = generatedDate;
@@ -38,55 +37,56 @@ public class Report {
         return reportID;
     }
 
-    public void setReportID(int reportID) {
-        this.reportID = reportID;
+    public Integer getManagerID() {
+        return managerID;
     }
 
-    public Organization getOrg() {
-        return org;
+    public Integer getEventID() {
+        return eventID;
     }
 
-    public void setOrg(Organization org) {
-        this.org = org;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
-    }
-
-    public Users getGeneratedByUser() {
-        return generatedByUser;
-    }
-
-    public void setGeneratedByUser(Users generatedByUser) {
-        this.generatedByUser = generatedByUser;
+    public Integer getGeneratedByUserID() {
+        return generatedByUserID;
     }
 
     public String getReportType() {
         return reportType;
     }
 
-    public void setReportType(String reportType) {
-        this.reportType = reportType;
-    }
-
     public String getReportDetails() {
         return reportDetails;
-    }
-
-    public void setReportDetails(String reportDetails) {
-        this.reportDetails = reportDetails;
     }
 
     public LocalDateTime getGeneratedDate() {
         return generatedDate;
     }
 
+    public void setReportID(int reportID) {
+        this.reportID = reportID;
+    }
+
+    public void setManagerID(Integer managerID) {
+        this.managerID = managerID;
+    }
+
+    public void setEventID(Integer eventID) {
+        this.eventID = eventID;
+    }
+
+    public void setGeneratedByUserID(Integer generatedByUserID) {
+        this.generatedByUserID = generatedByUserID;
+    }
+
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
+    }
+
+    public void setReportDetails(String reportDetails) {
+        this.reportDetails = reportDetails;
+    }
+
     public void setGeneratedDate(LocalDateTime generatedDate) {
         this.generatedDate = generatedDate;
     }
+
 }
