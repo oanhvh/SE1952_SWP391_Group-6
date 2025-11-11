@@ -98,7 +98,7 @@ public class EmployeeCodesDAO {
     
     //đếm tổng số code theo Manager
     public int getCodesCountByManager(Connection conn, int managerId) throws Exception {
-        String sql = "SELECT COUNT(*) FROM EmployeeCodes WHERE ManagerID = ?";
+        String sql = "SELECT COUNT(*) FROM EmployeeCodes WHERE ManagerID = ?"; //AND IsUsed = 1
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, managerId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -107,7 +107,7 @@ public class EmployeeCodesDAO {
         }
         return 0;
     }
-
+    
     //phân trang danh sách code theo ID đã tạo 
     public List<CodeInfo> listCodesByManager(Connection conn, int managerId, int page, int pageSize) throws Exception {
         if (page <= 0) page = 1;
@@ -116,7 +116,8 @@ public class EmployeeCodesDAO {
         String sql = "SELECT ec.CodeID, ec.ManagerID, ec.CodeValue, ec.IsUsed, ec.CreatedAt, ec.CreatedByUserID, COALESCE(u.FullName, u.Username) AS CreatorName "
                 + "FROM EmployeeCodes ec "
                 + "LEFT JOIN Users u ON u.UserID = ec.CreatedByUserID "
-                + "WHERE ec.ManagerID = ? ORDER BY ec.CodeID DESC "
+                + "WHERE ec.ManagerID = ? "
+                + "ORDER BY ec.CodeID DESC " //AND ec.IsUsed = 1
                 + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, managerId);
@@ -139,7 +140,7 @@ public class EmployeeCodesDAO {
             return list;
         }
     }
-    
+       
     //xóa code
     public int deleteCodeByManager(Connection conn, int managerId, int codeId) throws Exception {
         String sql = "DELETE FROM EmployeeCodes WHERE CodeID = ? AND ManagerID = ?";

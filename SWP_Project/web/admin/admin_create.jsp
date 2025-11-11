@@ -1,13 +1,22 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.Map,java.util.HashMap" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%--<%
+<%
     String role = (String) session.getAttribute("role");
     if (role == null || !"Admin".equalsIgnoreCase(role)) {
         response.sendRedirect(request.getContextPath() + "/login.jsp");
         return;
     }
-%>--%>
+    
+    Map<String,String> errors = (Map<String,String>) request.getAttribute("errors");
+    if (errors == null) errors = new java.util.HashMap<>();
+    Map<String,String> form = (Map<String,String>) request.getAttribute("form");
+    if (form == null) form = new java.util.HashMap<>();
+
+    String success = request.getParameter("success");
+    String errorMsg = request.getParameter("error");
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -45,14 +54,16 @@
 
                                     <div class="mb-3">
                                         <label for="username" class="form-label">Username</label>
-                                        <input type="text" class="form-control" id="username" name="username" required>
+                                        <input type="text" class="form-control <%= errors.containsKey("username") ? "is-invalid" : "" %>" id="username" name="username" value="<%= form.getOrDefault("username", "") %>" required>
+                                        <div class="invalid-feedback"><%= errors.getOrDefault("username", "") %></div>
                                     </div>
                                     <div class="mb-3 password-wrapper">
                                         <label for="password" class="form-label">Password</label>
                                         <div class="position-relative">
-                                            <input type="password" class="form-control" id="password" name="password" required>
+                                            <input type="password" class="form-control <%= errors.containsKey("password") ? "is-invalid" : "" %>" id="password" name="password" required>
                                             <i class="fa fa-eye-slash toggle-password" id="togglePassword" aria-label="Show password"></i>
                                         </div>
+                                        <div class="invalid-feedback d-block"><%= errors.getOrDefault("password", "") %></div>
                                         <div class="mt-2">
                                             <div class="progress" style="height:6px;"><div id="pwdStrengthBar" class="progress-bar bg-danger" style="width:0%"></div></div>
                                             <small id="pwdStrengthText" class="text-muted">Weak</small>
@@ -61,15 +72,18 @@
 
                                     <div class="mb-3">
                                         <label for="fullName" class="form-label">Full Name</label>
-                                        <input type="text" class="form-control" id="fullName" name="fullName">
+                                        <input type="text" class="form-control <%= errors.containsKey("fullName") ? "is-invalid" : "" %>" id="fullName" name="fullName" value="<%= form.getOrDefault("fullName", "") %>">
+                                        <div class="invalid-feedback"><%= errors.getOrDefault("fullName", "") %></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email">
+                                        <input type="email" class="form-control <%= errors.containsKey("email") ? "is-invalid" : "" %>" id="email" name="email" value="<%= form.getOrDefault("email", "") %>">
+                                        <div class="invalid-feedback"><%= errors.getOrDefault("email", "") %></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="phone" class="form-label">Phone</label>
-                                        <input type="text" class="form-control" id="phone" name="phone">
+                                        <input type="text" class="form-control <%= errors.containsKey("phone") ? "is-invalid" : "" %>" id="phone" name="phone" value="<%= form.getOrDefault("phone", "") %>">
+                                        <div class="invalid-feedback"><%= errors.getOrDefault("phone", "") %></div>
                                     </div>
                                     <div class="d-grid"><button type="submit" class="btn btn-primary">Create Admin</button></div>
                                 </form>

@@ -1,5 +1,7 @@
 /* ===== Topbar ===== */
-.hidden{display:none !important}
+.hidden{
+    display:none !important
+}
 .topbar {
     height: 96px;
     background: #2a57c9;
@@ -34,8 +36,12 @@
 }
 
 /* ===== Password eye toggle ===== */
-#password{ padding-right: 42px; }
-.password-wrapper{ position: relative; }
+#password{
+    padding-right: 42px;
+}
+.password-wrapper{
+    position: relative;
+}
 .toggle-password{
     position: absolute;
     top: 50%;
@@ -90,7 +96,10 @@
     padding: 28px 26px 30px;
 }
 
-.form-label{ font-weight:600; color:#243a6b; }
+.form-label{
+    font-weight:600;
+    color:#243a6b;
+}
 .form-control, .form-select{
     height: 48px;
     border-radius: 12px;
@@ -108,8 +117,25 @@
     border-radius: 12px;
     font-weight:700;
 }
-.btn-primary:hover{ filter: brightness(0.95); }
+.btn-primary:hover{
+    filter: brightness(0.95);
+}
 
 /* strength meter text */
-#pwdStrengthText{ display:inline-block; margin-top:6px; color:#6c7a99; }
+#pwdStrengthText{
+    display:inline-block;
+    margin-top:6px;
+    color:#6c7a99;
+}
 
+.error-field {
+    border: 1px solid #dc3545;
+}
+.error-message {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
+.hidden {
+    display: none;
+}

@@ -15,9 +15,18 @@
         <link rel="stylesheet" href="../css/activation.css" />
         <style>
             /* Ensure pagination numbers are visible regardless of global styles */
-            .pagination .page-link { color: #0d6efd !important; }
-            .pagination .page-item.disabled .page-link { color: #6c757d !important; pointer-events: none; }
-            .pagination .page-item.active .page-link { background-color: #e91e63; border-color: #e91e63; color: #fff !important; }
+            .pagination .page-link {
+                color: #0d6efd !important;
+            }
+            .pagination .page-item.disabled .page-link {
+                color: #6c757d !important;
+                pointer-events: none;
+            }
+            .pagination .page-item.active .page-link {
+                background-color: #e91e63;
+                border-color: #e91e63;
+                color: #fff !important;
+            }
         </style>
     </head>
     <body class="activation-page">
@@ -83,9 +92,11 @@
 
             let currentPage = 1;
             let pageSize = 50;
+            const urlParams = new URLSearchParams(window.location.search);
+            let currentStatus = (urlParams.get('status') || '').toLowerCase();
             async function fetchList(page = 1, size = pageSize) {
                 const url = '<%= request.getContextPath() %>/manager/activation-code?page=1&pageSize=' + encodeURIComponent(size);
-                const resp = await fetch(url, { cache: 'no-store' });
+                const resp = await fetch(url, {cache: 'no-store'});
                 if (!resp.ok)
                     throw new Error('Load failed');
                 return resp.json();
@@ -111,7 +122,13 @@
                 tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">Loading...</td></tr>';
                 try {
                     const result = await fetchList(currentPage, pageSize);
-                    const items = result && Array.isArray(result.items) ? result.items : (Array.isArray(result) ? result : []);
+                    let items = result && Array.isArray(result.items) ? result.items : (Array.isArray(result) ? result : []);
+                    if (currentStatus) {
+                        items = items.filter(it => {
+                            const st = statusLabel(it.used, it.createdAtMs).text.toLowerCase();
+                            return st === currentStatus;
+                        });
+                    }
                     tbody.innerHTML = '';
                     if (!items || items.length === 0) {
                         tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No codes yet</td></tr>';

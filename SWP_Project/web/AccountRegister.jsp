@@ -16,10 +16,9 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>
     <body class="login-page">
-        <!-- Topbar (reuse from login) -->
         <div class="topbar d-flex align-items-center">
             <div class="container d-flex justify-content-between align-items-center">
-                <a class="brand text-decoration-none" href="index.html">
+                <a class="brand text-decoration-none" href="index.jsp">
                     <img src="images/logo.png" alt="logo"/>
                     <span class="text-white">Register</span>
                 </a>
@@ -42,6 +41,9 @@
                                 <c:if test="${not empty error}">
                                     <div class="alert alert-danger">${error}</div>
                                 </c:if>
+                                <c:if test="${not empty success}">
+                                    <div class="alert alert-success">${success}</div>
+                                </c:if>
                                 <c:if test="${not empty message}">
                                     <div class="alert alert-info">${message}</div>
                                 </c:if>
@@ -51,30 +53,39 @@
                                     <!-- Role -->
                                     <div class="mb-3">
                                         <label for="role" class="form-label">Role</label>
-                                        <select class="form-select" id="role" name="role" onchange="onRoleChange(this)" required>
+                                        <select class="form-select ${not empty errors.role ? 'error-field' : ''}" id="role" name="role" onchange="onRoleChange(this)" required>
                                             <option value="" disabled ${empty param.role ? 'selected' : ''}>-- Select Role --</option>
                                             <option value="Volunteer" ${param.role == 'Volunteer' ? 'selected' : ''}>Volunteer</option>
                                             <option value="Staff" ${param.role == 'Staff' ? 'selected' : ''}>Staff</option>
                                         </select>
+                                        <c:if test="${not empty errors.role}">
+                                            <div class="error-message">${errors.role}</div>
+                                        </c:if>
                                     </div>
 
                                     <!-- Employee Code (for Staff) -->
                                     <div class="mb-3 hidden" id="employeeCodeRow">
                                         <label for="employeeCode" class="form-label">Employee Code (Staff)</label>
-                                        <input type="text" class="form-control" id="employeeCode" name="employeeCode" value="${param.employeeCode}">
+                                        <input type="text" class="form-control ${not empty errors.employeeCode ? 'error-field' : ''}" id="employeeCode" name="employeeCode" value="${param.employeeCode}">
+                                        <c:if test="${not empty errors.employeeCode}">
+                                            <div class="error-message">${errors.employeeCode}</div>
+                                        </c:if>
                                     </div>
 
                                     <!-- Username -->
                                     <div class="mb-3">
                                         <label for="username" class="form-label">Username</label>
-                                        <input type="text" class="form-control" id="username" name="username" value="${param.username}" required>
+                                        <input type="text" class="form-control ${not empty errors.username ? 'error-field' : ''}" id="username" name="username" value="${param.username}" required>
+                                        <c:if test="${not empty errors.username}">
+                                            <div class="error-message">${errors.username}</div>
+                                        </c:if>
                                     </div>
 
                                     <!-- Password -->
                                     <div class="mb-3 password-wrapper">
                                         <label for="password" class="form-label">Password</label>
                                         <div class="position-relative">
-                                            <input type="password" class="form-control" id="password" name="password" required>
+                                            <input type="password" class="form-control ${not empty errors.password ? 'error-field' : ''}" id="password" name="password" required>
                                             <i class="fa fa-eye-slash toggle-password" id="togglePassword" aria-label="Show password"></i>
                                         </div>
                                         <div class="mt-2">
@@ -83,30 +94,45 @@
                                             </div>
                                             <small id="pwdStrengthText" class="text-muted">Weak</small>
                                         </div>
+                                        <c:if test="${not empty errors.password}">
+                                            <div class="error-message">${errors.password}</div>
+                                        </c:if>
                                     </div>
 
                                     <!-- Full Name -->
                                     <div class="mb-3">
                                         <label for="fullName" class="form-label">Full Name</label>
-                                        <input type="text" class="form-control" id="fullName" name="fullName" value="${param.fullName}">
+                                        <input type="text" class="form-control ${not empty errors.fullName ? 'error-field' : ''}" id="fullName" name="fullName" value="${param.fullName}">
+                                        <c:if test="${not empty errors.fullName}">
+                                            <div class="error-message">${errors.fullName}</div>
+                                        </c:if>
                                     </div>
 
                                     <!-- Email -->
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="${param.email}">
+                                        <input type="email" class="form-control ${not empty errors.email ? 'error-field' : ''}" id="email" name="email" value="${param.email}">
+                                        <c:if test="${not empty errors.email}">
+                                            <div class="error-message">${errors.email}</div>
+                                        </c:if>
                                     </div>
 
                                     <!-- Phone -->
                                     <div class="mb-3">
                                         <label for="phone" class="form-label">Phone</label>
-                                        <input type="text" class="form-control" id="phone" name="phone" value="${param.phone}">
+                                        <input type="text" class="form-control ${not empty errors.phone ? 'error-field' : ''}" id="phone" name="phone" value="${param.phone}">
+                                        <c:if test="${not empty errors.phone}">
+                                            <div class="error-message">${errors.phone}</div>
+                                        </c:if>
                                     </div>
 
                                     <!-- Date of Birth -->
                                     <div class="mb-3">
                                         <label for="dateOfBirth" class="form-label">Date of Birth</label>
-                                        <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" value="${param.dateOfBirth}">
+                                        <input type="date" class="form-control ${not empty errors.dateOfBirth ? 'error-field' : ''}" id="dateOfBirth" name="dateOfBirth" value="${param.dateOfBirth}">
+                                        <c:if test="${not empty errors.dateOfBirth}">
+                                            <div class="error-message">${errors.dateOfBirth}</div>
+                                        </c:if>
                                     </div>
 
                                     <!-- Submit Button -->
@@ -133,6 +159,7 @@
                 </div>
             </div>
         </div>
+
         <script>
             function onRoleChange(sel) {
                 var v = sel.value;
@@ -140,14 +167,19 @@
                 if (row)
                     row.classList.toggle('hidden', v !== 'Staff');
             }
+
             document.addEventListener('DOMContentLoaded', function () {
+                // Initialize role-based field visibility
                 var sel = document.getElementById('role');
                 if (sel)
                     onRoleChange(sel);
+
+                // Password strength and toggle functionality
                 var pwd = document.getElementById('password');
                 var toggle = document.getElementById('togglePassword');
                 var bar = document.getElementById('pwdStrengthBar');
                 var text = document.getElementById('pwdStrengthText');
+
                 function scorePassword(p) {
                     var s = 0;
                     if (!p)
@@ -164,6 +196,7 @@
                         s++;
                     return Math.min(s, 5);
                 }
+
                 function updateStrength(p) {
                     var s = scorePassword(p);
                     var pct = [0, 20, 40, 60, 80, 100][s];
@@ -185,12 +218,14 @@
                         text.textContent = label;
                     }
                 }
+
                 if (pwd) {
                     updateStrength(pwd.value || '');
                     pwd.addEventListener('input', function () {
                         updateStrength(pwd.value);
                     });
                 }
+
                 if (toggle && pwd) {
                     toggle.addEventListener('click', function () {
                         var show = pwd.type === 'password';
@@ -199,6 +234,12 @@
                         toggle.classList.toggle('fa-eye-slash', !show);
                         toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
                     });
+                }
+
+                // Auto-focus on first error field if any
+                var firstErrorField = document.querySelector('.error-field');
+                if (firstErrorField) {
+                    firstErrorField.focus();
                 }
             });
         </script>
@@ -272,10 +313,5 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
-<<<<<<< HEAD
-</html>
-=======
 </html>
 
-
->>>>>>> mainV1
