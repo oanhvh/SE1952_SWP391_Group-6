@@ -19,7 +19,10 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Notifications <% if (unread != null && unread > 0) { %><span class="badge badge-danger"><%= unread %> unread</span><% } %></h4>
-        <a class="btn btn-outline-primary" href="<%= request.getContextPath() %>/notifications/mark-all">Mark all as read</a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary" onclick="if (history.length > 1) { history.back(); } else { window.location.href='<%= request.getContextPath() %>/volunteer/index_1.jsp'; }">Back</button>
+            <a class="btn btn-outline-primary" href="<%= request.getContextPath() %>/notifications/mark-all">Mark all as read</a>
+        </div>
     </div>
 
     <div class="list-group">

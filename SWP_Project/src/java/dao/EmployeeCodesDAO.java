@@ -25,19 +25,25 @@ public class EmployeeCodesDAO {
         public final String codeValue;
         public final boolean isUsed;
         public final Timestamp createdAt;
+        public final Integer createdByUserId;
+        public final String creatorName;
 
-        public CodeInfo(int codeId, int managerId, String codeValue, boolean isUsed, Timestamp createdAt) {
+        public CodeInfo(int codeId, int managerId, String codeValue, boolean isUsed, Timestamp createdAt, Integer createdByUserId, String creatorName) {
             this.codeId = codeId;
             this.managerId = managerId;
             this.codeValue = codeValue;
             this.isUsed = isUsed;
             this.createdAt = createdAt;
+            this.createdByUserId = createdByUserId;
+            this.creatorName = creatorName;
         }
     }
     
     //kiểm tra mã hợp lệ
     public CodeInfo getValidCodeInfo(Connection conn, String codeValue) throws Exception {
-        String sql = "SELECT CodeID, ManagerID, CodeValue, IsUsed, CreatedAt FROM EmployeeCodes WHERE CodeValue = ? AND IsUsed = 0"; //IsUsed = 1(đã được sử dụng)
+        String sql = "SELECT CodeID, ManagerID, CodeValue, IsUsed, CreatedAt FROM EmployeeCodes "
+                + "WHERE CodeValue = ? AND IsUsed = 0 "
+                + "AND CreatedAt >= DATEADD(HOUR, -24, SYSUTCDATETIME())"; //hết hạn sau 24h kể từ thời điểm tạo
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, codeValue);
             try (ResultSet rs = ps.executeQuery()) {
@@ -47,7 +53,9 @@ public class EmployeeCodesDAO {
                             rs.getInt("ManagerID"),
                             rs.getString("CodeValue"),
                             rs.getBoolean("IsUsed"),
-                            rs.getTimestamp("CreatedAt")
+                            rs.getTimestamp("CreatedAt"),
+                            null,
+                            null
                     );
                 }
             }
@@ -88,15 +96,32 @@ public class EmployeeCodesDAO {
         }
     }
     
-    //list 20 code theo ID đã tạo 
-    public List<CodeInfo> listCodesByManager(Connection conn, int managerId, int limit) throws Exception {
-        String sql = "SELECT TOP (ISNULL(?, 20)) CodeID, ManagerID, CodeValue, IsUsed, CreatedAt FROM EmployeeCodes WHERE ManagerID = ? ORDER BY CodeID DESC";
+    //đếm tổng số code theo Manager
+    public int getCodesCountByManager(Connection conn, int managerId) throws Exception {
+        String sql = "SELECT COUNT(*) FROM EmployeeCodes WHERE ManagerID = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            if (limit <= 0) {
-                limit = 20;
+            ps.setInt(1, managerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
             }
-            ps.setInt(1, limit);
-            ps.setInt(2, managerId);
+        }
+        return 0;
+    }
+
+    //phân trang danh sách code theo ID đã tạo 
+    public List<CodeInfo> listCodesByManager(Connection conn, int managerId, int page, int pageSize) throws Exception {
+        if (page <= 0) page = 1;
+        if (pageSize <= 0) pageSize = 20;
+        int offset = (page - 1) * pageSize;
+        String sql = "SELECT ec.CodeID, ec.ManagerID, ec.CodeValue, ec.IsUsed, ec.CreatedAt, ec.CreatedByUserID, COALESCE(u.FullName, u.Username) AS CreatorName "
+                + "FROM EmployeeCodes ec "
+                + "LEFT JOIN Users u ON u.UserID = ec.CreatedByUserID "
+                + "WHERE ec.ManagerID = ? ORDER BY ec.CodeID DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, managerId);
+            ps.setInt(2, offset);
+            ps.setInt(3, pageSize);
             List<CodeInfo> list = new ArrayList<>();
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -105,7 +130,9 @@ public class EmployeeCodesDAO {
                             rs.getInt("ManagerID"),
                             rs.getString("CodeValue"),
                             rs.getBoolean("IsUsed"),
-                            rs.getTimestamp("CreatedAt")
+                            rs.getTimestamp("CreatedAt"),
+                            (Integer) rs.getObject("CreatedByUserID"),
+                            rs.getString("CreatorName")
                     ));
                 }
             }

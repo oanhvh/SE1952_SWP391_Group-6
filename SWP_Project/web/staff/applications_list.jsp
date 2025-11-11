@@ -103,14 +103,14 @@
                                                 <form method="post" action="${pageContext.request.contextPath}/staff/applications/review" class="mr-2">
                                                     <input type="hidden" name="applicationId" value="${r.applicationID}">
                                                     <input type="hidden" name="action" value="approve">
-                                                    <input type="text" class="form-control form-control-sm mb-1" name="staffComment" placeholder="Note">
                                                     <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Confirm approve this application?');">Approve</button>
+                                                    <input type="text" class="form-control form-control-sm mb-1" name="staffComment" placeholder="Note">
                                                 </form>
                                                 <form method="post" action="${pageContext.request.contextPath}/staff/applications/review">
                                                     <input type="hidden" name="applicationId" value="${r.applicationID}">
-                                                    <input type="hidden" name="action" value="reject">
+                                                    <input type="hidden" name="action" value="reject">                              
+                                                   <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Confirm rejection of this application?');">Reject</button>
                                                     <input type="text" class="form-control form-control-sm mb-1" name="staffComment" placeholder="Reason for declining">
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Confirm rejection of this application?');">Reject</button>
                                                 </form>
                                             </div>
                                         </td>

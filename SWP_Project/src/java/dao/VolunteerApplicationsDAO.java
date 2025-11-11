@@ -8,7 +8,6 @@ import entity.ApplicationReviewRow;
 import entity.Event;
 import entity.VolunteerApplications;
 import service.EmailService;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -55,7 +55,6 @@
                                         <div class="position-relative">
                                             <input type="password" id="password" name="password" class="form-control" placeholder="Please enter your password" required>
                                             <i class="fa fa-eye-slash toggle-password" id="togglePassword"></i>
-                                            <a href="#" class="forgot-link">Forgot password?</a>
                                         </div>
                                     </div>
                                     <div class="d-grid gap-2">

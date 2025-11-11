@@ -48,16 +48,22 @@ public class ManagerActivationCodeController extends HttpServlet {
             throws ServletException, IOException {
         setJson(response);
         Users auth = getAuthUser(request);
-
-        int limit = clamp(parseIntOrDefault(request.getParameter("limit"), DEFAULT_LIMIT), 1, MAX_LIMIT); //giới hạn code
+        int page = parseIntOrDefault(request.getParameter("page"), 1);
+        int pageSize = clamp(parseIntOrDefault(request.getParameter("pageSize"), DEFAULT_LIMIT), 1, MAX_LIMIT); //kích thước trang
 
         try (Connection conn = DBUtils.getConnection1()) {
             Integer managerId = requireManagerId(request, response, conn, auth);
             if (managerId == null) {
                 return;
             }
-            java.util.List<dao.EmployeeCodesDAO.CodeInfo> list = codesDAO.listCodesByManager(conn, managerId, limit);  //lấy danh sách code 
-            writeJson(response, HttpServletResponse.SC_OK, listToJson(list));
+            int total = codesDAO.getCodesCountByManager(conn, managerId);
+            java.util.List<dao.EmployeeCodesDAO.CodeInfo> list = codesDAO.listCodesByManager(conn, managerId, page, pageSize);  //lấy danh sách code theo trang
+            String body = "{\"items\":" + listToJson(list)
+                    + ",\"total\":" + total
+                    + ",\"page\":" + page
+                    + ",\"pageSize\":" + pageSize
+                    + "}";
+            writeJson(response, HttpServletResponse.SC_OK, body);
         } catch (Exception e) {
             e.printStackTrace();
             writeError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to load codes");
@@ -108,7 +114,7 @@ public class ManagerActivationCodeController extends HttpServlet {
             writeJson(response, HttpServletResponse.SC_OK, "{\"code\":\"" + escapeJson(code) + "\",\"codeId\":" + codeId + "}");
         } catch (Exception e) {
             e.printStackTrace();
-            writeError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to create code");
+            writeError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to create code: " + e.getMessage());
         }
     }
 
@@ -183,6 +189,8 @@ public class ManagerActivationCodeController extends HttpServlet {
                     .append(",\"code\":\"").append(escapeJson(c.codeValue)).append("\"")
                     .append(",\"used\":").append(c.isUsed)
                     .append(",\"createdAtMs\":").append(createdAtMs)
+                    .append(",\"creatorName\":\"").append(c.creatorName != null ? escapeJson(c.creatorName) : "").append("\"")
+                    .append(",\"createdByUserId\":").append(c.createdByUserId == null ? "null" : c.createdByUserId)
                     .append("}");
             if (i < list.size() - 1) {
                 sb.append(",");
