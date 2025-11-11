@@ -154,7 +154,7 @@ public class EventController extends HttpServlet {
             String categoryName = (category != null) ? category.getCategoryName() : "Unknown";
 
             String staffName = staffDAO.getUserNameByStaffId(event.getCreatedByStaffID());
-            String managerName = managerDAO.getUserNameByManagerId(event.getManagerID());
+            String managerName = managerDAO.getFullNameByManagerId(event.getManagerID());
 
             request.setAttribute("event", event);
             request.setAttribute("categoryName", categoryName);
