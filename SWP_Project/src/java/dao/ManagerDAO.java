@@ -65,9 +65,9 @@ public class ManagerDAO {
         return null;
     }
 
-    public String getUserNameByManagerId(int managerId) {
-        String username = null;
-        String sql = "SELECT u.Username "
+    public String getFullNameByManagerId(int managerId) {
+        String fullName = null;
+        String sql = "SELECT u.FullName "
                 + "FROM Manager m "
                 + "JOIN Users u ON m.UserID = u.UserID "
                 + "WHERE m.ManagerID = ?";
@@ -75,13 +75,13 @@ public class ManagerDAO {
             ps.setInt(1, managerId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    username = rs.getString("Username");
+                    fullName = rs.getString("FullName");
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return username;
+        return fullName;
     }
 //    public List<Manager> getManagersByPage(int page) {
 //        List<Manager> list = new ArrayList<>();
