@@ -4,6 +4,10 @@
  */
 package controller;
 
+import dao.CategoryDAO;
+import dao.ManagerDAO;
+import dao.StaffDAO;
+import entity.Category;
 import entity.Event;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,10 +27,16 @@ import service.EventService;
 public class DelEventController extends HttpServlet {
 
     private EventService eventService;
+    private StaffDAO staffDAO;
+    private CategoryDAO categoryDAO;
+    private ManagerDAO managerDAO;
 
     @Override
     public void init() throws ServletException {
         eventService = new EventService();
+        staffDAO = new StaffDAO();
+        categoryDAO = new CategoryDAO();
+        managerDAO = new ManagerDAO();
     }
 
     /**
@@ -121,8 +131,20 @@ public class DelEventController extends HttpServlet {
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
-        request.setAttribute("event", event);
-        request.getRequestDispatcher("/staff/viewEvent.jsp").forward(request, response);
+//        request.setAttribute("event", event);
+        if (event != null) {
+            Category category = categoryDAO.getCategoryById(event.getCategoryID());
+            String categoryName = (category != null) ? category.getCategoryName() : "Unknown";
+
+            String staffName = staffDAO.getUserNameByStaffId(event.getCreatedByStaffID());
+            String managerName = managerDAO.getFullNameByManagerId(event.getManagerID());
+
+            request.setAttribute("event", event);
+            request.setAttribute("categoryName", categoryName);
+            request.setAttribute("staffName", staffName);
+            request.setAttribute("managerName", managerName);
+        }
+        request.getRequestDispatcher("/staff/viewDelEvent.jsp").forward(request, response);
     }
     
     private void restoreEvent(HttpServletRequest request, HttpServletResponse response)

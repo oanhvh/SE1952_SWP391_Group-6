@@ -70,7 +70,7 @@
                 <div class="alert alert-danger">${error}</div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/event" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <form action="${pageContext.request.contextPath}/staff/event" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                 <input type="hidden" name="action" value="add">
 
                 <div class="form-group mb-3">
@@ -134,7 +134,7 @@
                     <select class="form-control" name="status" required>
                         <option value="Pending" ${event.status == 'Pending' ? 'selected' : ''}>Pending</option>
                         <option value="Active" ${event.status == 'Active' ? 'selected' : ''}>Active</option>
-                        <option value=" Completed" ${event.status == 'Completed' ? 'selected' : ''}>Completed</option>
+                        <option value="Completed" ${event.status == 'Completed' ? 'selected' : ''}>Completed</option>
                     </select>
                 </div>
 
