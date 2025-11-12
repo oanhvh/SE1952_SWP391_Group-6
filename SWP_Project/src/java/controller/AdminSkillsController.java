@@ -9,11 +9,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import service.SkillsService;
 
 @WebServlet(name = "AdminSkillsController", urlPatterns = {"/admin/skills"})
 public class AdminSkillsController extends HttpServlet {
 
     private final SkillsDAO skillsDAO = new SkillsDAO();
+    private final SkillsService skillsService = new SkillsService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -63,13 +67,23 @@ public class AdminSkillsController extends HttpServlet {
         s.setDescription(desc);
 
         try {
-            if (idStr == null || idStr.isEmpty()) {
-                skillsDAO.addSkill(s);
-                request.setAttribute("msg", "Created");
+            Map<String,String> errors = (idStr == null || idStr.isEmpty())
+                    ? skillsService.validateCreate(name, desc)
+                    : skillsService.validateUpdate(Integer.parseInt(idStr), name, desc);
+
+            if (!errors.isEmpty()) {
+                request.setAttribute("errors", errors);
+                request.setAttribute("skill", s);
+                request.setAttribute("mode", (idStr == null || idStr.isEmpty()) ? "create" : "edit");
             } else {
-                s.setSkillID(Integer.parseInt(idStr));
-                skillsDAO.updateSkill(s);
-                request.setAttribute("msg", "Updated");
+                if (idStr == null || idStr.isEmpty()) {
+                    skillsDAO.addSkill(s);
+                    request.setAttribute("msg", "Created");
+                } else {
+                    s.setSkillID(Integer.parseInt(idStr));
+                    skillsDAO.updateSkill(s);
+                    request.setAttribute("msg", "Updated");
+                }
             }
         } catch (Exception e) {
             request.setAttribute("error", "Save failed");

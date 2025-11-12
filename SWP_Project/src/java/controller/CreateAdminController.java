@@ -16,6 +16,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import service.AdminUserService;
 
 /**
  *
@@ -26,49 +30,53 @@ public class CreateAdminController extends HttpServlet {
 
     private final UserDao userDao = new UserDao();
     private final ManagerDAO managerDAO = new ManagerDAO();
+    private final AdminUserService adminUserService = new AdminUserService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Kiểm tra role Admin
-        HttpSession session = request.getSession(false);
-        String role = session != null ? (String) session.getAttribute("role") : null;
-        if (role == null || !"Admin".equalsIgnoreCase(role)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
-            return;
-        }
-        request.getRequestDispatcher("/admin/admin_create.jsp").forward(request, response);
+//        HttpSession session = request.getSession(false);
+//        String role = session != null ? (String) session.getAttribute("role") : null;
+//        if (role == null || !"Admin".equalsIgnoreCase(role)) {
+//            response.sendRedirect(request.getContextPath() + "/login.jsp");
+//            return;
+//        }
+//        request.getRequestDispatcher("/admin/admin_create.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // kiểm tra Role Admin
-        HttpSession session = request.getSession(false);
-        String sessionRole = session != null ? (String) session.getAttribute("role") : null;
-        if (sessionRole == null || !"Admin".equalsIgnoreCase(sessionRole)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
-            return;
-        }
+//        HttpSession session = request.getSession(false);
+//        String sessionRole = session != null ? (String) session.getAttribute("role") : null;
+//        if (sessionRole == null || !"Admin".equalsIgnoreCase(sessionRole)) {
+//            response.sendRedirect(request.getContextPath() + "/login.jsp");
+//            return;
+//        }
         String username = param(request, "username");
         String password = param(request, "password");
         String fullName = param(request, "fullName");
         String email = param(request, "email");
         String phone = param(request, "phone");
 
-        if (isBlank(username) || isBlank(password)) {
-            request.setAttribute("error", "Please enter required information");
+        Map<String, String> errors = adminUserService.validateCreateAdmin(username, password, fullName, email, phone);
+        if (!errors.isEmpty()) {
+            request.setAttribute("errors", errors);
+            Map<String, String> form = new HashMap<>();
+            form.put("username", nullToEmpty(username));
+            form.put("fullName", nullToEmpty(fullName));
+            form.put("email", nullToEmpty(email));
+            form.put("phone", nullToEmpty(phone));
+            request.setAttribute("form", form);
             request.getRequestDispatcher("/admin/admin_create.jsp").forward(request, response);
             return;
         }
 
-        if (userDao.isUsernameExisted(username)) {
-            request.setAttribute("error", "Username already exists");
-            request.getRequestDispatcher("/admin/admin_create.jsp").forward(request, response);
-            return;
-        }
-
-        try (Connection conn = DBUtils.getConnection1()) {
+        Connection conn = null;
+        try {
+            conn = DBUtils.getConnection1();
             conn.setAutoCommit(false);
             Users u = new Users();
             u.setUsername(username);
@@ -79,15 +87,18 @@ public class CreateAdminController extends HttpServlet {
             u.setEmail(email);
             u.setPhone(phone);
 
-            userDao.createUser(conn, u, true);
+            adminUserService.createAdmin(conn, u);
             conn.commit();
             // PRG redirect with success flag
             response.sendRedirect(request.getContextPath() + "/admin/admin_create.jsp?success=1");
             return;
 
         } catch (Exception ex) {
+            try { if (conn != null) conn.rollback(); } catch (SQLException ignore) {}
             ex.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/admin/admin_create.jsp?error=" + ex.getMessage());
+        } finally {
+            try { if (conn != null) conn.close(); } catch (Exception ignore) {}
         }
     }
 
@@ -100,5 +111,9 @@ public class CreateAdminController extends HttpServlet {
     //kiểm tra chuỗi rỗng
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
+    }
+
+    private String nullToEmpty(String s) {
+        return s == null ? "" : s;
     }
 }

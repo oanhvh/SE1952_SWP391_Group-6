@@ -89,4 +89,37 @@ public class SkillsDAO extends DBUtils {
         skill.setDescription(rs.getString("Description"));
         return skill;
     }
+
+    // kiểm tra tồn tại
+    public boolean existsByName(String skillName) {
+        String sql = "SELECT COUNT(*) FROM Skills WHERE LOWER(SkillName) = LOWER(?)";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, skillName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // kiểm tra tồn tại (update)
+    public boolean existsByNameExcludingId(String skillName, int excludeSkillId) {
+        String sql = "SELECT COUNT(*) FROM Skills WHERE LOWER(SkillName) = LOWER(?) AND SkillID <> ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, skillName);
+            pstmt.setInt(2, excludeSkillId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

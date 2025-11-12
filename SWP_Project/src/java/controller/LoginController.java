@@ -44,15 +44,13 @@ public class LoginController extends HttpServlet {
             return;
         }
 
-        String loginProvider = user.getLoginProvider();
-        if (loginProvider != null && !"Local".equalsIgnoreCase(loginProvider)) {
-            request.setAttribute("error", "This account uses " + loginProvider + " login. Please use " + loginProvider + " to sign in.");
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
-            return;
-        }
-
+        // If the account has no local password, require provider login (e.g., Google only account)
         if (user.getPasswordHash() == null || user.getPasswordHash().trim().isEmpty()) {
-            request.setAttribute("error", "Password is not set for this account");
+            String provider = user.getLoginProvider();
+            if (provider == null || provider.trim().isEmpty()) {
+                provider = "Google"; // default friendly hint
+            }
+            request.setAttribute("error", "This account uses " + provider + " login. Please use " + provider + " to sign in.");
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
@@ -86,7 +84,7 @@ public class LoginController extends HttpServlet {
         } else if ("Manager".equalsIgnoreCase(role)) {
             response.sendRedirect(request.getContextPath() + "/manager/index_1.jsp");
         } else if ("Admin".equalsIgnoreCase(role)) {
-            response.sendRedirect(request.getContextPath() + "/ListAccount");
+            response.sendRedirect(request.getContextPath() + "/admin/listAccount.jsp");
         } else {
             response.sendRedirect(request.getContextPath() + "/");
         }

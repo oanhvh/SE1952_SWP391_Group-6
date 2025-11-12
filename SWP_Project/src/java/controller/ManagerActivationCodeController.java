@@ -50,6 +50,7 @@ public class ManagerActivationCodeController extends HttpServlet {
         Users auth = getAuthUser(request);
         int page = parseIntOrDefault(request.getParameter("page"), 1);
         int pageSize = clamp(parseIntOrDefault(request.getParameter("pageSize"), DEFAULT_LIMIT), 1, MAX_LIMIT); //kích thước trang
+        
 
         try (Connection conn = DBUtils.getConnection1()) {
             Integer managerId = requireManagerId(request, response, conn, auth);

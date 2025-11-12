@@ -146,6 +146,9 @@ public class EventController extends HttpServlet {
         if (status != null && !status.isBlank()) {
             request.setAttribute("filterStatus", status);
         }
+//        List<Event> eventList = eventService.getEventsByStatus("Active");
+        
+        request.setAttribute("eventList", eventList);
         request.getRequestDispatcher("/staff/listEvent.jsp").forward(request, response);
     }
 

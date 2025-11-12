@@ -24,7 +24,7 @@
     <body class="login-page">
         <div class="topbar d-flex align-items-center">
             <div class="container d-flex justify-content-between align-items-center">
-                <a class="brand text-decoration-none" href="index.html">
+                <a class="brand text-decoration-none" href="index.jsp">
                     <img src="images/logo.png" alt="logo"/>
                     <span class="text-white">Login</span>
                 </a>

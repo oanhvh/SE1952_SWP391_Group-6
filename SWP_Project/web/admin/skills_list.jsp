@@ -1,7 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.Map,java.util.HashMap" %>
 <%@ page import="java.util.List" %>
 <%@ page import="entity.Skills" %>
 <%@ page import="dao.SkillsDAO" %>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,6 +17,8 @@
   Skills skill = (Skills) request.getAttribute("skill");
   String mode = (String) request.getAttribute("mode");
   if (mode == null) mode = "create";
+  Map<String,String> errors = (Map<String,String>) request.getAttribute("errors");
+  if (errors == null) errors = new HashMap<>();
 %>
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
@@ -43,7 +48,8 @@
             <% } %>
             <div class="mb-3">
               <label for="skillName" class="form-label">Name</label>
-              <input type="text" id="skillName" name="skillName" class="form-control" required value="<%= (skill!=null && skill.getSkillName()!=null) ? skill.getSkillName() : "" %>" />
+              <input type="text" id="skillName" name="skillName" class="form-control <%= errors.containsKey("skillName") ? "is-invalid" : "" %>" required value="<%= (skill!=null && skill.getSkillName()!=null) ? skill.getSkillName() : "" %>" />
+              <div class="invalid-feedback"><%= errors.getOrDefault("skillName", "") %></div>
             </div>
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
