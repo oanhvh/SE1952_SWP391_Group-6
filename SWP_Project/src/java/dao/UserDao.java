@@ -605,4 +605,21 @@ public class UserDao extends DBUtils {
         }
         return false;
     }
+    
+    public boolean isEmailExisted(String email) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE Email = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

@@ -170,7 +170,11 @@ public class UserService {
                 request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
                 return;
             }
-
+            if (userDao.isEmailExisted(email)) {
+                request.setAttribute("error", "Email already exists!");
+                request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
+                return;
+            }
             if (validatePhone(request, response, phone, userDao, "admin/AddAccount.jsp")) {
                 return;
             }
