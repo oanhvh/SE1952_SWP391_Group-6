@@ -121,6 +121,7 @@
                 value="<%= user.getPhone() != null ? user.getPhone() : "" %>" 
                 required 
                 minlength="10"
+                pattern="[0-9]{10}" 
                 maxlength="10"
                 
                 title="Phone must be 10 numbers">

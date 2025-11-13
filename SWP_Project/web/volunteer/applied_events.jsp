@@ -5,6 +5,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="entity.VolunteerApplications" %>
 <%@ page import="entity.Event" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 
 <%
     List<VolunteerApplications> appliedEvents = (List<VolunteerApplications>) request.getAttribute("appliedEvents");
@@ -208,7 +209,7 @@
             }
         </script>
         <% } %>
-
+        
         <section class="banner">
             <h1>MY APPLIED EVENTS</h1>
             <p>See all the volunteer programs you’ve joined with Doni Charity.</p>
@@ -222,6 +223,9 @@
             <% if (appliedEvents == null || appliedEvents.isEmpty()) { %>
             <p class="no-event">You haven't applied</p>
             <% } else { %>
+            <%
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"); // ví dụ: 13 Nov 2025 14:30
+            %>
             <table>
                 <thead>
                     <tr>
@@ -238,7 +242,7 @@
                     <tr>
                         <td><%= e.getEventName() %></td>
                         <td><%= e.getLocation() %></td>
-                        <td><%= e.getStartDate() %> — <%= e.getEndDate() %></td>
+                        <td><%= e.getStartDate().format(formatter) %> — <%= e.getEndDate().format(formatter) %></td>
                         <td>
                             <%= va.getStatus() %>
                             <% if ("Rejected".equalsIgnoreCase(va.getStatus())) { %>
