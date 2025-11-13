@@ -110,16 +110,35 @@
         <input type="hidden" name="action" value="updateProfile">
 
         <label>Full Name</label>
-        <input type="text" name="fullName" value="<%= user.getFullName() != null ? user.getFullName() : "" %>">
+        <input type="text" name="fullName" value="<%= user.getFullName() != null ? user.getFullName() : "" %>" required>
 
         <label>Email</label>
         <input type="email" name="email" value="<%= user.getEmail() != null ? user.getEmail() : "" %>">
 
         <label>Phone</label>
-        <input type="text" name="phone" value="<%= user.getPhone() != null ? user.getPhone() : "" %>">
+        <input type="text" 
+                name="phone" 
+                value="<%= user.getPhone() != null ? user.getPhone() : "" %>" 
+                required 
+                minlength="10"
+                maxlength="10"
+                
+                title="Phone must be 10 numbers">
 
-        <label>Date of Birth</label>
-        <input type="date" name="dateOfBirth" value="<%= user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : "" %>">
+        <%
+    // Lấy ngày hiện tại
+    java.time.LocalDate today = java.time.LocalDate.now();
+    // Giới hạn ngày sinh tối thiểu (ví dụ: từ năm 1900 trở đi)
+    java.time.LocalDate minDate = java.time.LocalDate.of(1900, 1, 1);
+%>
+
+<label>Date of Birth</label>
+<input type="date" 
+       name="dateOfBirth" 
+       value="<%= user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : "" %>" 
+       min="<%= minDate.toString() %>" 
+       max="<%= today.toString() %>" 
+       required>
 
         <label>Avatar URL</label>
         <input type="text" name="avatar" value="<%= user.getAvatar() != null ? user.getAvatar() : "" %>">

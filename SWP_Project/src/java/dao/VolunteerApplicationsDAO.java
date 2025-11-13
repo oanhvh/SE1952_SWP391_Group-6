@@ -359,7 +359,8 @@ public class VolunteerApplicationsDAO extends DBUtils {
                     app.setVolunteerID(rs.getInt("VolunteerID"));
                     app.setEventID(rs.getInt("EventID"));
                     app.setStatus(rs.getString("Status"));
-
+                    app.setStaffComment(rs.getString("StaffComment"));
+                            
                     Event e = new Event();
                     e.setEventID(rs.getInt("EventID"));
                     e.setEventName(rs.getString("EventName"));
