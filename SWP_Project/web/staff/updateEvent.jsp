@@ -159,9 +159,9 @@
                     <select class="form-control" name="status" required>
                         <option value="Active" <c:if test="${event.status eq 'Active'}">selected</c:if>>Active</option>
                         <option value="Inactive" <c:if test="${event.status eq 'Inactive'}">selected</c:if>>Inactive</option>
-                    </select>
-                </div>
-                
+                        </select>
+                    </div>
+
                 <%--<div class="form-group mb-3">
                     <label>Status <span class="text-danger">*</span></label>
                     <select class="form-control" name="status" required>
@@ -263,14 +263,23 @@
                     return false;
                 }
 
-                // Convert format to dd-MM-yyyy HH:mm
-                const formatDate = (d) => {
+                // Convert datetime-local -> dd-MM-yyyy HH:mm
+                <%--const formatDate = (d) => {
                     const pad = (n) => n < 10 ? '0' + n : n;
-                    return pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+                    return pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear() + ' ' +
+                            pad(d.getHours()) + ':' + pad(d.getMinutes());
                 };
 
                 startEl.value = formatDate(start);
-                endEl.value = formatDate(end);
+                endEl.value = formatDate(end);--%>
+                // Convert format to dd-MM-yyyy HH:mm
+            <%--const formatDate = (d) => {
+                const pad = (n) => n < 10 ? '0' + n : n;
+                return pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+            };
+
+                startEl.value = formatDate(start);
+                endEl.value = formatDate(end);--%>
                 return true;
             }
         </script>
