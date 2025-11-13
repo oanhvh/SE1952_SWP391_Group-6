@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import service.ProfileService;
 
 @WebServlet(name = "ProfileController", urlPatterns = {
     "/ProfileController",
@@ -24,9 +25,7 @@ import java.util.List;
 })
 public class ProfileController extends HttpServlet {
 
-    private final UserDao userDao = new UserDao();
-    private final SkillsDAO skillsDAO = new SkillsDAO();
-    private final VolunteerSkillsDAO volunteerSkillsDAO = new VolunteerSkillsDAO();
+    private final ProfileService profileService = new ProfileService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -46,18 +45,16 @@ public class ProfileController extends HttpServlet {
 
         request.setAttribute("user", user);
 
-        // lấy kỹ năng hiện tại của user
-        List<Skills> userSkills = userDao.getSkillsByUserID(user.getUserID());
-        request.setAttribute("skills", userSkills);
+        // Lấy kỹ năng hiện tại
+        request.setAttribute("skills", profileService.getUserSkills(user.getUserID()));
 
         if ("edit".equalsIgnoreCase(action)) {
             request.getRequestDispatcher("/" + scope + "/edit_profile.jsp").forward(request, response);
 
         } else if ("editSkills".equalsIgnoreCase(action)) {
-            // lấy tất cả skill trong DB để hiển thị checkbox
-            List<Skills> allSkills = skillsDAO.getAllSkills();
-            request.setAttribute("allSkills", allSkills);
-            request.setAttribute("userSkills", userSkills);
+            // Lấy tất cả skill
+            request.setAttribute("allSkills", profileService.getAllSkills());
+            request.setAttribute("userSkills", profileService.getUserSkills(user.getUserID()));
             request.getRequestDispatcher("/" + scope + "/update_skills.jsp").forward(request, response);
 
         } else {
@@ -80,7 +77,6 @@ public class ProfileController extends HttpServlet {
 
         String action = request.getParameter("action");
 
-        // ---------------- UPDATE PROFILE ----------------
         if ("updateProfile".equalsIgnoreCase(action)) {
             String fullName = request.getParameter("fullName");
             String email = request.getParameter("email");
@@ -99,46 +95,31 @@ public class ProfileController extends HttpServlet {
                 }
             }
 
-            user.setFullName(fullName);
-            user.setEmail(email);
-            user.setPhone(phone);
-            user.setAvatar(avatar);
-            user.setDateOfBirth(dob);
-            user.setUpdatedAt(java.time.LocalDateTime.now());
+            boolean success = profileService.updateProfile(user, fullName, email, phone, avatar, dob);
 
-            boolean success = userDao.updateProfile(user);
+            request.setAttribute("user", user);
+            request.setAttribute("skills", profileService.getUserSkills(user.getUserID()));
 
             if (success) {
                 session.setAttribute("authUser", user);
-                request.setAttribute("user", user);
-                request.setAttribute("skills", userDao.getSkillsByUserID(user.getUserID()));
                 request.setAttribute("success", "Profile updated successfully!");
                 forwardToProfile(request, response, user, role);
             } else {
-                request.setAttribute("user", user);
-                request.setAttribute("skills", userDao.getSkillsByUserID(user.getUserID()));
                 request.setAttribute("error", "Update failed. Please try again.");
                 forwardToEdit(request, response, user, role);
             }
 
-            // ---------------- UPDATE SKILLS ----------------
         } else if ("updateSkills".equalsIgnoreCase(action)) {
             String[] selectedSkillIDs = request.getParameterValues("skillIDs");
+            profileService.updateSkills(user.getUserID(), selectedSkillIDs);
 
-            // Cập nhật kỹ năng cho volunteer (xóa cũ → thêm mới)
-            volunteerSkillsDAO.updateSkillsForUser(user.getUserID(), selectedSkillIDs);
-
-            // Load lại dữ liệu để hiển thị
-            List<Skills> updatedSkills = userDao.getSkillsByUserID(user.getUserID());
-            request.setAttribute("skills", updatedSkills);
             request.setAttribute("user", user);
+            request.setAttribute("skills", profileService.getUserSkills(user.getUserID()));
             request.setAttribute("success", "Skills updated successfully!");
-
             forwardToProfile(request, response, user, role);
         }
     }
 
-    // ===================== Helper Methods =====================
     private void forwardToProfile(HttpServletRequest request, HttpServletResponse response, Users user, String role)
             throws ServletException, IOException {
         String scope = resolveScope(request, role);
@@ -153,15 +134,9 @@ public class ProfileController extends HttpServlet {
 
     private String resolveScope(HttpServletRequest request, String role) {
         String path = request.getServletPath();
-        if (path.startsWith("/manager/") || "Manager".equalsIgnoreCase(role)) {
-            return "manager";
-        }
-        if (path.startsWith("/staff/") || "Staff".equalsIgnoreCase(role)) {
-            return "staff";
-        }
-        if (path.startsWith("/volunteer/") || "Volunteer".equalsIgnoreCase(role)) {
-            return "volunteer";
-        }
+        if (path.startsWith("/manager/") || "Manager".equalsIgnoreCase(role)) return "manager";
+        if (path.startsWith("/staff/") || "Staff".equalsIgnoreCase(role)) return "staff";
+        if (path.startsWith("/volunteer/") || "Volunteer".equalsIgnoreCase(role)) return "volunteer";
         return "volunteer";
     }
 }

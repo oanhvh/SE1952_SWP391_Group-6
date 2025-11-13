@@ -1,16 +1,23 @@
 package controller;
 
-import dao.VolunteerApplicationsDAO;
 import entity.Users;
 import entity.VolunteerApplications;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import service.VolunteerApplicationsService;
 import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/ApplyEventController")
 public class ApplyEventController extends HttpServlet {
+
+    private VolunteerApplicationsService service;
+
+    @Override
+    public void init() throws ServletException {
+        service = new VolunteerApplicationsService();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -25,8 +32,7 @@ public class ApplyEventController extends HttpServlet {
         }
 
         int userId = authUser.getUserID();
-        VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
-        List<VolunteerApplications> list = dao.getApplicationsByUserId(userId);
+        List<VolunteerApplications> list = service.getApplicationsByUserId(userId);
 
         request.setAttribute("appliedEvents", list);
         request.getRequestDispatcher("/volunteer/applied_events.jsp").forward(request, response);
@@ -49,16 +55,13 @@ public class ApplyEventController extends HttpServlet {
         String motivation = request.getParameter("motivation");
         String experience = request.getParameter("experience");
 
-        VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
-
-        // ✅ Kiểm tra trùng sự kiện hoặc trùng ngày
-        if (dao.hasAppliedForEvent(userId, eventId)) {
+        if (service.hasAppliedForEvent(userId, eventId)) {
             request.setAttribute("error", "You've already applied this event!");
             request.getRequestDispatcher("/volunteer/events.jsp").forward(request, response);
             return;
         }
 
-        boolean success = dao.applyEventByUserId(userId, eventId, motivation, experience);
+        boolean success = service.applyForEvent(userId, eventId, motivation, experience);
 
         if (success) {
             response.sendRedirect("ApplyEventController");

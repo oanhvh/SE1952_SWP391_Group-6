@@ -1,10 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
-import dao.EventDAO;
 import entity.Event;
 import entity.Users;
 import jakarta.servlet.ServletException;
@@ -13,13 +8,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import service.EventService;
 import java.io.IOException;
 import java.util.List;
 
 @WebServlet(name = "ViewEventController", urlPatterns = {"/volunteer/events"})
 public class ViewEventController extends HttpServlet {
 
-    private final EventDAO eventDao = new EventDAO();
+    private EventService eventService;
+
+    @Override
+    public void init() throws ServletException {
+        eventService = new EventService();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -27,6 +28,7 @@ public class ViewEventController extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         Users authUser = (session != null) ? (Users) session.getAttribute("authUser") : null;
+
         if (authUser == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -39,11 +41,10 @@ public class ViewEventController extends HttpServlet {
         }
 
         try {
-            // Lấy tất cả sự kiện có thể apply (hoặc tuỳ điều kiện)
-            List<Event> eventList = eventDao.getAllEvents1();
-            request.setAttribute("eventList", eventList);
+            // ✅ Lấy chỉ các sự kiện có trạng thái "Active"
+            List<Event> eventList = eventService.getActiveEvents();
 
-            // Forward sang trang JSP
+            request.setAttribute("eventList", eventList);
             request.getRequestDispatcher("/volunteer/events.jsp").forward(request, response);
 
         } catch (Exception e) {

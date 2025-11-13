@@ -1,11 +1,11 @@
 package controller;
 
-import dao.VolunteerApplicationsDAO;
 import entity.Users;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import service.VolunteerApplicationsService;
 
 @WebServlet("/CancelApplyController")
 public class CancelApplyController extends HttpServlet {
@@ -25,27 +25,16 @@ public class CancelApplyController extends HttpServlet {
 
         try {
             int applicationId = Integer.parseInt(request.getParameter("applicationId"));
-            String cancelReason = request.getParameter("cancelReason"); // có thể null nếu Pending
+            String cancelReason = request.getParameter("cancelReason");
 
-            VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
-            String result = dao.cancelApplication(applicationId, cancelReason);
+            VolunteerApplicationsService service = new VolunteerApplicationsService();
+            String message = service.cancelApplication(applicationId, cancelReason);
 
-//            switch (result) {
-//                case "PENDING_CANCELLED" ->
-//                    session.setAttribute("cancelMsg", "✅ Cancel application");
-//                case "APPROVED_CANCELLED" ->
-//                    session.setAttribute("cancelMsg", "✅ Cancel application.");
-//                case "REJECTED" ->
-//                    session.setAttribute("cancelMsg", "⚠️ Rejected.");
-//                case "NOT_FOUND" ->
-//                    session.setAttribute("cancelMsg", "❌ Can not found");
-//                default ->
-//                    session.setAttribute("cancelMsg", "❌ Can not cancel");
-//            }
+            session.setAttribute("cancelMsg", message);
 
         } catch (Exception e) {
             e.printStackTrace();
-            session.setAttribute("cancelMsg", "❌ Error.");
+            session.setAttribute("cancelMsg", "❌ Error while processing request.");
         }
 
         response.sendRedirect("ApplyEventController");

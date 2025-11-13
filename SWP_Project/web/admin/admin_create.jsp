@@ -3,11 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%
-    String role = (String) session.getAttribute("role");
-    if (role == null || !"Admin".equalsIgnoreCase(role)) {
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
-        return;
-    }
+    
     
     Map<String,String> errors = (Map<String,String>) request.getAttribute("errors");
     if (errors == null) errors = new java.util.HashMap<>();

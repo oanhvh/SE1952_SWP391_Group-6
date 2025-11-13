@@ -7,8 +7,10 @@ package service;
 import dao.VolunteerApplicationsDAO;
 import dao.VolunteerDAO;
 import entity.VolunteerApplications;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -56,7 +58,87 @@ public class VolunteerApplicationsService {
         validateDecisionStatus(status);
         volunteerAppDAO.updateStatus(applicationID, status, approvedByStaffID);
     }
+    
+    public List<VolunteerApplications> getApplicationsByUserId(int userId) {
+        return volunteerAppDAO.getApplicationsByUserId(userId);
+    }
 
+    public boolean hasAppliedForEvent(int userId, int eventId) {
+        return volunteerAppDAO.hasAppliedForEvent(userId, eventId);
+    }
+
+    public boolean applyForEvent(int userId, int eventId, String motivation, String experience) {
+        return volunteerAppDAO.applyEventByUserId(userId, eventId, motivation, experience);
+    }
+    
+    public String cancelApplication(int applicationId, String cancelReason) {
+        try {
+            String result = volunteerAppDAO.cancelApplication(applicationId, cancelReason);
+
+            switch (result) {
+                case "PENDING_CANCELLED":
+                    return "✅ Cancel application (pending).";
+                case "APPROVED_CANCELLED":
+                    return "✅ Cancel application (approved).";
+                case "REJECTED":
+                    return "⚠️ Application rejected.";
+                case "NOT_FOUND":
+                    return "❌ Application not found.";
+                default:
+                    return "❌ Cannot cancel application.";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "❌ Error while cancelling application.";
+        }
+    }
+    
+ public List<VolunteerApplications> getTodayEventsByUserId(int userId) throws Exception {
+        return volunteerAppDAO.getTodayEventsByUserId(userId);
+    }
+    
+    // Lấy tất cả ứng dụng đã hoàn thành của user
+    public List<VolunteerApplications> getCompletedApplicationsByUserId(int userId) throws Exception {
+        return volunteerAppDAO.getCompletedApplicationsByUserId(userId);
+    }
+    
+    public List<VolunteerApplications> filterByEventName(List<VolunteerApplications> applications, String eventName) {
+    if (eventName == null || eventName.isEmpty()) return applications;
+
+    return applications.stream()
+            .filter(app -> app.getEvent().getEventName().toLowerCase().contains(eventName.toLowerCase()))
+            .collect(Collectors.toList());
+    }  
+    
+    // Lọc theo địa điểm
+    public List<VolunteerApplications> filterByLocation(List<VolunteerApplications> applications, String location) {
+        if (location == null || location.isEmpty()) return applications;
+
+        return applications.stream()
+                .filter(app -> app.getEvent().getLocation().equalsIgnoreCase(location))
+                .collect(Collectors.toList());
+    }
+
+    // Lọc theo khoảng ngày
+    public List<VolunteerApplications> filterByDate(List<VolunteerApplications> applications,
+                                                    LocalDate startDateFilter,
+                                                    LocalDate endDateFilter) {
+        if (startDateFilter == null && endDateFilter == null) return applications;
+
+        return applications.stream()
+                .filter(app -> {
+                    LocalDate eventDate = app.getEvent().getStartDate().toLocalDate();
+                    if (startDateFilter != null && eventDate.isBefore(startDateFilter)) return false;
+                    if (endDateFilter != null && eventDate.isAfter(endDateFilter)) return false;
+                    return true;
+                })
+                .collect(Collectors.toList());
+    }
+    
+    // Lấy sự kiện của hôm nay theo userId
+    
+    
+    
     // =============================
     // VALIDATION
     // =============================

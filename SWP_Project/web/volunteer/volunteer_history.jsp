@@ -104,6 +104,77 @@
             background-color: #003080;
             color: white;
         }
+         
+/* Container form */
+.filter-form-inline {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+/* Form group (input + label) */
+.filter-form-inline .form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 150px;
+}
+
+.filter-form-inline label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #001f54;
+    margin-bottom: 5px;
+}
+
+.filter-form-inline input {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 100%;
+}
+
+/* Button */
+.filter-form-inline button {
+    background-color: #001f54;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    align-self: flex-end;
+}
+
+.filter-form-inline button:hover {
+    background-color: #003080;
+}
+
+/* Responsive: khi màn hình nhỏ, các input xếp dọc */
+@media (max-width: 767px) {
+    .filter-form-inline {
+        flex-direction: column;
+    }
+
+    .filter-form-inline .form-group,
+    .filter-form-inline button {
+        width: 100%;
+    }
+
+    .filter-form-inline button {
+        align-self: stretch;
+    }
+}
+
+
     </style>
 </head>
 <body>
@@ -113,6 +184,33 @@
         <h2>📜 Volunteer History</h2>
         <p>Your completed and past volunteer experiences</p>
     </div>
+      <div class="container">
+    <form method="get" action="<%= request.getContextPath() %>/VolunteerHistory" class="filter-form-inline">
+        <div class="form-group">
+            <label for="eventName">Event Name</label>
+            <input type="text" id="eventName" name="eventName"
+                   value="<%= request.getParameter("eventName") != null ? request.getParameter("eventName") : "" %>"
+                   placeholder="Enter event name">
+        </div>
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location"
+                   value="<%= request.getParameter("location") != null ? request.getParameter("location") : "" %>"
+                   placeholder="Enter location">
+        </div>
+        <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" name="startDate"
+                   value="<%= request.getParameter("startDate") != null ? request.getParameter("startDate") : "" %>">
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate" name="endDate"
+                   value="<%= request.getParameter("endDate") != null ? request.getParameter("endDate") : "" %>">
+        </div>
+        <button type="submit">Filter</button>
+    </form>
+</div>
 
     <!-- Content -->
     <div class="container">

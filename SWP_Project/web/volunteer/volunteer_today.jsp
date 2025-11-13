@@ -144,6 +144,8 @@
                     <h5><%= e.getEventName() %></h5>
                     <p>📍 <strong>Location:</strong> <%= e.getLocation() %></p>
                     <p>🕒 <strong>Time:</strong> <%= e.getStartDate() %> - <%= e.getEndDate() %></p>
+                     <p>👥 <strong>Capacity:</strong> <%= e.getCapacity() %> volunteers</p>
+                    <p>📝 <strong>Description:</strong> <%= e.getDescription() %></p>
                     <div class="status">
                         <% if ("Completed".equalsIgnoreCase(va.getStatus())) { %>
                             <span class="badge bg-success">Completed</span>

@@ -238,6 +238,7 @@
     <% } %>
 
     <% if (events != null && !events.isEmpty()) {
+            
            for (Event e : events) { %>
         <div class="event-card">
             <img src="<%= request.getContextPath() %>/<%= e.getImage() %>" alt="Event Image">

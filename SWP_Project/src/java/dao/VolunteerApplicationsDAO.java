@@ -295,7 +295,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
         }
     }
 
-    // ✅ Lấy volunteerID từ userID
+    //  Lấy volunteerID từ userID
     private int getVolunteerIdByUserId(int userID) {
         String sql = "SELECT VolunteerID FROM Volunteer WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -312,7 +312,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
         return -1;
     }
 
-    // ✅ Apply event có thêm lý do và kinh nghiệm
+    // Apply event có thêm lý do và kinh nghiệm
     public boolean applyEventByUserId(int userID, int eventID, String motivation, String experience) {
         int volunteerID = getVolunteerIdByUserId(userID);
         if (volunteerID == -1) {
@@ -338,7 +338,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
         }
     }
 
-    // ✅ Lấy danh sách đã apply
+    // Lấy danh sách đã apply
     public List<VolunteerApplications> getApplicationsByUserId(int userID) {
         List<VolunteerApplications> list = new ArrayList<>();
         String sql
@@ -377,7 +377,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
         return list;
     }
 
-    // ✅ Hủy đơn (chỉ khi đang pending)
+    //  Hủy đơn 
     public String cancelApplication(int applicationId, String cancelReason) {
         String sqlSelect = "SELECT Status, StaffComment FROM VolunteerApplications WHERE ApplicationID = ?";
         String sqlDeleteSkills = "DELETE FROM EventApplicationSkills WHERE ApplicationID = ?";
@@ -445,11 +445,12 @@ public class VolunteerApplicationsDAO extends DBUtils {
         }
     }
 
-    // ✅ Lấy danh sách sự kiện tình nguyện hôm nay cho volunteer
+    //  Lấy danh sách sự kiện tình nguyện hôm nay cho volunteer
     public List<VolunteerApplications> getTodayEventsByUserId(int userID) {
         List<VolunteerApplications> list = new ArrayList<>();
         String sql
                 = "SELECT va.*, e.EventName, e.Location, e.StartDate, e.EndDate\n"
+                + ",e.Description, e.Capacity, e.Image\n"
                 + "FROM VolunteerApplications va\n"
                 + "JOIN Event e ON va.EventID = e.EventID\n"
                 + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n"
@@ -475,6 +476,9 @@ public class VolunteerApplicationsDAO extends DBUtils {
                     e.setLocation(rs.getString("Location"));
                     e.setStartDate(rs.getTimestamp("StartDate").toLocalDateTime());
                     e.setEndDate(rs.getTimestamp("EndDate").toLocalDateTime());
+                    e.setDescription(rs.getString("Description"));
+                    e.setCapacity(rs.getInt("Capacity"));
+                    e.setImage(rs.getString("Image"));
                     app.setEvent(e);
 
                     list.add(app);
@@ -526,7 +530,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
 
                     Event e = new Event();
                     e.setEventID(rs.getInt("EventID"));
-                    e.setEventName(rs.getString("EventName"));
+                    e.setEventName(rs.getString("eventName"));
                     e.setLocation(rs.getString("Location"));
                     Timestamp start = rs.getTimestamp("StartDate");
                     Timestamp end = rs.getTimestamp("EndDate");

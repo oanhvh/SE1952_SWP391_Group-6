@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -77,7 +78,14 @@ public class EventService {
         }
         return eventDAO.getEventsByStatus(status);
     }
-
+    
+    // Lấy tất cả sự kiện có trạng thái "Active"
+    public List<Event> getActiveEvents() throws Exception {
+        List<Event> allEvents = eventDAO.getAllEvents1();
+        return allEvents.stream()
+                .filter(event -> "Active".equalsIgnoreCase(event.getStatus()))
+                .collect(Collectors.toList());
+    }
     // =============================
     // VALIDATION
     // =============================
