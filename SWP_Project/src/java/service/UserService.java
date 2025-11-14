@@ -185,34 +185,6 @@ public class UserService {
                 request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
                 return;
             }
-
-            // ✅ Try sending verification email before saving user
-            String subject = "Welcome to Group6_VMS - Account Verification";
-            String body = "Dear " + fullName + ",\n\n"
-                    + "Your manager account has been successfully created.\n"
-                    + "Username: " + username + "\n"
-                    + "Role: " + role + "\n\n"
-                    + "Please confirm that this email is valid to start using your account.\n\n"
-                    + "Regards,\n"
-                    + "Group6_VMS Team";
-
-            try {
-                boolean emailSent = EmailService.sendEmail(email, subject, body);
-                if (!emailSent) {
-                    request.setAttribute("error", "Cannot verify email. Please check email configuration.");
-                    request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
-                    return;
-                }
-            } catch (Exception e) {
-
-                e.printStackTrace();
-
-                request.setAttribute("error", "Cannot verify email. Please check email address or SMTP configuration.");
-                request.getRequestDispatcher("admin/AddAccount.jsp").forward(request, response);
-                return;
-            }
-
-            // ✅ If email verified successfully, proceed to save the user
             LocalDate dateOfBirth = null;
             if (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) {
                 dateOfBirth = LocalDate.parse(dateOfBirthStr);

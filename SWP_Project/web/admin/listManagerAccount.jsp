@@ -64,7 +64,7 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${m.user.status eq 'Active'}">
-                                        <span class="badge bg-success">Active</span>
+                                        <span class="badge bg-secondary">Active</span>
                                     </c:when>
                                     <c:otherwise>
                                         <span class="badge bg-secondary">${m.user.status}</span>

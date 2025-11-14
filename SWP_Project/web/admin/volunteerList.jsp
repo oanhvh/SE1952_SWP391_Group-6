@@ -70,7 +70,7 @@
                                 <td>
                                     <c:choose>
                                         <c:when test="${v.status eq 'Active'}">
-                                            <span class="badge bg-success">Active</span>
+                                            <span class="badge bg-secondary">Active</span>
                                         </c:when>
                                         <c:otherwise>
                                             <span class="badge bg-secondary">${v.status}</span>
