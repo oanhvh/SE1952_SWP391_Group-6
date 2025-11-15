@@ -126,7 +126,7 @@
                         <td>${cat.categoryID}</td>
                         <td>${cat.categoryName}</td>
                         <td>
-                            <form action="${pageContext.request.contextPath}/category" method="get" class="delete-form" style="display:inline;">
+                            <form action="${pageContext.request.contextPath}/manager/category" method="get" class="delete-form" style="display:inline;">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="${cat.categoryID}">
                                 <button type="submit" class="delete-btn">Delete</button>

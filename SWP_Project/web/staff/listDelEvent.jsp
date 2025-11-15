@@ -56,6 +56,12 @@
                 gap: 10px;
                 flex-wrap: wrap;
             }
+            #searchEvent {
+                transition: all 0.3s ease;
+            }
+            #searchEvent:focus {
+                box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+            }
         </style>
     </head>
     <body>
@@ -63,10 +69,15 @@
 
         <div class="news_section layout_padding">
             <div class="container">
-                <div class="row mb-4">
-                    <div class="col-sm-12">
-                        <h1 class="news_taital">INACTIVE EVENTS</h1>
-                        <p class="news_text">List of events that have been removed. You can review or restore them below.</p>
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="news_taital mb-0">INACTIVE EVENTS</h1>
+                        <p class="news_text mb-0">List of events that have been removed. You can review or restore them below.</p>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <div class="input-group">
+                            <input type="text" id="searchEvent" class="form-control rounded-pill" placeholder="🔍 Search events...">
+                        </div>
                     </div>
                 </div>
 
@@ -128,7 +139,7 @@
         </div>
 
         <jsp:include page="includes/footer.jsp" />
-        
+
         <script src="../js/jquery.min.js"></script>
         <script src="../js/popper.min.js"></script>
         <script src="../js/bootstrap.bundle.min.js"></script>
@@ -142,5 +153,15 @@
         <script src="../js/custom.js"></script>
         <script src="../js/owl.carousel.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script>
+                                               document.getElementById('searchEvent').addEventListener('keyup', function () {
+                                                   let keyword = this.value.toLowerCase();
+                                                   let cards = document.querySelectorAll('.card');
+                                                   cards.forEach(card => {
+                                                       let name = card.querySelector('.card-title').textContent.toLowerCase();
+                                                       card.parentElement.style.display = name.includes(keyword) ? '' : 'none';
+                                                   });
+                                               });
+        </script>
     </body>
 </html>

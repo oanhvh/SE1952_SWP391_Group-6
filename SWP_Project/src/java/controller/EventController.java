@@ -147,7 +147,7 @@ public class EventController extends HttpServlet {
             request.setAttribute("filterStatus", status);
         }
 //        List<Event> eventList = eventService.getEventsByStatus("Active");
-        
+
         request.setAttribute("eventList", eventList);
         request.getRequestDispatcher("/staff/listEvent.jsp").forward(request, response);
     }
@@ -265,16 +265,74 @@ public class EventController extends HttpServlet {
 
     private void updateEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
+        Event event = null;
+        List<Category> categoryList = categoryDAO.getAllCategory();
+        request.setAttribute("categoryList", categoryList);
+
         try {
-            Event event = buildEventFromRequest(request, true);
+            int eventId = Integer.parseInt(request.getParameter("eventID"));
+            Event existingEvent = eventService.getEventById(eventId);
+
+            if (existingEvent == null) {
+                throw new IllegalArgumentException("Event not found");
+            }
+
+            // Build event từ request
+            event = buildEventFromRequest(request, true);
+
+            // GIỮ LẠI các giá trị không thay đổi từ DB
+            event.setCreatedByStaffID(existingEvent.getCreatedByStaffID());
+            event.setManagerID(existingEvent.getManagerID());
+
+            // Nếu createdAt không có trong request, giữ lại giá trị cũ
+            if (event.getCreatedAt() == null) {
+                event.setCreatedAt(existingEvent.getCreatedAt());
+            }
+
             eventService.updateEvent(event);
             response.sendRedirect(request.getContextPath() + "/staff/event?action=list");
         } catch (IllegalArgumentException e) {
+            // Nếu build thất bại, lấy event cũ từ DB
+            if (event == null || event.getEventID() == 0) {
+                try {
+                    int eventId = Integer.parseInt(request.getParameter("eventID"));
+                    event = eventService.getEventById(eventId);
+                } catch (Exception ex) {
+                    event = new Event();
+                }
+            }
+
+            // Format lại createdAt để hiển thị
+            String formattedCreatedAt = "";
+            if (event != null && event.getCreatedAt() != null) {
+                formattedCreatedAt = event.getCreatedAt().format(FORMATTER);
+            }
+
+            request.setAttribute("event", event);
+            request.setAttribute("formattedCreatedAt", formattedCreatedAt);
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("/staff/updateEvent.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Unexpected error while updating event");
+
+            // Tương tự xử lý cho exception khác
+            if (event == null || event.getEventID() == 0) {
+                try {
+                    int eventId = Integer.parseInt(request.getParameter("eventID"));
+                    event = eventService.getEventById(eventId);
+                } catch (Exception ex) {
+                    event = new Event();
+                }
+            }
+
+            String formattedCreatedAt = "";
+            if (event != null && event.getCreatedAt() != null) {
+                formattedCreatedAt = event.getCreatedAt().format(FORMATTER);
+            }
+
+            request.setAttribute("event", event);
+            request.setAttribute("formattedCreatedAt", formattedCreatedAt);
+            request.setAttribute("error", "Unexpected error while updating event: " + e.getMessage());
             request.getRequestDispatcher("/staff/updateEvent.jsp").forward(request, response);
         }
     }

@@ -89,7 +89,7 @@ public class EventService {
     // =============================
     // VALIDATION
     // =============================
-     private void validateEvent(Event event, boolean isNew) {
+    private void validateEvent(Event event, boolean isNew) {
         if (event == null) {
             throw new IllegalArgumentException("Event cannot be null");
         }
@@ -97,15 +97,12 @@ public class EventService {
         if (event.getManagerID() <= 0) {
             throw new IllegalArgumentException("Manager ID must be valid");
         }
-
         if (event.getEventName() == null || event.getEventName().isBlank()) {
             throw new IllegalArgumentException("Event name cannot be empty");
         }
-
         if (event.getDescription() == null || event.getDescription().isBlank()) {
             throw new IllegalArgumentException("Description cannot be empty");
         }
-
         if (event.getLocation() == null || event.getLocation().isBlank()) {
             throw new IllegalArgumentException("Location cannot be empty");
         }
@@ -118,19 +115,18 @@ public class EventService {
             throw new IllegalArgumentException("End date cannot be before start date");
         }
 
-        if (event.getStartDate().isBefore(LocalDateTime.now())) {
+        if (isNew && event.getStartDate().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Start date cannot be in the past");
         }
 
         if (event.getCapacity() <= 0) {
             throw new IllegalArgumentException("Capacity must be greater than zero");
         }
-
         if (event.getCategoryID() <= 0) {
             throw new IllegalArgumentException("Invalid Category ID");
         }
 
-        if (event.getImage() == null || event.getImage().isBlank()) {
+        if (isNew && (event.getImage() == null || event.getImage().isBlank())) {
             throw new IllegalArgumentException("Image path cannot be empty");
         }
 

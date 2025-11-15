@@ -76,20 +76,31 @@
                 color: white;
                 font-size: 1.5rem;
             }
+            #searchEvent {
+                transition: all 0.3s ease;
+            }
+            #searchEvent:focus {
+                box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+            }
         </style>
     </head>
     <body>
         <jsp:include page="includes/header.jsp" />
-        
+
         <div class="news_section layout_padding">
             <div class="container">
-                <div class="row mb-4">
-                    <div class="col-sm-12">
-                        <h1 class="news_taital">EVENT LIST</h1>
-                        <p class="news_text">Explore our upcoming and ongoing events below.</p>
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="news_taital mb-0">EVENT LIST</h1>
+                        <p class="news_text mb-0">Explore our upcoming and ongoing events below.</p>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <div class="input-group">
+                            <input type="text" id="searchEvent" class="form-control rounded-pill" placeholder="🔍 Search events...">
+                        </div>
                     </div>
                 </div>
-                
+
                 <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
                     <div class="row mb-3">
                         <div class="col-sm-12 text-end">
@@ -99,7 +110,7 @@
                         </div>
                     </div>
                 </c:if>
-                
+
                 <div class="row">
                     <c:forEach var="event" items="${eventList}">
                         <div class="col-md-6 col-lg-4 mb-4">
@@ -117,32 +128,32 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
-                                
+
                                 <div class="card-body">
                                     <h5 class="card-title">${event.eventName}</h5>
                                     <p class="card-text text-muted">${event.description}</p>
-                                    
+
                                     <div class="mb-2">
                                         <small><strong><i class="fa fa-map-marker"></i> Location:</strong></small>
                                         <p class="mb-1">${event.location}</p>
                                     </div>
-                                    
+
                                     <div class="mb-2">
                                         <small><strong><i class="fa fa-clock-o"></i> Date:</strong></small>
                                         <p class="mb-1">${event.startDate} - ${event.endDate}</p>
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <small><strong>Status:</strong></small><br>
                                         <span class="status-badge status-${event.status}">${event.status}</span>
                                     </div>
-                                    
+
                                     <div class="btn-actions">
                                         <a href="${pageContext.request.contextPath}/staff/event?action=detail&id=${event.eventID}" 
                                            class="btn btn-primary btn-sm flex-fill">
                                             <i class="fa fa-eye"></i> View Details
                                         </a>
-                                        
+
                                         <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
                                             <a href="${pageContext.request.contextPath}/staff/event?action=edit&id=${event.eventID}" 
                                                class="btn btn-warning btn-sm">
@@ -160,7 +171,7 @@
                         </div>
                     </c:forEach>
                 </div>
-                
+
                 <c:if test="${empty eventList}">
                     <div class="row">
                         <div class="col-12">
@@ -180,9 +191,9 @@
                 </c:if>
             </div>
         </div>
-        
+
         <jsp:include page="includes/footer.jsp" />
-        
+
         <script src="../js/jquery.min.js"></script>
         <script src="../js/popper.min.js"></script>
         <script src="../js/bootstrap.bundle.min.js"></script>
@@ -196,5 +207,15 @@
         <script src="../js/custom.js"></script>
         <script src="../js/owl.carousel.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script>
+                                                   document.getElementById('searchEvent').addEventListener('keyup', function () {
+                                                       let keyword = this.value.toLowerCase();
+                                                       let cards = document.querySelectorAll('.card');
+                                                       cards.forEach(card => {
+                                                           let name = card.querySelector('.card-title').textContent.toLowerCase();
+                                                           card.parentElement.style.display = name.includes(keyword) ? '' : 'none';
+                                                       });
+                                                   });
+        </script>
     </body>
 </html>
