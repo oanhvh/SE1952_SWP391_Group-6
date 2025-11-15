@@ -44,7 +44,7 @@
                                         actionPath = sp.substring(0, sp.length() - ".jsp".length())
                                                          .replace("_password", "-password");
                                     } else {
-                                        actionPath = sp != null ? sp : "/manager/change-password";
+                                        actionPath = sp != null ? sp : "/staff/change-password";
                                     }
                                 }
                             %>
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="d-flex justify-content-center gap-3">
                                     <button type="submit" class="btn btn-primary">Change password</button>
-                                    <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/manager/index_1.jsp">Home page</a>
+                                    <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/staff/index_1.jsp">Home page</a>
                                 </div>
                             </form>
                         </div>

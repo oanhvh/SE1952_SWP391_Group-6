@@ -13,21 +13,7 @@
         <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css" />
         <link rel="stylesheet" href="../css/sidebar.css" />
         <link rel="stylesheet" href="../css/activation.css" />
-        <style>
-            /* Ensure pagination numbers are visible regardless of global styles */
-            .pagination .page-link {
-                color: #0d6efd !important;
-            }
-            .pagination .page-item.disabled .page-link {
-                color: #6c757d !important;
-                pointer-events: none;
-            }
-            .pagination .page-item.active .page-link {
-                background-color: #e91e63;
-                border-color: #e91e63;
-                color: #fff !important;
-            }
-        </style>
+
     </head>
     <body class="activation-page">
         <jsp:include page="includes/header.jsp" />
@@ -89,7 +75,7 @@
                     return {text: 'Expired', cls: 'status-expired'};
                 return {text: 'Not yet activated', cls: 'status-pending'};
             }
-
+                       
             let currentPage = 1;
             let pageSize = 50;
             const urlParams = new URLSearchParams(window.location.search);
@@ -153,7 +139,7 @@
                     tbody.innerHTML = '<tr><td colspan="5" class="text-danger text-center py-4">Load failed</td></tr>';
                 }
             }
-
+          
             document.addEventListener('DOMContentLoaded', () => {
                 const btnGenerate = document.getElementById('btnGenerate');
                 const btnReload = document.getElementById('btnReload');

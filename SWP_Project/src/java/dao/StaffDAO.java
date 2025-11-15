@@ -15,7 +15,7 @@ import java.sql.SQLException;
 
 public class StaffDAO extends DBUtils {
 
-    //tạo Staff
+    //tạo Staff (Thanhcocodo)
     public void createStaff(Connection conn, int userId, int managerId, int employeeCodeId, boolean verified) throws Exception {
         String sql = "INSERT INTO Staff(UserID, ManagerID, Position, EmployeeCodeID, EmployeeCodeVerified, ContactInfo, JoinDate) "
                 + "VALUES(?, ?, NULL, ?, ?, NULL, SYSUTCDATETIME())";
@@ -27,7 +27,8 @@ public class StaffDAO extends DBUtils {
             ps.executeUpdate();
         }
     }
-
+    
+    //Tìm StaffID từ UserID - để biết user này có phải là Staff không (Thanhcocodo)
     public Integer getStaffIdByUserId(int userId) {
         String sql = "SELECT StaffID FROM Staff WHERE UserID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {

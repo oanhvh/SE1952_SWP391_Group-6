@@ -37,9 +37,9 @@ public class StaffApplicationReviewController extends HttpServlet {
         } catch (Exception e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid applicationId");
             return;
-        }
+        }   
 
-        //xác nhận approve hay reject
+        //Xác nhận approve hay reject
         boolean approve;
         if ("approve".equalsIgnoreCase(action)) {
             approve = true;
@@ -50,14 +50,14 @@ public class StaffApplicationReviewController extends HttpServlet {
             return;
         }
 
-        // Map UserID -> StaffID to satisfy FK ApprovedByStaffID
+        //Ánh xạ từ User sang Staff
         StaffDAO staffDAO = new StaffDAO();
         Integer staffId = staffDAO.getStaffIdByUserId(user.getUserID());
         if (staffId == null) {
             resp.sendRedirect(req.getContextPath() + "/staff/applications?status=Pending&error=no_staff_id");
             return;
         }
-
+        
         //Gọi DAO để cập nhật trạng thái đơn
         boolean ok = applicationsDAO.reviewApplication(applicationId, staffId, approve, staffComment);
 

@@ -66,7 +66,8 @@ public class SkillsDAO extends DBUtils {
         }
         return 0;
     }
-
+    
+    //Lấy thông tin một kỹ năng cụ thể theo ID
     public Skills getById(int id) {
         String sql = "SELECT * FROM Skills WHERE SkillID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -106,7 +107,7 @@ public class SkillsDAO extends DBUtils {
         return false;
     }
 
-    // kiểm tra tồn tại (update)
+    // kiểm tra trùng lặp tên kỹ năng khi chỉnh sửa 
     public boolean existsByNameExcludingId(String skillName, int excludeSkillId) {
         String sql = "SELECT COUNT(*) FROM Skills WHERE LOWER(SkillName) = LOWER(?) AND SkillID <> ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {

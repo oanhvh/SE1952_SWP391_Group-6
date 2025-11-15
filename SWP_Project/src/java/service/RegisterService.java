@@ -11,7 +11,6 @@ import dao.UserDao;
 import dao.VolunteerDAO;
 import entity.Users;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,12 +59,16 @@ public class RegisterService {
             errors.put("email", "Email is required");
         } else if (!email.matches("^[\\w.%+-]+@[\\w.-]+\\.[A-Za-z]{2,}$")) {
             errors.put("email", "Invalid email format");
+        } else if (userDao.isEmailExisted(email)) {
+            errors.put("email", "Email already exists");
         }
 
         if (isBlank(phone)) {
             errors.put("phone", "Phone is required");
         } else if (!phone.matches("^(0\\d{9})$")) {
             errors.put("phone", "Phone must be 10 digits starting with 0");
+        } else if (userDao.isPhoneExisted(phone)) {
+            errors.put("phone", "Phone already exists");
         }
 
         if (isBlank(dateOfBirth)) {
@@ -90,10 +93,7 @@ public class RegisterService {
         return errors;
     }
 
-    public boolean registerUser(String role, String username, String password,
-            String fullName, String email, String phone,
-            LocalDate dob, String employeeCode,
-            Map<String, String> errors) {
+    public boolean registerUser(String role, String username, String password, String fullName, String email, String phone, LocalDate dob, String employeeCode, Map<String, String> errors) {
         try (Connection conn = DBUtils.getConnection1()) {
             conn.setAutoCommit(false);
 
@@ -102,7 +102,7 @@ public class RegisterService {
                 u.setUsername(username);
                 u.setPasswordHash(password);
                 u.setRole("Volunteer");
-                u.setStatus("Pending");
+                u.setStatus("Active");
                 u.setFullName(fullName);
                 u.setEmail(email);
                 u.setPhone(phone);
@@ -129,7 +129,7 @@ public class RegisterService {
                 u.setUsername(username);
                 u.setPasswordHash(password);
                 u.setRole("Staff");
-                u.setStatus("Pending");
+                u.setStatus("Active");
                 u.setFullName(fullName);
                 u.setEmail(email);
                 u.setPhone(phone);
@@ -159,6 +159,24 @@ public class RegisterService {
             }
             return false;
         }
+    }
+
+    public boolean processRegistration(String role, String username, String password, String fullName, String email, String phone, String dobStr, String employeeCode, Map<String, String> errors) {
+        Map<String, String> v = validateRegistration(username, password, role, fullName, email, phone, dobStr, employeeCode);
+        if (!v.isEmpty()) {
+            errors.putAll(v);
+            return false;
+        }
+        LocalDate dob = null;
+        if (!isBlank(dobStr)) {
+            try {
+                dob = LocalDate.parse(dobStr);
+            } catch (Exception e) {
+                errors.put("dateOfBirth", "Invalid date format (YYYY-MM-DD)");
+                return false;
+            }
+        }
+        return registerUser(role, username, password, fullName, email, phone, dob, employeeCode, errors);
     }
 
     private boolean isBlank(String s) {

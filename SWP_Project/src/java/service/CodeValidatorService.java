@@ -18,7 +18,7 @@ public class CodeValidatorService {
 
     private final EmployeeCodesDAO codesDAO = new EmployeeCodesDAO();
     
-    //kiểm tra mã hợp lệ
+    //kiểm tra mã hợp lệ (Thanhcocodo)
     public EmployeeCodesDAO.CodeInfo validateEmployeeCode(Connection conn, String employeeCode) throws Exception {
         if (employeeCode == null || employeeCode.trim().isEmpty()) {
             return null;

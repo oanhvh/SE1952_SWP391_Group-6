@@ -21,16 +21,39 @@ import java.util.List;
  */
 public class VolunteerDAO {
 
+    //Tạo Volunteer (Thanhcocodo)
+    public void createVolunteer(Connection conn, int userId) throws Exception {
+        String sql = "INSERT INTO Volunteer(UserID, Status) VALUES(?, 'Pending')";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        }
+    }
+    
+    //Tìm VolunteerID từ UserID - để biết user này có phải là Volunteer không (Thanhcocodo)
+    public Integer getVolunteerIdByUserId(int userId) {
+        String sql = "SELECT VolunteerID FROM Volunteer WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("VolunteerID");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public List<VolunteerUser> getAllVolunteers() {
         List<VolunteerUser> list = new ArrayList<>();
-        String sql = "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, " +
-                "v.IsSponsor, u.UserID, u.Username, u.FullName, u.Email, u.Phone, " +
-                "u.Role, u.Status AS UserStatus, u.Avatar " +
-                "FROM Volunteer v JOIN Users u ON v.UserID = u.UserID";
+        String sql = "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, "
+                + "v.IsSponsor, u.UserID, u.Username, u.FullName, u.Email, u.Phone, "
+                + "u.Role, u.Status AS UserStatus, u.Avatar "
+                + "FROM Volunteer v JOIN Users u ON v.UserID = u.UserID";
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 list.add(mapResultSetToVolunteer(rs));
@@ -44,10 +67,10 @@ public class VolunteerDAO {
     public List<VolunteerUser> searchVolunteers(String name, String phone, String email, String status) {
         List<VolunteerUser> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, " +
-                        "v.IsSponsor, u.UserID, u.Username, u.FullName, u.Email, u.Phone, " +
-                        "u.Role, u.Status AS UserStatus, u.Avatar " +
-                        "FROM Volunteer v JOIN Users u ON v.UserID = u.UserID WHERE 1=1"
+                "SELECT v.VolunteerID, v.ProfileInfo, v.JoinDate, v.Status, v.Availability, "
+                + "v.IsSponsor, u.UserID, u.Username, u.FullName, u.Email, u.Phone, "
+                + "u.Role, u.Status AS UserStatus, u.Avatar "
+                + "FROM Volunteer v JOIN Users u ON v.UserID = u.UserID WHERE 1=1"
         );
 
         List<Object> params = new ArrayList<>();
@@ -69,8 +92,7 @@ public class VolunteerDAO {
             params.add(status);
         }
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
@@ -104,8 +126,9 @@ public class VolunteerDAO {
         v.setUser(user);
         v.setProfileInfo(rs.getString("ProfileInfo"));
         Date joinDate = rs.getDate("JoinDate");
-        if (joinDate != null)
+        if (joinDate != null) {
             v.setJoinDate(joinDate.toLocalDate());
+        }
         v.setStatus(rs.getString("Status"));
         v.setAvailability(rs.getString("Availability"));
         v.setSponsor(rs.getBoolean("IsSponsor"));
@@ -120,8 +143,7 @@ public class VolunteerDAO {
                 + "JOIN Users u ON v.UserID = u.UserID "
                 + "WHERE v.VolunteerID = ?";
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, volunteerId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -162,8 +184,7 @@ public class VolunteerDAO {
 
     public boolean updateVolunteerStatus(int volunteerID, String status) {
         String sql = "UPDATE Volunteer SET status = ? WHERE volunteerID = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
             ps.setInt(2, volunteerID);
             return ps.executeUpdate() > 0;
@@ -172,30 +193,5 @@ public class VolunteerDAO {
         }
         return false;
     }
-
-
-    public void createVolunteer(Connection conn, int userId) throws Exception {
-        String sql = "INSERT INTO Volunteer(UserID, Status) VALUES(?, 'Pending')";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.executeUpdate();
-        }
-    }
-
-    public Integer getVolunteerIdByUserId(int userId) {
-        String sql = "SELECT VolunteerID FROM Volunteer WHERE UserID = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("VolunteerID");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null; // nếu không tìm thấy
-    }
-
+   
 }

@@ -7,7 +7,6 @@ package dao;
 import entity.ApplicationReviewRow;
 import entity.Event;
 import entity.VolunteerApplications;
-import service.EmailService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -56,7 +55,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
         return list;
     }
 
-    // Data for staff review list with volunteer full name and event name
+    //Lấy danh sách đơn đăng ký kèm đầy đủ thông tin (Thanhcocodo)
     public List<ApplicationReviewRow> getApplicationsForReviewByStatus(String status) {
         List<ApplicationReviewRow> list = new ArrayList<>();
         String sql
@@ -68,15 +67,15 @@ public class VolunteerApplicationsDAO extends DBUtils {
                 + "       va.Motivation,\n"
                 + "       va.Experience,\n"
                 + "       (\n"
-                + "           SELECT STRING_AGG(s.SkillName, ', ')\n"
+                + "           SELECT STRING_AGG(s.SkillName, ', ')\n"  //Bảng trung gian lưu kỹ năng cho mỗi đơn
                 + "           FROM EventApplicationSkills eas\n"
                 + "           JOIN Skills s ON s.SkillID = eas.SkillID\n"
                 + "           WHERE eas.ApplicationID = va.ApplicationID\n"
                 + "       ) AS SkillsCsv\n"
-                + "FROM VolunteerApplications va\n"
-                + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n"
+                + "FROM VolunteerApplications va\n" //Lấy thông tin tình nguyện viên
+                + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n" //Lấy tên đầy đủ (FullName) của tình nguyện viên
                 + "JOIN Users u ON v.UserID = u.UserID\n"
-                + "JOIN Event e ON va.EventID = e.EventID\n"
+                + "JOIN Event e ON va.EventID = e.EventID\n"  //Lấy tên sự kiện
                 + "WHERE va.Status = ?\n"
                 + "ORDER BY va.ApplicationDate DESC";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -88,7 +87,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
                     row.setVolunteerFullName(rs.getString("VolunteerFullName"));
                     row.setEventName(rs.getString("EventName"));
                     row.setStatus(rs.getString("Status"));
-                    Timestamp t = rs.getTimestamp("ApplicationDate");
+                    Timestamp t = rs.getTimestamp("ApplicationDate"); //Chuyển đổi Timestamp sang LocalDateTime
                     if (t != null) {
                         row.setApplicationDate(t.toLocalDateTime());
                     }
@@ -102,6 +101,71 @@ public class VolunteerApplicationsDAO extends DBUtils {
             e.printStackTrace();
         }
         return list;
+    }
+    
+    //Xử lý toàn bộ quy trình duyệt/từ chối đơn đăng ký
+    public boolean reviewApplication(int applicationId, int staffUserId, boolean approve, String staffComment) {
+        //Lấy thông tin cần thiết để tạo thông báo
+        String sqlSelect = "SELECT va.VolunteerID, va.EventID, e.EventName, e.Location "
+                + "FROM VolunteerApplications va "
+                + "JOIN Event e ON va.EventID = e.EventID "
+                + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID "
+                + "JOIN Users u ON v.UserID = u.UserID "
+                + "WHERE va.ApplicationID = ?";
+        //Cập nhật trạng thái đơn
+        String sqlUpdate = "UPDATE VolunteerApplications SET Status = ?, ApprovalDate = ?, ApprovedByStaffID = ?, StaffComment = ? WHERE ApplicationID = ?";
+        //Tạo thông báo
+        String sqlNoti = "INSERT INTO Notifications (Title, Message, ReceiverID, IsRead, CreatedAt, Type, EventID) VALUES (?, ?, ?, 0, SYSUTCDATETIME(), 'Application', ?)";
+
+        try (Connection con = DBUtils.getConnection1(); PreparedStatement psSel = con.prepareStatement(sqlSelect); PreparedStatement psUpd = con.prepareStatement(sqlUpdate); PreparedStatement psNoti = con.prepareStatement(sqlNoti)) {
+
+            con.setAutoCommit(false);
+
+            psSel.setInt(1, applicationId);
+            ResultSet rs = psSel.executeQuery();
+            if (!rs.next()) {
+                con.rollback();
+                return false;
+            }
+            int volunteerId = rs.getInt("VolunteerID");
+            int eventId = rs.getInt("EventID"); 
+            String eventName = rs.getString("EventName");
+            String location = rs.getString("Location");
+
+            String newStatus = approve ? "Approved" : "Rejected";
+            psUpd.setString(1, newStatus);
+            psUpd.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            psUpd.setInt(3, staffUserId);
+            psUpd.setString(4, staffComment);
+            psUpd.setInt(5, applicationId);
+            int updated = psUpd.executeUpdate();
+            if (updated <= 0) {
+                con.rollback();
+                return false;
+            }
+
+            String title = (approve ? "Đơn ứng tuyển được duyệt" : "Đơn ứng tuyển bị từ chối")
+                    + (eventName != null && !eventName.isEmpty() ? (" - " + eventName) : "");
+            String message = approve
+                    ? String.format("Đơn của bạn cho sự kiện '%s'%s đã được duyệt.",
+                            eventName != null ? eventName : "",
+                            (location != null && !location.isEmpty() ? " tại " + location : ""))
+                    : String.format("Đơn của bạn cho sự kiện '%s'%s đã bị từ chối.%s",
+                            eventName != null ? eventName : "",
+                            (location != null && !location.isEmpty() ? " tại " + location : ""),
+                            (staffComment != null && !staffComment.isEmpty() ? " Lý do: " + staffComment : ""));
+            psNoti.setString(1, title);
+            psNoti.setString(2, message);
+            psNoti.setInt(3, volunteerId);
+            psNoti.setInt(4, eventId);
+            psNoti.executeUpdate();
+
+            con.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void addVolunteerApplication(VolunteerApplications app) {
@@ -217,81 +281,6 @@ public class VolunteerApplicationsDAO extends DBUtils {
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    // Review application: approve/reject, set staff comment, create notification for volunteer
-    public boolean reviewApplication(int applicationId, int staffUserId, boolean approve, String staffComment) {
-        String sqlSelect = "SELECT va.VolunteerID, va.EventID, e.EventName, e.Location, u.Email "
-                + "FROM VolunteerApplications va "
-                + "JOIN Event e ON va.EventID = e.EventID "
-                + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID "
-                + "JOIN Users u ON v.UserID = u.UserID "
-                + "WHERE va.ApplicationID = ?";
-        String sqlUpdate = "UPDATE VolunteerApplications SET Status = ?, ApprovalDate = ?, ApprovedByStaffID = ?, StaffComment = ? WHERE ApplicationID = ?";
-        String sqlNoti = "INSERT INTO Notifications (Title, Message, ReceiverID, IsRead, CreatedAt, Type, EventID) VALUES (?, ?, ?, 0, SYSUTCDATETIME(), 'Application', ?)";
-
-        try (Connection con = DBUtils.getConnection1(); PreparedStatement psSel = con.prepareStatement(sqlSelect); PreparedStatement psUpd = con.prepareStatement(sqlUpdate); PreparedStatement psNoti = con.prepareStatement(sqlNoti)) {
-
-            con.setAutoCommit(false);
-
-            psSel.setInt(1, applicationId);
-            ResultSet rs = psSel.executeQuery();
-            if (!rs.next()) {
-                con.rollback();
-                return false;
-            }
-            int volunteerId = rs.getInt("VolunteerID");
-            int eventId = rs.getInt("EventID");
-            String eventName = rs.getString("EventName");
-            String location = rs.getString("Location");
-            String volunteerEmail = rs.getString("Email");
-
-            String newStatus = approve ? "Approved" : "Rejected";
-            psUpd.setString(1, newStatus);
-            psUpd.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            psUpd.setInt(3, staffUserId);
-            psUpd.setString(4, staffComment);
-            psUpd.setInt(5, applicationId);
-            int updated = psUpd.executeUpdate();
-            if (updated <= 0) {
-                con.rollback();
-                return false;
-            }
-
-            String title = (approve ? "Đơn ứng tuyển được duyệt" : "Đơn ứng tuyển bị từ chối")
-                    + (eventName != null && !eventName.isEmpty() ? (" - " + eventName) : "");
-            String message = approve
-                    ? String.format("Đơn của bạn cho sự kiện '%s'%s đã được duyệt.",
-                            eventName != null ? eventName : "",
-                            (location != null && !location.isEmpty() ? " tại " + location : ""))
-                    : String.format("Đơn của bạn cho sự kiện '%s'%s đã bị từ chối.%s",
-                            eventName != null ? eventName : "",
-                            (location != null && !location.isEmpty() ? " tại " + location : ""),
-                            (staffComment != null && !staffComment.isEmpty() ? " Lý do: " + staffComment : ""));
-            psNoti.setString(1, title);
-            psNoti.setString(2, message);
-            psNoti.setInt(3, volunteerId);
-            psNoti.setInt(4, eventId);
-            psNoti.executeUpdate();
-
-            con.commit();
-
-            // Attempt to send email notification (non-blocking to DB result)
-            try {
-                if (volunteerEmail != null && !volunteerEmail.isEmpty()) {
-                    String subject = title;
-                    String body = message;
-                    EmailService.sendEmail(volunteerEmail, subject, body);
-                }
-            } catch (Exception mailEx) {
-                // Do not rollback DB; just log the failure
-                mailEx.printStackTrace();
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
     }
 

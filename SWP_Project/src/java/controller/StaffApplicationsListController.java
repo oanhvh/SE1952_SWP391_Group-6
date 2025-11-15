@@ -31,7 +31,7 @@ public class StaffApplicationsListController extends HttpServlet {
             status = "Pending";
         }
         
-        //Đưa dữ liệu vào request để JSP hiển thị
+        //xử lý và truyền dữ liệu từ Controller sang JSP
         VolunteerApplicationsDAO dao = new VolunteerApplicationsDAO();
         List<ApplicationReviewRow> rows = dao.getApplicationsForReviewByStatus(status);
         request.setAttribute("rows", rows);

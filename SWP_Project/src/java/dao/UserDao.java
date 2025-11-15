@@ -64,21 +64,9 @@ public class UserDao extends DBUtils {
         }
         return user;
     }
-
-    public List<Users> getAllUsers() {
-        List<Users> userList = new ArrayList<>();
-        String sql = "SELECT * FROM Users";
-        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                Users user = extractUser(rs);
-                userList.add(user);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return userList;
-    }
-
+//============================================================== Login ==========================================================================================================    
+    
+    //Hàm lấy dữ liệu user từ database (Thanhcocodo)
     public Users getUserbyUsername(String Username) {
         String sql = "SELECT * FROM Users WHERE Username = ?";
         Users user = null;
@@ -96,6 +84,36 @@ public class UserDao extends DBUtils {
         return user;
     }
 
+    //Ghi lại log thời gian hoạt động gần nhất, xét từ ngay khi đăng nhập (Thanhcocodo)
+    public boolean updateLastLogin(int userId) {
+        String sql = "UPDATE Users SET UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    //Lấy Role dựa theo userId (Thanhcocodo)
+    public String getUserRole(int userId) {
+        String sql = "SELECT Role FROM Users WHERE UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+//============================================================== Register =======================================================================================================   
+    
+    //Kiểm tra sự tồn tại của user (Thanhcocodo)
     public boolean isUsernameExisted(String username) {
         String sql = "SELECT COUNT(*) FROM Users WHERE username = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -114,176 +132,40 @@ public class UserDao extends DBUtils {
         return false;
     }
 
-    public Users upsertUserByGoogle(String googleId, String email, String fullName, String avatar, boolean emailVerified) throws SQLException {
-        try (Connection cn = DBUtils.getConnection1()) {
-            cn.setAutoCommit(false);
-            try {
-                // User đã từng đăng nhập bằng Google
-                Users u = findByGoogleId(cn, googleId);
-                if (u != null) {
-                    updateLoginMeta(cn, u.getUserID(), "Google", emailVerified, fullName, avatar);
-                    cn.commit();
-                    return getUserById(u.getUserID());
-                }
+    //Kiểm tra sự tồn tại của email (Thanhcocodo)
+    public boolean isEmailExisted(String email) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE Email = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
 
-                // User có tài khoản gmail, link với Google đăng nhập bình thường
-                if (email != null && !email.trim().isEmpty()) {
-                    u = findByEmail(cn, email);
-                    if (u != null) {
-                        linkGoogleToUser(cn, u.getUserID(), googleId, emailVerified, fullName, avatar);
-                        cn.commit();
-                        return getUserById(u.getUserID());
-                    }
-                }
-
-                // Tạo mới user Google (role mặc định Volunteer,)
-                int newId = insertGoogleUser(cn, googleId, email, fullName, avatar, emailVerified);
-                try {
-                    dao.VolunteerDAO volunteerDAO = new dao.VolunteerDAO();
-                    volunteerDAO.createVolunteer(cn, newId);
-                } catch (Exception e) {
-                    // Nếu tạo Volunteer thất bại, log nhưng không rollback vì user đã được tạo
-                    System.err.println("Warning: Failed to create Volunteer record for Google user: " + e.getMessage());
-                }
-                cn.commit();
-                return getUserById(newId);
-            } catch (Exception ex) {
-                cn.rollback();
-                if (ex instanceof SQLException) {
-                    throw (SQLException) ex;
-                }
-                throw new SQLException(ex);
-            } finally {
-                cn.setAutoCommit(true);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new SQLException(e);
-        }
-    }
-
-    //Tìm trong database xem có user nào đã đăng ký với Google ID này chưa?
-    private Users findByGoogleId(Connection cn, String googleId) throws SQLException {
-        String sql = "SELECT TOP 1 * FROM Users WHERE GoogleID = ?";
-        try (PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setString(1, googleId);
-            try (ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    try {
-                        return extractUser(rs);
-                    } catch (Exception e) {
-                        throw new SQLException(e);
-                    }
+                    int count = rs.getInt(1);
+                    return count > 0;
                 }
             }
-        }
-        return null;
-    }
-
-    //Tìm trong database xem có user nào đã đăng ký với email này chưa?
-    private Users findByEmail(Connection cn, String email) throws SQLException {
-        if (email == null || email.trim().isEmpty()) {
-            return null;
-        }
-        String sql = "SELECT TOP 1 * FROM Users WHERE Email = ?";
-        try (PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setString(1, email);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    try {
-                        return extractUser(rs);
-                    } catch (Exception e) {
-                        throw new SQLException(e);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    //User đã có tài khoản bằng email, nay muốn thêm đăng nhập bằng Google vào tài khoản đó
-    private void linkGoogleToUser(Connection cn, int userId, String googleId, boolean emailVerified, String fullName, String avatar) throws SQLException {
-        String sql = "UPDATE Users SET GoogleID = ?, LoginProvider = 'Google', "
-                + "IsEmailVerified = CASE WHEN ? = 1 THEN 1 ELSE IsEmailVerified END, "
-                + "FullName = COALESCE(?, FullName), Avatar = COALESCE(?, Avatar), UpdatedAt = SYSUTCDATETIME() "
-                + "WHERE UserID = ?";
-        try (PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setString(1, googleId);
-            ps.setInt(2, emailVerified ? 1 : 0);
-            ps.setString(3, fullName);
-            ps.setString(4, avatar);
-            ps.setInt(5, userId);
-            ps.executeUpdate();
-        }
-    }
-
-    //Khi user đăng nhập lại bằng Google/Facebook, cập nhật thông tin mới nhất từ nhà cung cấp
-    private void updateLoginMeta(Connection cn, int userId, String provider, boolean emailVerified, String fullName, String avatar) throws SQLException {
-        String sql = "UPDATE Users SET LoginProvider = ?, "
-                + "IsEmailVerified = CASE WHEN ? = 1 THEN 1 ELSE IsEmailVerified END, "
-                + "FullName = COALESCE(?, FullName), Avatar = COALESCE(?, Avatar), UpdatedAt = SYSUTCDATETIME() "
-                + "WHERE UserID = ?";
-        try (PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setString(1, provider);
-            ps.setInt(2, emailVerified ? 1 : 0);
-            ps.setString(3, fullName);
-            ps.setString(4, avatar);
-            ps.setInt(5, userId);
-            ps.executeUpdate();
-        }
-    }
-
-    //Tạo tài khoản mới hoàn toàn cho user đăng nhập bằng Google lần đầu
-    private int insertGoogleUser(Connection cn, String googleId, String email, String fullName, String avatar, boolean emailVerified) throws SQLException {
-        String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, DateOfBirth, Phone, Avatar, "
-                + "GoogleID, FacebookID, LoginProvider, IsEmailVerified, IsPhoneVerified, CreatedAt, UpdatedAt) "
-                + "VALUES (?, NULL, 'Volunteer', 'Active', ?, ?, NULL, NULL, ?, ?, NULL, 'Google', ?, 0, SYSUTCDATETIME(), SYSUTCDATETIME()); "
-                + "SELECT SCOPE_IDENTITY();";
-        try (PreparedStatement ps = cn.prepareStatement(sql)) {
-            // Tạo username duy nhất
-            String baseUsername = (email != null && !email.isEmpty())
-                    ? email
-                    : ("gg_" + googleId.substring(0, Math.min(8, googleId.length())));
-
-            // Kiểm tra username đã tồn tại chưa, nếu có thì thêm suffix để unique
-            String username = baseUsername;
-            int suffix = 1;
-            while (isUsernameExistedInConnection(cn, username)) {
-                username = baseUsername + "_" + suffix;
-                suffix++;
-                // Giới hạn độ dài username (nếu cần)
-                if (username.length() > 45) {
-                    username = "gg_" + System.currentTimeMillis() % 100000;
-                }
-            }
-
-            ps.setString(1, username);
-            ps.setString(2, fullName != null ? fullName : "");
-            ps.setString(3, email); // Email có thể NULL
-            ps.setString(4, avatar);
-            ps.setString(5, googleId);
-            ps.setInt(6, emailVerified ? 1 : 0);
-            try (ResultSet rs = ps.executeQuery()) {
-                rs.next();
-                return rs.getInt(1);
-            }
-        }
-    }
-
-    // Helper method để kiểm tra username trong cùng connection (cho transaction)
-    private boolean isUsernameExistedInConnection(Connection cn, String username) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Users WHERE Username = ?";
-        try (PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setString(1, username);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
 
-    // tạo một user mới trong bảng Users
+    //Kiểm tra sự tồn tại của phone (Thanhcocodo)
+    public boolean isPhoneExisted(String phone) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE phone = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // tạo một user mới trong bảng Users (Thanhcocodo)
     public int createUser(Connection conn, Users user, boolean hashPassword) throws Exception {
         String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, DateOfBirth, Phone, Avatar, CreatedAt, UpdatedAt) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, SYSUTCDATETIME(), SYSUTCDATETIME())";
@@ -312,6 +194,198 @@ public class UserDao extends DBUtils {
             }
             throw new RuntimeException("Creating user failed, no ID obtained.");
         }
+    }
+
+    //Băm mật khẩu ra (Thanhcocodo)
+    public static String sha256(String input) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
+        StringBuilder hex = new StringBuilder();
+        for (byte b : hash) {
+            hex.append(String.format("%02x", b));
+        }
+        return hex.toString();
+    }
+//============================================================== Login Google ===================================================================================================  
+    
+    //Setup từng trường hợp người dùng với Google (Thanhcocodo)
+    public Users upsertUserByGoogle(String googleId, String email, String fullName, String avatar, boolean emailVerified) throws SQLException {
+        try (Connection cn = DBUtils.getConnection1()) {
+            cn.setAutoCommit(false);
+            try {
+                // User đã từng đăng nhập bằng Google
+                Users u = findByGoogleId(cn, googleId);
+                if (u != null) {
+                    updateLoginMeta(cn, u.getUserID(), "Google", emailVerified, fullName, avatar); // Cập nhật thông tin mới
+                    cn.commit();
+                    return getUserById(u.getUserID()); // Đăng nhập
+                }
+
+                // User có tài khoản gmail, link với Google đăng nhập bình thường
+                if (email != null && !email.trim().isEmpty()) {
+                    u = findByEmail(cn, email);
+                    if (u != null) {
+                        linkGoogleToUser(cn, u.getUserID(), googleId, emailVerified, fullName, avatar); // Liên kết Google với tài khoản cũ
+                        cn.commit();
+                        return getUserById(u.getUserID()); // Đăng nhập
+                    }
+                }
+
+                // Tạo mới user Google (role mặc định Volunteer)
+                int newId = insertGoogleUser(cn, googleId, email, fullName, avatar, emailVerified);
+                dao.VolunteerDAO volunteerDAO = new dao.VolunteerDAO();
+                volunteerDAO.createVolunteer(cn, newId);
+                cn.commit(); // Lưu
+                return getUserById(newId);
+            } catch (Exception ex) {
+                cn.rollback();  // Hủy tất cả thay đổi
+                if (ex instanceof SQLException) {
+                    throw (SQLException) ex;
+                }
+                throw new SQLException(ex);
+            } finally {
+                cn.setAutoCommit(true);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new SQLException(e);
+        }
+    }
+
+    //Tìm user trong database dựa trên Google ID (Thanhcocodo)
+    private Users findByGoogleId(Connection cn, String googleId) throws SQLException {
+        String sql = "SELECT TOP 1 * FROM Users WHERE GoogleID = ?";
+        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, googleId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    try {
+                        return extractUser(rs);
+                    } catch (Exception e) {
+                        throw new SQLException(e);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    //Tìm user trong database dựa trên địa chỉ email (Thanhcocodo)
+    private Users findByEmail(Connection cn, String email) throws SQLException {
+        if (email == null || email.trim().isEmpty()) {
+            return null;
+        }
+        String sql = "SELECT TOP 1 * FROM Users WHERE Email = ?";
+        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    try {
+                        return extractUser(rs);
+                    } catch (Exception e) {
+                        throw new SQLException(e);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    //Liên kết tài khoản Google với tài khoản đã tồn tại trong hệ thống (Thanhcocodo)
+    private void linkGoogleToUser(Connection cn, int userId, String googleId, boolean emailVerified, String fullName, String avatar) throws SQLException {
+        String sql = "UPDATE Users SET GoogleID = ?, LoginProvider = 'Google', "
+                + "IsEmailVerified = CASE WHEN ? = 1 THEN 1 ELSE IsEmailVerified END, "
+                + "FullName = COALESCE(?, FullName), Avatar = COALESCE(?, Avatar), UpdatedAt = SYSUTCDATETIME() "
+                + "WHERE UserID = ?";
+        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, googleId);
+            ps.setInt(2, emailVerified ? 1 : 0);
+            ps.setString(3, fullName);
+            ps.setString(4, avatar);
+            ps.setInt(5, userId);
+            ps.executeUpdate();
+        }
+    }
+
+    //Khi user đăng nhập lại bằng Google/Facebook, cập nhật thông tin mới nhất từ nhà cung cấp (Thanhcocodo)
+    private void updateLoginMeta(Connection cn, int userId, String provider, boolean emailVerified, String fullName, String avatar) throws SQLException {
+        String sql = "UPDATE Users SET LoginProvider = ?, "
+                + "IsEmailVerified = CASE WHEN ? = 1 THEN 1 ELSE IsEmailVerified END, "
+                + "FullName = COALESCE(?, FullName), Avatar = COALESCE(?, Avatar), UpdatedAt = SYSUTCDATETIME() "
+                + "WHERE UserID = ?";
+        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, provider);
+            ps.setInt(2, emailVerified ? 1 : 0);
+            ps.setString(3, fullName);
+            ps.setString(4, avatar);
+            ps.setInt(5, userId);
+            ps.executeUpdate();
+        }
+    }
+
+    //Tạo tài khoản mới hoàn toàn cho user đăng nhập bằng Google lần đầu (Thanhcocodo)
+    private int insertGoogleUser(Connection cn, String googleId, String email, String fullName, String avatar, boolean emailVerified) throws SQLException {
+        String sql = "INSERT INTO Users (Username, PasswordHash, Role, Status, FullName, Email, DateOfBirth, Phone, Avatar, "
+                + "GoogleID, FacebookID, LoginProvider, IsEmailVerified, IsPhoneVerified, CreatedAt, UpdatedAt) "
+                + "VALUES (?, NULL, 'Volunteer', 'Active', ?, ?, NULL, NULL, ?, ?, NULL, 'Google', ?, 0, SYSUTCDATETIME(), SYSUTCDATETIME()); "
+                + "SELECT SCOPE_IDENTITY();";
+        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+            // Tạo username
+            String baseUsername = (email != null && !email.isEmpty())
+                    ? email
+                    : ("gg_" + googleId.substring(0, Math.min(8, googleId.length())));
+
+            // Kiểm tra username đã tồn tại chưa, nếu có thì thêm suffix
+            String username = baseUsername;
+            int suffix = 1;
+            while (isUsernameExistedInConnection(cn, username)) {
+                username = baseUsername + "_" + suffix;
+                suffix++;
+                // Giới hạn độ dài username
+                if (username.length() > 45) {
+                    username = "GG_" + System.currentTimeMillis() % 100000;
+                }
+            }
+
+            ps.setString(1, username);
+            ps.setString(2, fullName != null ? fullName : "");
+            ps.setString(3, email);
+            ps.setString(4, avatar);
+            ps.setString(5, googleId);
+            ps.setInt(6, emailVerified ? 1 : 0);
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1);
+            }
+        }
+    }
+
+    //Kiểm tra xem username đã tồn tại trong database chưa (sử dụng connection có sẵn) (Thanhcocodo)
+    private boolean isUsernameExistedInConnection(Connection cn, String username) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Users WHERE Username = ?";
+        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+//===============================================================================================================================================================================   
+
+    public List<Users> getAllUsers() {
+        List<Users> userList = new ArrayList<>();
+        String sql = "SELECT * FROM Users";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Users user = extractUser(rs);
+                userList.add(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userList;
     }
 
     public int addUser(Users user) {
@@ -379,43 +453,6 @@ public class UserDao extends DBUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    // ghi lại log thời gian hoạt động gần nhất, xét từ ngay khi đăng nhập vào
-    public boolean updateLastLogin(int userId) {
-        String sql = "UPDATE Users SET UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
-        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public String getUserRole(int userId) {
-        String sql = "SELECT Role FROM Users WHERE UserID = ?";
-        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString(1);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static String sha256(String input) throws Exception {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
-        StringBuilder hex = new StringBuilder();
-        for (byte b : hash) {
-            hex.append(String.format("%02x", b));
-        }
-        return hex.toString();
     }
 
     public List<Users> searchUser(String name, String role, String phone) {
@@ -543,8 +580,7 @@ public class UserDao extends DBUtils {
 
     public int getUserIdByUsername(String username) {
         String sql = "SELECT UserID FROM Users WHERE Username = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -556,23 +592,20 @@ public class UserDao extends DBUtils {
         return -1;
     }
 
-
     public List<Skills> getSkillsByUserID(int userID) {
         List<Skills> list = new ArrayList<>();
 
-        String sql =
-                "SELECT "
-                        + "s.SkillID, "
-                        + "s.SkillName, "
-                        + "s.Description "
-                        + "FROM VolunteerSkills vs "
-                        + "JOIN Volunteer v ON vs.VolunteerID = v.VolunteerID "
-                        + "JOIN Skills s ON vs.SkillID = s.SkillID "
-                        + "WHERE v.UserID = ?";
+        String sql
+                = "SELECT "
+                + "s.SkillID, "
+                + "s.SkillName, "
+                + "s.Description "
+                + "FROM VolunteerSkills vs "
+                + "JOIN Volunteer v ON vs.VolunteerID = v.VolunteerID "
+                + "JOIN Skills s ON vs.SkillID = s.SkillID "
+                + "WHERE v.UserID = ?";
 
-
-        try (Connection con = DBUtils.getConnection1();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DBUtils.getConnection1(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userID);
             ResultSet rs = ps.executeQuery();
 
@@ -589,37 +622,5 @@ public class UserDao extends DBUtils {
         }
 
         return list;
-    }
-
-    public boolean isPhoneExisted(String phone) {
-        String sql = "SELECT COUNT(*) FROM Users WHERE phone = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, phone);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-    
-    public boolean isEmailExisted(String email) {
-        String sql = "SELECT COUNT(*) FROM Users WHERE Email = ?";
-        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, email);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    int count = rs.getInt(1);
-                    return count > 0;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 }

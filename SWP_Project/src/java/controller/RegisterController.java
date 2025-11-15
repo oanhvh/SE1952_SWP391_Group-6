@@ -14,8 +14,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Map;
+import java.util.HashMap;
 import service.RegisterService;
 
 @WebServlet(name = "RegisterController", urlPatterns = {"/register"})
@@ -41,34 +41,26 @@ public class RegisterController extends HttpServlet {
         String employeeCode = param(request, "employeeCode");
         String dobStr = param(request, "dateOfBirth");
 
-        LocalDate dob = null;
-        try {
-            dob = LocalDate.parse(dobStr);
-        } catch (Exception e) {
-            errorForward(request, response, "Invalid date format (YYYY-MM-DD)");
-            return;
-        }
-
-        Map<String, String> errors = registerService.validateRegistration(
-                username, password, role, fullName, email, phone, dobStr, employeeCode);
-
-        if (!errors.isEmpty()) {
-            request.setAttribute("errors", errors);
-            errorForward(request, response, "Please correct the errors and try again.");
-            return;
-        }
-
-        boolean success = registerService.registerUser(
-                role, username, password, fullName, email, phone, dob, employeeCode, errors);
-
+        Map<String, String> errors = new java.util.HashMap<>();
+        boolean success = registerService.processRegistration(role, username, password, fullName, email, phone, dobStr, employeeCode, errors);
         if (success) {
             successForward(request, response, "Registration successful. Please proceed to login.");
         } else {
             request.setAttribute("errors", errors);
+            Map<String, String> form = new HashMap<>();
+            form.put("role", role != null ? role : "");
+            form.put("username", username != null ? username : "");
+            form.put("fullName", fullName != null ? fullName : "");
+            form.put("email", email != null ? email : "");
+            form.put("phone", phone != null ? phone : "");
+            form.put("employeeCode", employeeCode != null ? employeeCode : "");
+            form.put("dateOfBirth", dobStr != null ? dobStr : "");
+            request.setAttribute("form", form);
             errorForward(request, response, "Registration failed. Please check the errors.");
         }
     }
-
+    
+    //loại bỏ khoảng trắng thừa
     private String param(HttpServletRequest req, String name) {
         String v = req.getParameter(name);
         return v != null ? v.trim() : null;

@@ -19,7 +19,7 @@ import service.PasswordValidatorService;
  * @author NHThanh
  */
 
-@WebServlet(name = "LoginController", urlPatterns = {"/login", "/login.html"})
+@WebServlet(name = "LoginController", urlPatterns = {"/login"})
 public class LoginController extends HttpServlet {
 
     private final UserDao userDao = new UserDao();
@@ -44,11 +44,11 @@ public class LoginController extends HttpServlet {
             return;
         }
 
-        // If the account has no local password, require provider login (e.g., Google only account)
+        //Nếu tài khoản có mật khẩu là null, yêu cầu đăng nhập bằng Google
         if (user.getPasswordHash() == null || user.getPasswordHash().trim().isEmpty()) {
             String provider = user.getLoginProvider();
             if (provider == null || provider.trim().isEmpty()) {
-                provider = "Google"; // default friendly hint
+                provider = "Google";
             }
             request.setAttribute("error", "This account uses " + provider + " login. Please use " + provider + " to sign in.");
             request.getRequestDispatcher("/login.jsp").forward(request, response);

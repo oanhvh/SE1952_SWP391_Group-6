@@ -18,8 +18,8 @@ import java.net.URLEncoder;
  * @author NHThanh
  */
 public class GoogleOAuthUtils {
-    
-    //Tạo URL để chuyển hướng user đến Google Login
+
+    //Tạo URL để chuyển hướng user đến Google
     public static String buildAuthUrl(String authBaseUrl, String clientId, String redirectUri) throws IOException {
         String scope = "email%20profile";
         return authBaseUrl
@@ -30,8 +30,8 @@ public class GoogleOAuthUtils {
                 + "&access_type=online"
                 + "&prompt=select_account";
     }
-    
-    //Đổi authorization code lấy access token
+
+    //Dùng authorization code lấy access token
     public static String exchangeCodeForToken(String tokenUrl, String clientId, String clientSecret,
             String redirectUri, String code) throws IOException {
         String body = "code=" + URLEncoder.encode(code, "UTF-8")
@@ -41,16 +41,16 @@ public class GoogleOAuthUtils {
                 + "&grant_type=authorization_code";
         return postForm(tokenUrl, body);
     }
-    
-    //Lấy thông tin user từ Google API
+
+    //Dùng access token lấy thông tin user từ Google API
     public static String fetchUserInfo(String userInfoUrl, String accessToken) throws IOException {
         URL url = new URL(userInfoUrl + "?access_token=" + URLEncoder.encode(accessToken, "UTF-8"));
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         return read(con);
     }
-    
-    //Gửi POST request
+
+    //Gửi POST request đến Google Token API
     private static String postForm(String urlStr, String body) throws IOException {
         URL url = new URL(urlStr);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -60,9 +60,9 @@ public class GoogleOAuthUtils {
         try (OutputStream os = con.getOutputStream()) {
             os.write(body.getBytes("UTF-8"));
         }
-        return read(con);
+        return read(con); // đọc kết quả từ Google
     }
-    
+
     //Đọc response
     private static String read(HttpURLConnection con) throws IOException {
         InputStream is = (con.getResponseCode() >= 400) ? con.getErrorStream() : con.getInputStream();

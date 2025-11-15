@@ -2,16 +2,14 @@
 <%@ page import="java.util.Map,java.util.HashMap" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%
-    
-    
+<%    
     Map<String,String> errors = (Map<String,String>) request.getAttribute("errors");
     if (errors == null) errors = new java.util.HashMap<>();
     Map<String,String> form = (Map<String,String>) request.getAttribute("form");
     if (form == null) form = new java.util.HashMap<>();
 
-    String success = request.getParameter("success");
-    String errorMsg = request.getParameter("error");
+    String success = (String) request.getAttribute("success");
+    String errorMsg = (String) request.getAttribute("error");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +24,7 @@
     <body class="login-page">
         <div class="topbar d-flex align-items-center">
             <div class="container d-flex justify-content-between align-items-center">
-                <a class="brand text-decoration-none" href="<%=request.getContextPath()%>/admin/listAccount.jsp">
+                <a class="brand text-decoration-none" href="<%= request.getContextPath() %>/ListAccount">
                     <img src="<%=request.getContextPath()%>/images/logo.png" alt="logo"/>
                     <span class="text-white">Create Admin</span>
                 </a>
