@@ -76,6 +76,41 @@ public class EmployeeCodesDAO {
         }
     }
     
+//    //Liệt kê tất cả code của tất cả Manager (phân trang)
+//    public List<CodeInfo> listAllCodes(Connection conn, int page, int pageSize) throws Exception {
+//        if (page <= 0) {
+//            page = 1;
+//        }
+//        if (pageSize <= 0) {
+//            pageSize = 20;
+//        }
+//        int offset = (page - 1) * pageSize;
+//        String sql = "SELECT ec.CodeID, ec.ManagerID, ec.CodeValue, ec.IsUsed, ec.CreatedAt, ec.CreatedByUserID, COALESCE(u.FullName, u.Username) AS CreatorName "
+//                + "FROM EmployeeCodes ec "
+//                + "LEFT JOIN Users u ON u.UserID = ec.CreatedByUserID "
+//                + "ORDER BY ec.CodeID DESC "
+//                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+//        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+//            ps.setInt(1, offset);
+//            ps.setInt(2, pageSize);
+//            List<CodeInfo> list = new ArrayList<>();
+//            try (ResultSet rs = ps.executeQuery()) {
+//                while (rs.next()) {
+//                    list.add(new CodeInfo(
+//                            rs.getInt("CodeID"),
+//                            rs.getInt("ManagerID"),
+//                            rs.getString("CodeValue"),
+//                            rs.getBoolean("IsUsed"),
+//                            rs.getTimestamp("CreatedAt"),
+//                            (Integer) rs.getObject("CreatedByUserID"),
+//                            rs.getString("CreatorName")
+//                    ));
+//                }
+//            }
+//            return list;
+//        }
+//    }
+//    
     //Xóa code, nhưng chỉ khi code thuộc về Manager này
     public int deleteCodeByManager(Connection conn, int managerId, int codeId) throws Exception {
         String sql = "DELETE FROM EmployeeCodes WHERE CodeID = ? AND ManagerID = ?";

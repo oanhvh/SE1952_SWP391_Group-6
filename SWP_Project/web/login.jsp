@@ -64,7 +64,7 @@
                                 <div class="signup-section">
                                     <p class="signup-text">
                                         Don't have an account? 
-                                        <a href="AccountRegister.jsp" class="signup-link">Sign up</a>
+                                        <a href="Register.jsp" class="signup-link">Sign up</a>
                                     </p>
 
                                     <div class="d-grid gap-2 mt-3">

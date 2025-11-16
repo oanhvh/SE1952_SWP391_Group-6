@@ -49,6 +49,8 @@ public class ManagerActivationCodeController extends HttpServlet {
         Users auth = getAuthUser(request);
         int page = 1;
         int pageSize = DEFAULT_LIMIT;
+//        String mode = request.getParameter("mode");
+//        boolean listAll = "all".equalsIgnoreCase(mode);
 
         try (Connection conn = DBUtils.getConnection1()) {
             Integer managerId = requireManagerId(request, response, conn, auth);
@@ -56,7 +58,12 @@ public class ManagerActivationCodeController extends HttpServlet {
                 return; //Dừng nếu không phải manager
             }
             // Lấy 20 code đầu tiên của manager này
-            java.util.List<dao.EmployeeCodesDAO.CodeInfo> list = codesDAO.listCodesByManager(conn, managerId, page, pageSize); 
+            java.util.List<dao.EmployeeCodesDAO.CodeInfo> list = codesDAO.listCodesByManager(conn, managerId, page, pageSize);
+
+//            // Nếu mode=all thì liệt kê tất cả code của tất cả manager, ngược lại chỉ code của manager hiện tại
+//            java.util.List<dao.EmployeeCodesDAO.CodeInfo> list = listAll
+//                    ? codesDAO.listAllCodes(conn, page, pageSize)
+//                    : codesDAO.listCodesByManager(conn, managerId, page, pageSize);
             int total = list.size(); // Đếm tổng số code
             String body = "{\"items\":" + listToJson(list)
                     + ",\"total\":" + total

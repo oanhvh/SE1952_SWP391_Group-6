@@ -78,8 +78,10 @@ public class RegisterService {
                 LocalDate dob = LocalDate.parse(dateOfBirth);
                 if (dob.isAfter(LocalDate.now())) {
                     errors.put("dateOfBirth", "Invalid date of birth");
-                } else if (dob.isBefore(LocalDate.now().minusYears(130))) {
+                } else if (dob.isBefore(LocalDate.now().minusYears(65))) {
                     errors.put("dateOfBirth", "Invalid date of birth");
+                } else if (dob.isAfter(LocalDate.now().minusYears(12))) {
+                    errors.put("dateOfBirth", "Age must be at least 12 years old");
                 }
             } catch (Exception ex) {
                 errors.put("dateOfBirth", "Invalid date format (YYYY-MM-DD)");

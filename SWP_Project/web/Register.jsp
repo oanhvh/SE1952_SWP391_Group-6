@@ -150,7 +150,7 @@
                                 <div class="d-grid gap-2 mt-3">
                                     <a href="<%= request.getContextPath() %>/auth/google" class="btn btn-outline-danger d-flex align-items-center justify-content-center" style="text-decoration: none;">
                                         <img src="https://www.gstatic.com/images/branding/product/1x/gsa_ios_64dp.png" alt="Google logo" style="width: 20px; height: 20px; margin-right: 8px;">
-                                        <span>Đăng ký với Google</span>
+                                        <span>Sign up with Google</span>
                                     </a>
                                 </div>
                             </div>

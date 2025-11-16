@@ -31,7 +31,7 @@
             body {
                 font-family: "Poppins", sans-serif;
                 background-color: #f7f8fa;
-                margin: 40px;
+                margin: 0;
                 color: #333;
             }
             h1 {
@@ -103,16 +103,17 @@
     <body>
         <jsp:include page="/manager/includes/header.jsp" flush="true"/>
 
-        <h1>Category List</h1>
+        <div class="container py-4">
+            <h1>Category List</h1>
 
-        <div class="toolbar">
-            <input type="text" id="searchBox" placeholder="Search category name...">
-            <button class="add-btn" onclick="window.location.href = '${pageContext.request.contextPath}/manager/category?action=add'">
-                + Add Category
-            </button>
-        </div>
+            <div class="toolbar">
+                <input type="text" id="searchBox" placeholder="Search category name...">
+                <button class="add-btn" onclick="window.location.href = '${pageContext.request.contextPath}/manager/category?action=add'">
+                    + Add Category
+                </button>
+            </div>
 
-        <table id="categoryTable" class="display">
+            <table id="categoryTable" class="display">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -136,6 +137,8 @@
                 </c:forEach>
             </tbody>
         </table>
+
+        </div>
 
         <jsp:include page="/manager/includes/footer.jsp" flush="true"/>
 

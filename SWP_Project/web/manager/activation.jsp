@@ -24,6 +24,7 @@
                 <div>
                     <button id="btnGenerate" class="btn btn-primary">Generate Code</button>
                     <button id="btnReload" class="btn btn-outline-secondary ml-2">Reload</button>
+                    <!--                    <button id="btnListAll" class="btn btn-outline-info ml-2">List all</button>-->
                 </div>
             </div>
 
@@ -75,13 +76,16 @@
                     return {text: 'Expired', cls: 'status-expired'};
                 return {text: 'Not yet activated', cls: 'status-pending'};
             }
-                       
+
             let currentPage = 1;
             let pageSize = 50;
+//            let listAllMode = false;
             const urlParams = new URLSearchParams(window.location.search);
             let currentStatus = (urlParams.get('status') || '').toLowerCase();
             async function fetchList(page = 1, size = pageSize) {
                 const url = '<%= request.getContextPath() %>/manager/activation-code?page=1&pageSize=' + encodeURIComponent(size);
+//                const base = '<%= request.getContextPath() %>/manager/activation-code?page=1&pageSize=' + encodeURIComponent(size);
+//                const url = listAllMode ? (base + '&mode=all') : base;
                 const resp = await fetch(url, {cache: 'no-store'});
                 if (!resp.ok)
                     throw new Error('Load failed');
@@ -139,10 +143,19 @@
                     tbody.innerHTML = '<tr><td colspan="5" class="text-danger text-center py-4">Load failed</td></tr>';
                 }
             }
-          
+
+            //  button activated
+//            if (btnFilter) {
+//                btnFilter.addEventListener('click', () => {
+//                    currentStatus = 'activated';
+//                    render();
+//                });
+//            }
+
             document.addEventListener('DOMContentLoaded', () => {
                 const btnGenerate = document.getElementById('btnGenerate');
                 const btnReload = document.getElementById('btnReload');
+//                const btnListAll = document.getElementById('btnListAll');
                 const lastWrap = document.getElementById('lastCodeWrap');
                 const lastCode = document.getElementById('lastCode');
 
@@ -168,6 +181,15 @@
                 });
 
                 btnReload.addEventListener('click', () => render());
+//                btnReload.addEventListener('click', () => {
+//                    listAllMode = false;
+//                    render();
+//                });
+//
+//                btnListAll.addEventListener('click', () => {
+//                    listAllMode = true;
+//                    render();
+//                });
 
                 document.getElementById('codeTableBody').addEventListener('click', async (e) => {
                     const btn = e.target.closest('button');
