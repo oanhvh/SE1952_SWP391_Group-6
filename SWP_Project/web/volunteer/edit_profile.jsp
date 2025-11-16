@@ -126,20 +126,24 @@
                 
                 title="Phone must be 10 numbers">
 
-        <%
+      <%
     // Lấy ngày hiện tại
     java.time.LocalDate today = java.time.LocalDate.now();
-    // Giới hạn ngày sinh tối thiểu (ví dụ: từ năm 1900 trở đi)
-    java.time.LocalDate minDate = java.time.LocalDate.of(1900, 1, 1);
+
+    // Giới hạn ngày sinh tối thiểu: không quá 130 tuổi
+    java.time.LocalDate minDate = today.minusYears(130);
+
+    java.time.LocalDate dob = user.getDateOfBirth();
 %>
 
 <label>Date of Birth</label>
 <input type="date" 
        name="dateOfBirth" 
-       value="<%= user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : "" %>" 
+       value="<%= (dob != null) ? dob.toString() : "" %>" 
        min="<%= minDate.toString() %>" 
        max="<%= today.toString() %>" 
        required>
+
 
         <label>Avatar URL</label>
         <input type="text" name="avatar" value="<%= user.getAvatar() != null ? user.getAvatar() : "" %>">
