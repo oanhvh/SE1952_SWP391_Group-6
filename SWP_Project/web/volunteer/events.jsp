@@ -9,6 +9,7 @@
 
 <%
     List<Event> events = (List<Event>) request.getAttribute("eventList");
+    List<Integer> appliedEventIds = (List<Integer>) request.getAttribute("appliedEventIds");
     String error = (String) request.getAttribute("error");
     String applyError = (String) session.getAttribute("applyError");
     String applySuccess = (String) session.getAttribute("applySuccess");
@@ -249,10 +250,22 @@
                 <p><%= e.getDescription() %></p>
 
         <!-- Nút Apply mở popup -->
-<button type="button" class="apply-btn" onclick="openApplyForm(<%= e.getEventID() %>, '<%= e.getEventName().replace("'", "\\'") %>')">
-    Apply
-</button>
+            <% boolean alreadyApplied = appliedEventIds != null && appliedEventIds.contains(e.getEventID()); %>
 
+            <% if (alreadyApplied) { %>
+                <button type="button" class="apply-btn" 
+                        style="background: gray; cursor: not-allowed;" disabled>
+                    Already Applied
+                </button>
+            <% } else { %>
+                <button class="apply-btn"
+                    data-id="<%= e.getEventID() %>"
+                    data-name="<%= e.getEventName() %>"
+                    onclick="openApplyForm(this)">
+                Apply
+            </button>
+
+            <% } %>
             </div>
         </div>
     <% } } else { %>
@@ -292,11 +305,15 @@
 </div>
 
 <script>
-function openApplyForm(eventId, eventName) {
+function openApplyForm(btn) {
+  const eventId = btn.dataset.id;
+  const eventName = btn.dataset.name;
+
   document.getElementById('applyModal').style.display = 'block';
   document.getElementById('eventIdField').value = eventId;
   document.getElementById('eventNameDisplay').innerText = eventName;
 }
+
 
 function closeApplyForm() {
   document.getElementById('applyModal').style.display = 'none';

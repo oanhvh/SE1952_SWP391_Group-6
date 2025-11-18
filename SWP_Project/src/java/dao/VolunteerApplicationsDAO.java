@@ -557,4 +557,23 @@ public class VolunteerApplicationsDAO extends DBUtils {
         }
         return false;
     }
+    
+    public List<Integer> getAppliedEventIdsByUser(int userId) {
+    List<Integer> ids = new ArrayList<>();
+    String sql = "SELECT EventID FROM VolunteerApplications WHERE UserID = ?";
+
+    try (Connection con = DBUtils.getConnection1();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            ids.add(rs.getInt("EventID"));
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return ids;
+}
 }

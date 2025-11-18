@@ -135,8 +135,9 @@ public class VolunteerApplicationsService {
                 .collect(Collectors.toList());
     }
     
-    // Lấy sự kiện của hôm nay theo userId
-    
+    public List<Integer> getAppliedEventIds(int userId) {
+        return volunteerAppDAO.getAppliedEventIdsByUser(userId);
+    }
     
     
     // =============================
