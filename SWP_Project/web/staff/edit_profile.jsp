@@ -15,83 +15,88 @@
 %>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Edit Profile</title>
-    <style>
-        body { font-family: "Poppins", sans-serif; background-color: #f5f7fa; margin:0; padding:0; }
-        .edit-container { max-width: 800px; margin:60px auto; background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.1); padding:40px 50px; }
-        h2 { text-align:center; color:#001F60; font-size:28px; margin-bottom:25px; }
-        form { display:flex; flex-direction:column; gap:18px; }
-        label { font-weight:600; color:#001F60; margin-bottom:4px; }
-        input[type="text"], input[type="email"], input[type="date"] { width:100%; padding:10px 14px; font-size:15px; border-radius:10px; border:1px solid #ccc; outline:none; transition:0.3s; }
-        input:focus { border-color:#001F60; box-shadow:0 0 5px rgba(0,31,96,0.3); }
-        .message { margin:15px 0; padding:12px; border-radius:10px; background-color:#f8d7da; color:#721c24; border:1px solid #f5c6cb; text-align:center; font-weight:500; }
-        .buttons { display:flex; justify-content:center; gap:15px; margin-top:25px; }
-        button, a.button { padding:10px 25px; border:none; border-radius:25px; font-size:15px; font-weight:500; color:#fff; cursor:pointer; text-decoration:none; transition:0.3s; }
-        button { background-color:#e74c3c; }
-        button:hover { background-color:#c0392b; }
-        a.button { background-color:#001F60; }
-        a.button:hover { background-color:#003399; }
-        @media (max-width: 768px) { .edit-container { padding:25px 20px; } h2 { font-size:22px; } }
-    </style>
-</head>
-<body>
+    <head>
+        <title>Edit Profile</title>
+        <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/responsive.css" />
+        <link rel="icon" href="../images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="../css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="../css/sidebar.css" />
+        <link rel="stylesheet" href="../css/edit_profile.css" />
+    </head>
+    <body>
+        <jsp:include page="includes/header.jsp" />
 
-<div class="edit-container">
-    <h2>Edit My Profile</h2>
+        <div class="edit-container">
+            <h2>Edit My Profile</h2>
 
-    <% if (error != null) { %>
-        <div class="message"><%= error %></div>
-    <% } %>
+            <% if (error != null) { %>
+            <div class="message"><%= error %></div>
+            <% } %>
 
-    <form action="<%= request.getContextPath() %>/<%= scope %>/profile" method="post">
-        <input type="hidden" name="action" value="updateProfile">
-        
-        <label>Full Name</label>
-        <input type="text" name="fullName" value="<%= user.getFullName() != null ? user.getFullName() : "" %>" required>
+            <form action="<%= request.getContextPath() %>/<%= scope %>/profile" method="post">
+                <input type="hidden" name="action" value="updateProfile">
 
-        <label>Email</label>
-        <input type="email" name="email" value="<%= user.getEmail() != null ? user.getEmail() : "" %>">
+                <label>Full Name</label>
+                <input type="text" name="fullName" value="<%= user.getFullName() != null ? user.getFullName() : "" %>" required>
 
-        <label>Phone</label>
-        <input type="text" 
-                name="phone" 
-                value="<%= user.getPhone() != null ? user.getPhone() : "" %>" 
-                required 
-                minlength="10"
-                pattern="[0-9]{10}" 
-                maxlength="10"
-                
-                title="Phone must be 10 numbers">
+                <label>Email</label>
+                <input type="email" name="email" value="<%= user.getEmail() != null ? user.getEmail() : "" %>">
 
-<%
-    // Lấy ngày hiện tại
-    java.time.LocalDate today = java.time.LocalDate.now();
+                <label>Phone</label>
+                <input type="text" 
+                       name="phone" 
+                       value="<%= user.getPhone() != null ? user.getPhone() : "" %>" 
+                       required 
+                       minlength="10"
+                       pattern="[0-9]{10}" 
+                       maxlength="10"
 
-    // Giới hạn ngày sinh tối thiểu: không quá 130 tuổi
-    java.time.LocalDate minDate = today.minusYears(130);
+                       title="Phone must be 10 numbers">
 
-    java.time.LocalDate dob = user.getDateOfBirth();
-%>
+                <%
+                    // Lấy ngày hiện tại
+                    java.time.LocalDate today = java.time.LocalDate.now();
 
-<label>Date of Birth</label>
-<input type="date" 
-       name="dateOfBirth" 
-       value="<%= (dob != null) ? dob.toString() : "" %>" 
-       min="<%= minDate.toString() %>" 
-       max="<%= today.toString() %>" 
-       required>
+                    // Giới hạn ngày sinh tối thiểu: không quá 130 tuổi
+                    java.time.LocalDate minDate = today.minusYears(130);
+
+                    java.time.LocalDate dob = user.getDateOfBirth();
+                %>
+
+                <label>Date of Birth</label>
+                <input type="date" 
+                       name="dateOfBirth" 
+                       value="<%= (dob != null) ? dob.toString() : "" %>" 
+                       min="<%= minDate.toString() %>" 
+                       max="<%= today.toString() %>" 
+                       required>
 
 
-        <label>Avatar URL</label>
-        <input type="text" name="avatar" value="<%= user.getAvatar() != null ? user.getAvatar() : "" %>">
+                <label>Avatar URL</label>
+                <input type="text" name="avatar" value="<%= user.getAvatar() != null ? user.getAvatar() : "" %>">
 
-        <div class="buttons">
-            <button type="submit">Save Changes</button>
-            <a href="<%= request.getContextPath() %>/<%= scope %>/profile" class="button">Cancel</a>
+                <div class="buttons">
+                    <button type="submit">Save Changes</button>
+                    <a href="<%= request.getContextPath() %>/<%= scope %>/profile" class="button">Cancel</a>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
+        <jsp:include page="includes/footer.jsp" />
 
-</body>
+        <script src="../js/role.js?v=2"></script>
+        <script src="../js/jquery.min.js"></script>
+        <script src="../js/popper.min.js"></script>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script src="../js/jquery-3.0.0.min.js"></script>
+        <script src="../js/plugin.js"></script>
+        <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="../js/custom.js"></script>
+        <script src="../js/owl.carousel.js"></script>
+        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+    </body>
 </html>
