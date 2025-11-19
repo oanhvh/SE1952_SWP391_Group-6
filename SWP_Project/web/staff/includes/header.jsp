@@ -30,7 +30,7 @@
                     <span class="text-muted">(<%= role %>)</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                    <a class="dropdown-item" href="<%= request.getContextPath() %>/ProfileController">My account</a>
+                    <a class="dropdown-item" href="<%= request.getContextPath() %>/staff/profile">My account</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="<%= request.getContextPath() %>/staff/change_password.jsp">Change password</a>
                     <div class="dropdown-divider"></div>
@@ -47,7 +47,6 @@
         <li><a href="<%= request.getContextPath() %>/staff/event?action=create">Add Event</a></li>
         <li><a href="<%= request.getContextPath() %>/staff/event?action=list">Update Event</a></li>
         <li><a href="<%= request.getContextPath() %>/staff/event?action=list">List Event</a></li>
-        <li><a href="<%= request.getContextPath() %>/staff/event?action=list">View Event</a></li>
         <li><a href="<%= request.getContextPath() %>/staff/delEvent?action=list">List Inactive Event</a></li>
         <li><a href="<%= request.getContextPath() %>/staff/applications">View Applications</a></li>
     </ul>

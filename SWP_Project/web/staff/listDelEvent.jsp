@@ -19,50 +19,7 @@
         <link rel="stylesheet" href="../css/owl.carousel.min.css" />
         <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
         <link rel="stylesheet" href="../css/sidebar.css" />
-        <style>
-            .event-image {
-                width: 100%;
-                height: 250px;
-                object-fit: cover;
-            }
-            .card {
-                transition: transform 0.3s ease;
-                height: 100%;
-            }
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
-            }
-            .status-Inactive {
-                background-color: #dc3545;
-                color: #fff;
-                border-radius: 20px;
-                padding: 5px 12px;
-                font-weight: 600;
-                font-size: 0.85rem;
-            }
-            .no-image {
-                width: 100%;
-                height: 250px;
-                background: linear-gradient(135deg, #ff416c, #ff4b2b);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 1.5rem;
-            }
-            .btn-actions {
-                display: flex;
-                gap: 10px;
-                flex-wrap: wrap;
-            }
-            #searchEvent {
-                transition: all 0.3s ease;
-            }
-            #searchEvent:focus {
-                box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
-            }
-        </style>
+        <link rel="stylesheet" href="../css/listDelEvent.css" />
     </head>
     <body>
         <jsp:include page="includes/header.jsp" />

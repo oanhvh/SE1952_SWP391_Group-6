@@ -23,46 +23,11 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
-        <style>
-            body {
-                background: #f4f6f9;
-                font-family: 'Segoe UI', sans-serif;
-            }
-            .form-container {
-                max-width: 700px;
-                margin: 60px auto;
-                background: #fff;
-                padding: 40px;
-                border-radius: 15px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            }
-            .form-container h3 {
-                text-align: center;
-                margin-bottom: 30px;
-                color: #333;
-            }
-            .form-group label {
-                font-weight: 600;
-                margin-bottom: 6px;
-            }
-            .error-msg {
-                color: #d9534f;
-                font-size: 0.9rem;
-            }
-            .image-preview img {
-                width: 100%;
-                max-width: 220px;
-                border-radius: 10px;
-                border: 1px solid #ddd;
-                margin-top: 10px;
-            }
-            .btn {
-                border-radius: 8px;
-                padding: 8px 20px;
-            }
-        </style>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/createEvent.css" />
     </head>
     <body>
+        <jsp:include page="includes/header.jsp" />
+
         <div class="form-container">
             <h3 class="text-center mb-4">Create New Event</h3>
 
@@ -145,7 +110,7 @@
             </form>
         </div>
 
-                
+
         <script>
             // Preview image before upload
             function previewImage(input) {
@@ -222,6 +187,17 @@
                 return true;
             }
         </script>
-        
+        <jsp:include page="includes/footer.jsp" />
+
+        <script src="../js/role.js?v=2"></script>
+        <script src="../js/jquery.min.js"></script>
+        <script src="../js/popper.min.js"></script>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script src="../js/jquery-3.0.0.min.js"></script>
+        <script src="../js/plugin.js"></script>
+        <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="../js/custom.js"></script>
+        <script src="../js/owl.carousel.js"></script>
+        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
     </body>
 </html>

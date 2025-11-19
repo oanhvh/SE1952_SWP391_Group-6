@@ -58,7 +58,7 @@
             <a href="<%= request.getContextPath() %>/notifications" class="btn btn-light position-relative mr-3" title="Thông báo" style="margin-right:12px;">
                 <span style="font-size:18px;">🔔</span>
                 <% if (unreadNoti > 0) { %>
-                    <span class="badge badge-danger" style="position:absolute; top:-5px; right:-5px;"><%= unreadNoti %></span>
+                <span class="badge badge-danger" style="position:absolute; top:-5px; right:-5px;"><%= unreadNoti %></span>
                 <% } %>
             </a>
             <div class="dropdown">
@@ -87,17 +87,14 @@
     <ul>
         <!-- 🔹 Xem danh sách tất cả sự kiện -->
         <li><a href="<%= request.getContextPath() %>/volunteer/events">📅 View Events</a></li>
-        
+
         <!-- 🔹 Xem các sự kiện đã apply -->
         <li><a href="<%= request.getContextPath() %>/ApplyEventController">📝 My Applied Events</a></li>
-        
+
         <!-- 🔹 Sự kiện hôm nay -->
         <li><a href="<%= request.getContextPath() %>/VolunteerTodayController">🌞 Volunteer Today</a></li>
-        
+
         <!-- 🔹 Trang hồ sơ -->
         <li><a href="<%= request.getContextPath() %>/ProfileController">👤 Profile</a></li>
     </ul>
 </div>
-<!-- ========================= -->
-<!-- 🔹 Header section end -->
-<!-- ========================= -->
