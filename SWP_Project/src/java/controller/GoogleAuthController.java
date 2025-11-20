@@ -36,58 +36,58 @@ public class GoogleAuthController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String code = req.getParameter("code");
-        String error = req.getParameter("error");
-
-        if (error != null) {
-            req.getSession().setAttribute("error", "You have denied Google access. Please try again.");
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
-            return;
-        }
-
-        if (code == null) {
-            String url = GoogleOAuthUtils.buildAuthUrl(AUTH_URL, CLIENT_ID, REDIRECT_URI);
-            resp.sendRedirect(url); // Chuyển đến trang đăng nhập Google
-            return;
-        }
-
-        try {
-            String tokenJson = GoogleOAuthUtils.exchangeCodeForToken(TOKEN_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code);
-            JsonObject tokenObj = new Gson().fromJson(tokenJson, JsonObject.class);
-            String accessToken = tokenObj.get("access_token").getAsString();
-
-            String userJson = GoogleOAuthUtils.fetchUserInfo(USERINFO_URL, accessToken);
-            JsonObject u = new Gson().fromJson(userJson, JsonObject.class);
-            
-            String googleId = u.get("sub").getAsString();
-            String email = u.has("email") && !u.get("email").isJsonNull() ? u.get("email").getAsString() : null;
-            boolean emailVerified = u.has("email_verified") && u.get("email_verified").getAsBoolean();
-            String fullName = u.has("name") && !u.get("name").isJsonNull() ? u.get("name").getAsString() : "";
-            String avatar = u.has("picture") && !u.get("picture").isJsonNull() ? u.get("picture").getAsString() : null;
-
-            UserDao userDao = new UserDao();
-            Users user = userDao.upsertUserByGoogle(googleId, email, fullName, avatar, emailVerified);
-
-            HttpSession session = req.getSession(true);
-            session.setAttribute("authUser", user);
-            session.setAttribute("role", user.getRole());
-
-            String role = user.getRole();
-            if ("Volunteer".equalsIgnoreCase(role)) {
-                resp.sendRedirect(req.getContextPath() + "/volunteer/index_1.jsp");
-            } else if ("Staff".equalsIgnoreCase(role)) {
-                resp.sendRedirect(req.getContextPath() + "/staff/index_1.jsp");
-            } else if ("Manager".equalsIgnoreCase(role)) {
-                resp.sendRedirect(req.getContextPath() + "/manager/index_1.jsp");
-            } else if ("Admin".equalsIgnoreCase(role)) {
-                resp.sendRedirect(req.getContextPath() + "/ListAccount");
-            } else {
-                resp.sendRedirect(req.getContextPath() + "/");
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            req.getSession().setAttribute("error", "Google login failed. Please try again later.");
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
-        }
+//        String code = req.getParameter("code");
+//        String error = req.getParameter("error");
+//
+//        if (error != null) {
+//            req.getSession().setAttribute("error", "You have denied Google access. Please try again.");
+//            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+//            return;
+//        }
+//
+//        if (code == null) {
+//            String url = GoogleOAuthUtils.buildAuthUrl(AUTH_URL, CLIENT_ID, REDIRECT_URI);
+//            resp.sendRedirect(url); // Chuyển đến trang đăng nhập Google
+//            return;
+//        }
+//
+//        try {
+//            String tokenJson = GoogleOAuthUtils.exchangeCodeForToken(TOKEN_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code);
+//            JsonObject tokenObj = new Gson().fromJson(tokenJson, JsonObject.class);
+//            String accessToken = tokenObj.get("access_token").getAsString();
+//
+//            String userJson = GoogleOAuthUtils.fetchUserInfo(USERINFO_URL, accessToken);
+//            JsonObject u = new Gson().fromJson(userJson, JsonObject.class);
+//            
+//            String googleId = u.get("sub").getAsString();
+//            String email = u.has("email") && !u.get("email").isJsonNull() ? u.get("email").getAsString() : null;
+//            boolean emailVerified = u.has("email_verified") && u.get("email_verified").getAsBoolean();
+//            String fullName = u.has("name") && !u.get("name").isJsonNull() ? u.get("name").getAsString() : "";
+//            String avatar = u.has("picture") && !u.get("picture").isJsonNull() ? u.get("picture").getAsString() : null;
+//
+//            UserDao userDao = new UserDao();
+//            Users user = userDao.upsertUserByGoogle(googleId, email, fullName, avatar, emailVerified);
+//
+//            HttpSession session = req.getSession(true);
+//            session.setAttribute("authUser", user);
+//            session.setAttribute("role", user.getRole());
+//
+//            String role = user.getRole();
+//            if ("Volunteer".equalsIgnoreCase(role)) {
+//                resp.sendRedirect(req.getContextPath() + "/volunteer/index_1.jsp");
+//            } else if ("Staff".equalsIgnoreCase(role)) {
+//                resp.sendRedirect(req.getContextPath() + "/staff/index_1.jsp");
+//            } else if ("Manager".equalsIgnoreCase(role)) {
+//                resp.sendRedirect(req.getContextPath() + "/manager/index_1.jsp");
+//            } else if ("Admin".equalsIgnoreCase(role)) {
+//                resp.sendRedirect(req.getContextPath() + "/ListAccount");
+//            } else {
+//                resp.sendRedirect(req.getContextPath() + "/");
+//            }
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            req.getSession().setAttribute("error", "Google login failed. Please try again later.");
+//            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+//        }
     }
 }

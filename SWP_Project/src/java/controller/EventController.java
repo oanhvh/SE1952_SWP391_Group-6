@@ -31,6 +31,7 @@ import java.nio.file.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import entity.Users;
+import java.util.ArrayList;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
@@ -138,16 +139,22 @@ public class EventController extends HttpServlet {
 
     private void listEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String status = request.getParameter("status");
-        List<Event> eventList = (status == null || status.isBlank())
-                ? eventService.getAllEvents()
-                : eventService.getEventsByStatus(status);
-        request.setAttribute("eventList", eventList);
-        if (status != null && !status.isBlank()) {
-            request.setAttribute("filterStatus", status);
-        }
-//        List<Event> eventList = eventService.getEventsByStatus("Active");
+        List<Event> eventList = new ArrayList<>(eventService.getAllEvents());
+        List<Event> pending = eventService.getEventsByStatus("Pending");
+        List<Event> active = eventService.getEventsByStatus("Active");
 
+        eventList.addAll(pending);
+        eventList.addAll(active);
+//        String status = request.getParameter("status");
+//        List<Event> eventList = (status == null || status.isBlank())
+//                ? eventService.getAllEvents()
+//                : eventService.getEventsByStatus(status);
+
+//        request.setAttribute("eventList", eventList);
+//        if (status != null && !status.isBlank()) {
+//            request.setAttribute("filterStatus", status);
+//        }
+//        List<Event> eventList = eventService.getEventsByStatus("Active");
         request.setAttribute("eventList", eventList);
         request.getRequestDispatcher("/staff/listEvent.jsp").forward(request, response);
     }
