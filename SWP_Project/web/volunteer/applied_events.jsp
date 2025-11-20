@@ -32,13 +32,7 @@
                 padding: 0;
             }
 
-            /* ===== Sidebar compatibility (only for applied events page) ===== */
-            /* Khi sidebar mở, đẩy banner và container dịch phải để không bị che */
-            .sidebar.active ~ .applied-banner,
-            .sidebar.active ~ .applied-container {
-                padding-left: 280px;
-                transition: padding-left 0.3s ease;
-            }
+            
 
             /* Trên màn hình nhỏ, không đẩy nội dung để giữ không gian */
             @media (max-width: 992px) {
@@ -71,7 +65,7 @@
 
             .applied-banner {
                 /* Không dùng JSP expression trong file .css. Dùng đường dẫn tương đối từ /css tới /assets */
-                background: url('../assets/images/applied_banner.jpg') center/cover no-repeat;
+                background: #1a237e;
                 height: 260px;
                 display: flex;
                 align-items: center;
@@ -82,11 +76,13 @@
             }
             .applied-banner h1 {
                 font-size: 40px;
+                color:  white;
                 font-weight: 700;
                 margin-bottom: 8px;
             }
             .applied-banner p {
                 font-size: 17px;
+                color: white;
                 opacity: 0.9;
             }
 
@@ -324,14 +320,15 @@
         </script>
         <jsp:include page="includes/footer.jsp" />
 
-        <script src="../js/jquery.min.js"></script>
-        <script src="../js/popper.min.js"></script>
-        <script src="../js/bootstrap.bundle.min.js"></script>
-        <script src="../js/plugin.js"></script>
-        <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
-        <script src="../js/custom.js"></script>
-        <script src="../js/owl.carousel.js"></script>
-        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
-        <script src="../js/role.js?v=2"></script>
+        <script src="<%= request.getContextPath() %>/js/jquery.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/popper.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/bootstrap.bundle.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/plugin.js"></script>
+<script src="<%= request.getContextPath() %>/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/custom.js"></script>
+<script src="<%= request.getContextPath() %>/js/owl.carousel.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/role.js?v=2"></script>
+
     </body>
 </html>
