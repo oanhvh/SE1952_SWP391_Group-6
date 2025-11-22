@@ -12,7 +12,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Lịch sử tình nguyện | DONI Charity</title>
-    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />   
     <style>
         body {
             background-color: #f9fbfd;
@@ -29,6 +38,7 @@
 
         .header-section h2 {
             font-size: 40px;
+            color: white;
             font-weight: 700;
         }
 
@@ -178,7 +188,7 @@
     </style>
 </head>
 <body>
-
+    <jsp:include page="includes/header.jsp" />
     <!-- Header -->
     <div class="header-section">
         <h2>📜 Volunteer History</h2>
@@ -246,6 +256,15 @@
             <a href="<%= request.getContextPath() %>/volunteer/profile" class="btn-back">⬅ Back to profile</a>
         </div>
     </div>
-
+    <jsp:include page="includes/footer.jsp" />
+     <script src="../js/jquery.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/jquery-3.0.0.min.js"></script>
+    <script src="../js/plugin.js"></script>
+    <script src="../js/role.js?v=2"></script>
+    <script src="../js/owl.carousel.js"></script>
+    <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+    <script src="../js/login.js"></script>
 </body>
 </html>
