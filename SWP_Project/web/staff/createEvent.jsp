@@ -24,6 +24,37 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/createEvent.css" />
+        <%-- <style>
+     .form-container {
+         max-width: 700px;
+         margin: 50px auto;
+         background: #fff;
+         padding: 35px;
+         border-radius: 12px;
+         box-shadow: 0 0 15px rgba(0,0,0,0.1);
+     }
+     .error-msg {
+         color: red;
+         font-size: 0.9rem;
+         margin-top: 5px;
+     }
+     .form-group label {
+         font-weight: 600;
+     }
+     .image-preview {
+         margin-top: 10px;
+         max-width: 200px;
+         max-height: 200px;
+         display: none;
+     }
+     .image-preview img {
+         width: 100%;
+         height: auto;
+         border: 1px solid #28a745;
+         border-radius: 4px;
+         padding: 5px;
+     }
+ </style>--%>
     </head>
     <body>
         <jsp:include page="includes/header.jsp" />
@@ -194,15 +225,24 @@
         </script>
         <jsp:include page="includes/footer.jsp" />
 
-        <script src="../js/role.js?v=2"></script>
+        <%--        <script src="../js/role.js?v=2"></script>
+                <script src="../js/jquery.min.js"></script>
+                <script src="../js/popper.min.js"></script>
+                <script src="../js/bootstrap.bundle.min.js"></script>
+                <script src="../js/jquery-3.0.0.min.js"></script>
+                <script src="../js/plugin.js"></script>
+                <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
+                <script src="../js/custom.js"></script>
+                <script src="../js/owl.carousel.js"></script>
+                <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>--%>
         <script src="../js/jquery.min.js"></script>
         <script src="../js/popper.min.js"></script>
         <script src="../js/bootstrap.bundle.min.js"></script>
         <script src="../js/jquery-3.0.0.min.js"></script>
         <script src="../js/plugin.js"></script>
-        <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
-        <script src="../js/custom.js"></script>
+        <script src="../js/role.js?v=2"></script>
         <script src="../js/owl.carousel.js"></script>
         <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script src="../js/login.js"></script>
     </body>
 </html>
