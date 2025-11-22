@@ -4,7 +4,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-6 col-md-6 col-lg-3">
-                <div class="footer_logo"><img src="../images/footer-logo.png"></div>
+                <div class="footer_logo"><img src="<%= request.getContextPath() %>/images/footer-logo.png" /></div>
             </div>
             <div class="col-sm-6 col-md-6 col-lg-3">
                 <h4 class="footer_taital">NAVIGATION</h4>
@@ -47,10 +47,10 @@
                 <div class="col-sm-4 col-md-4 col-lg-3">
                     <div class="social_icon">
                         <ul>
-                            <li><a href="#"><img src="../images/fb-icon.png"></a></li>
-                            <li><a href="#"><img src="../images/twitter-icon.png"></a></li>
-                            <li><a href="#"><img src="../images/linkedin-icon.png"></a></li>
-                            <li><a href="#"><img src="../images/instagram-icon.png"></a></li>
+                            <li><a href="#"><img src="<%= request.getContextPath() %>/images/fb-icon.png"></a></li>
+                            <li><a href="#"><img src="<%= request.getContextPath() %>/images/twitter-icon.png"></a></li>
+                            <li><a href="#"><img src="<%= request.getContextPath() %>/images/linkedin-icon.png"></a></li>
+                            <li><a href="#"><img src="<%= request.getContextPath() %>/images/instagram-icon.png"></a></li>
                         </ul>
                     </div>
                 </div>

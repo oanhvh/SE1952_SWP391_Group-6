@@ -24,7 +24,17 @@
     <head>
         <meta charset="UTF-8">
         <title>Volunteer Events | DONI Charity</title>
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
+    
         <style>
             body {
                 font-family: 'Poppins', sans-serif;
@@ -59,31 +69,45 @@
             }
 
             .banner {
-                background: url('<%= request.getContextPath() %>/assets/images/events_banner.jpg') center/cover no-repeat;
-                height: 300px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #004085;
-                text-align: center;
-                flex-direction: column;
-            }
-            .banner h1 {
-                font-size: 42px;
-                letter-spacing: 1px;
-                font-weight: 700;
-                margin-bottom: 10px;
-            }
-            .banner p {
-                font-size: 18px;
-                opacity: 0.9;
-            }
+    position: relative;
+    background: url('<%= request.getContextPath() %>/assets/images/events_banner.jpg') center/cover no-repeat;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    flex-direction: column;
+    margin-top: 20px; /* tách khỏi header */
+}
+
+.banner {
+    background: #1a237e; /* màu của logo */
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.banner h1 {
+    font-size: 42px;
+    color: white;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.banner p {
+    font-size: 18px;
+    opacity: 0.92;
+}
 
             .container {
-                max-width: 1000px;
-                margin: 50px auto;
-                padding: 0 20px;
-            }
+    margin-top: 40px; /* tách rõ banner -> content */
+}
 
             .event-card {
                 display: flex;
@@ -227,6 +251,7 @@
         </style>
     </head>
     <body>
+         <jsp:include page="includes/header.jsp" />
         <section class="banner">
             <h1>VOLUNTEER EVENTS</h1>
             <p>Join us in making a difference through kindness and community.</p>
@@ -282,14 +307,12 @@
             <p style="text-align:center; color:#666;">No events available at the moment.</p>
             <% } %>
 
-            <div style="text-align:center;">
+            <div style="text-align:center; padding-bottom: 50px" >
                 <a href="<%= request.getContextPath() %>/volunteer/index_1.jsp" class="back-home">← Back to Homepage</a>
             </div>
         </div>
 
-        <footer>
-            <p>&copy; 2025 DONI Charity | Together We Make a Difference</p>
-        </footer>
+        
         <!-- Form Apply Popup -->
         <div id="applyModal" class="modal">
             <div class="modal-content">
@@ -335,7 +358,16 @@
                 }
             }
         </script>
-
+         <jsp:include page="includes/footer.jsp" />
+         <script src="../js/jquery.min.js"></script>
+        <script src="../js/popper.min.js"></script>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script src="../js/plugin.js"></script>
+        <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="../js/custom.js"></script>
+        <script src="../js/owl.carousel.js"></script>
+        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script src="../js/role.js?v=2"></script>
 
     </body>
 </html>
