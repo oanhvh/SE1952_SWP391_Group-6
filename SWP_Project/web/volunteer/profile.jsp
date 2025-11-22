@@ -11,7 +11,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+     <meta charset="UTF-8">
     <title>My Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />   
     <style>
         body {
             font-family: "Poppins", sans-serif;
@@ -140,7 +151,9 @@
         }
     </style>
 </head>
+<jsp:include page="includes/header.jsp" />
 <body>
+    
 
 <div class="profile-container">
     <h2>My Profile</h2>
@@ -192,6 +205,17 @@
         <a href="<%= request.getContextPath() %>/volunteer/index_1.jsp" class="button back-btn">Back to Homepage</a>
     </div>
 </div>
+ <jsp:include page="includes/footer.jsp" />
+
+        <script src="<%= request.getContextPath() %>/js/jquery.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/popper.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/bootstrap.bundle.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/plugin.js"></script>
+<script src="<%= request.getContextPath() %>/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/custom.js"></script>
+<script src="<%= request.getContextPath() %>/js/owl.carousel.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/role.js?v=2"></script>
 
 </body>
 </html>

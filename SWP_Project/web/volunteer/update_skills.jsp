@@ -7,27 +7,41 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Edit Skills</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
+        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />  
     <style>
-        body {
-            font-family: "Poppins", sans-serif;
-            background-color: #f5f7fb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
+         
 
-        .container {
+        .skill-body {
+            font-family: "Poppins", sans-serif;
+  background-color: #f5f7fb;
+  display: flex;
+  flex-direction: column; /* thêm dòng này */
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+        }
+        .skill-container {
             background-color: #fff;
             width: 650px;
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            
             text-align: center;
+            margin-bottom: 50px
         }
-
         h2 {
             color: #0c2a4d;
             font-weight: 700;
@@ -95,7 +109,7 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.3s;  
         }
 
         button:hover {
@@ -117,8 +131,13 @@
         }
     </style>
 </head>
-<body>
-    <div class="container">
+
+<jsp:include page="includes/header.jsp" />
+
+<body class="skill-body">
+    
+    
+    <div class="skill-container">
         <h2>Edit Your Skills</h2>
 
         <form action="profile" method="post">
@@ -153,5 +172,20 @@
             </div>
         </form>
     </div>
+            
+
 </body>
+            <footer>       
+    <jsp:include page="includes/footer.jsp" />
+
+        <script src="<%= request.getContextPath() %>/js/jquery.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/popper.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/bootstrap.bundle.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/plugin.js"></script>
+<script src="<%= request.getContextPath() %>/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/custom.js"></script>
+<script src="<%= request.getContextPath() %>/js/owl.carousel.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+<script src="<%= request.getContextPath() %>/js/role.js?v=2"></script>
+            </footer>
 </html>

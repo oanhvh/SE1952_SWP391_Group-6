@@ -1,7 +1,7 @@
 /* Nút Toggle */
 .sidebar-toggle {
   position: fixed;
-  bottom: 15px; /* đặt ở dưới cách mép 15px */
+  bottom: 15px; 
   left: 15px;   /* bên trái cách mép 15px */
   background-color: #007bff;
   color: white;
