@@ -71,10 +71,14 @@
                                         <a href="${pageContext.request.contextPath}/staff/delEvent?action=detail&id=${event.eventID}" class="btn btn-primary btn-sm flex-fill">
                                             <i class="fa fa-eye"></i> View Details
                                         </a>
-                                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" class="btn btn-success btn-sm"
+                                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=edit&id=${event.eventID}" 
+                                           class="btn btn-warning btn-sm">
+                                            <i class="fa fa-edit"></i> Edit
+                                        </a>
+<!--                                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" class="btn btn-success btn-sm"
                                            onclick="return confirm('Restore this event?');">
                                             <i class="fa fa-undo"></i> Restore
-                                        </a>
+                                        </a>-->
                                     </div>
                                 </div>
                             </div>

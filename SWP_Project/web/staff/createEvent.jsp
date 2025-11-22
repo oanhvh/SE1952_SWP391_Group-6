@@ -96,12 +96,17 @@
 
                 <div class="form-group mb-3">
                     <label>Status <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" value="Pending" readonly>
+                    <input type="hidden" name="status" value="Pending">
+                </div>
+                <%--<div class="form-group mb-3">
+                    <label>Status <span class="text-danger">*</span></label>
                     <select class="form-control" name="status" required>
                         <option value="Pending" ${event.status == 'Pending' ? 'selected' : ''}>Pending</option>
                         <option value="Active" ${event.status == 'Active' ? 'selected' : ''}>Active</option>
                         <option value="Completed" ${event.status == 'Completed' ? 'selected' : ''}>Completed</option>
                     </select>
-                </div>
+                </div>--%>
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Create Event</button>

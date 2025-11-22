@@ -134,25 +134,49 @@
 
 
                 <div class="action-buttons">
-                    <a href="${pageContext.request.contextPath}/staff/delEvent?action=list" class="btn btn-secondary">
+                    <a href="${pageContext.request.contextPath}/manager/event?action=list" class="btn btn-secondary">
                         <i class="fa fa-arrow-left"></i> Back
                     </a>
-                    <c:if test="${sessionScope.role == 'Staff' || sessionScope.role == 'Manager'}">
-                        <%--<a href="${pageContext.request.contextPath}/staff/event?action=edit&id=${event.eventID}" class="btn btn-warning">
-                            <i class="fa fa-edit"></i> Edit
-                        </a>
-                        <a href="${pageContext.request.contextPath}/staff/event?action=delete&id=${event.eventID}" 
-                           class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this event?');">
-                            <i class="fa fa-trash"></i> Delete
-                        </a>--%>
-                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=edit&id=${event.eventID}" 
-                           class="btn btn-warning btn-sm">
-                            <i class="fa fa-edit"></i> Edit
-                        </a>
-<%--                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" 
-                           class="btn btn-danger" onclick="return confirm('Are you sure you want to restore this event?');">
-                            <i class="fa fa-undo"></i> Restore
-                        </a>--%>
+                    <c:if test="${sessionScope.role == 'Manager'}">
+                        <form method="post" action="${pageContext.request.contextPath}/manager/event" style="display:inline;">
+                            <input type="hidden" name="action" value="approve"/>
+                            <input type="hidden" name="id" value="${event.eventID}"/>
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                <i class="fa fa-check"></i> Approve
+                            </button>
+                        </form>
+                        <!-- Nút Deny mở modal -->
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#denyModal${event.eventID}">
+                            <i class="fa fa-times"></i> Deny
+                        </button>
+
+                        <!-- Modal Deny -->
+                        <div class="modal fade" id="denyModal${event.eventID}" tabindex="-1" role="dialog" aria-labelledby="denyModalLabel${event.eventID}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <form method="post" action="${pageContext.request.contextPath}/manager/event">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="denyModalLabel${event.eventID}">Deny Event: ${event.eventName}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="action" value="deny"/>
+                                            <input type="hidden" name="id" value="${event.eventID}"/>
+                                            <div class="form-group">
+                                                <label for="reason${event.eventID}">Reason for denial:</label>
+                                                <textarea class="form-control" name="reason" id="reason${event.eventID}" rows="3" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-danger">Submit Denial</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </c:if>
                 </div>
             </div>
