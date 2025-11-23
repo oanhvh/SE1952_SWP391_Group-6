@@ -4,14 +4,18 @@
  */
 package controller;
 
+import dao.DBUtils;
+import dao.ManagerDAO;
 import entity.Category;
+import entity.Users;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.sql.Connection;
 import service.CategoryService;
 
 /**
@@ -94,9 +98,47 @@ public class CategoryController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    // Lấy managerId từ session; nếu chưa có thì tra từ DB dựa vào authUser và lưu lại
+    private Integer resolveManagerId(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session is missing");
+            return null;
+        }
+
+        Integer managerId = (Integer) session.getAttribute("managerId");
+        if (managerId != null && managerId > 0) {
+            return managerId;
+        }
+
+        Users auth = (Users) session.getAttribute("authUser");
+        if (auth == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
+            return null;
+        }
+
+        try (Connection conn = DBUtils.getConnection1()) {
+            ManagerDAO mdao = new ManagerDAO();
+            managerId = mdao.getManagerIdByUserId(conn, auth.getUserID());
+            if (managerId == null || managerId <= 0) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Manager profile not found");
+                return null;
+            }
+            session.setAttribute("managerId", managerId);
+            return managerId;
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to resolve managerId");
+            return null;
+        }
+    }
+
     private void listCategories(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("categories", categoryService.getAllCategories());
+        Integer managerId = resolveManagerId(request, response);
+        if (managerId == null) return;
+
+        request.setAttribute("categories", categoryService.getCategoriesForManager(managerId));
         request.getRequestDispatcher("/manager/listCategory.jsp").forward(request, response);
     }
 
@@ -124,8 +166,10 @@ public class CategoryController extends HttpServlet {
 
         Category category = new Category();
         category.setCategoryName(name);
+        Integer managerId = resolveManagerId(request, response);
+        if (managerId == null) return;
 
-        String error = categoryService.addCategory(category);
+        String error = categoryService.addCategoryForManager(category, managerId);
         if (error != null) {
             request.setAttribute("error", error);
             request.setAttribute("categoryName", name);
@@ -138,7 +182,10 @@ public class CategoryController extends HttpServlet {
     private void deleteCategory(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        categoryService.deleteCategory(id);
+        Integer managerId = resolveManagerId(request, response);
+        if (managerId == null) return;
+
+        categoryService.deleteCategoryForManager(id, managerId);
         response.sendRedirect(request.getContextPath() + "/manager/category?action=list");
     }
 }

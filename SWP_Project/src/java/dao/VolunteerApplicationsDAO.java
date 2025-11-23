@@ -56,7 +56,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
 
     //Lấy danh sách đơn đăng ký kèm đầy đủ thông tin (Thanhcocodo)
-    public List<ApplicationReviewRow> getApplicationsForReviewByStatus(String status) {
+    public List<ApplicationReviewRow> getApplicationsForReviewByStatus(String status, int managerId) {
         List<ApplicationReviewRow> list = new ArrayList<>();
         String sql
                 = "SELECT va.ApplicationID,\n"
@@ -76,10 +76,11 @@ public class VolunteerApplicationsDAO extends DBUtils {
                 + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID\n" //Lấy tên đầy đủ (FullName) của tình nguyện viên
                 + "JOIN Users u ON v.UserID = u.UserID\n"
                 + "JOIN Event e ON va.EventID = e.EventID\n"  //Lấy tên sự kiện
-                + "WHERE va.Status = ?\n"
+                + "WHERE va.Status = ? AND e.ManagerID = ?\n"
                 + "ORDER BY va.ApplicationDate DESC";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
+            ps.setInt(2, managerId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     ApplicationReviewRow row = new ApplicationReviewRow();
@@ -104,14 +105,14 @@ public class VolunteerApplicationsDAO extends DBUtils {
     }
     
     //Xử lý toàn bộ quy trình duyệt/từ chối đơn đăng ký
-    public boolean reviewApplication(int applicationId, int staffUserId, boolean approve, String staffComment) {
+    public boolean reviewApplication(int applicationId, int approvedByStaffId, int managerId, boolean approve, String staffComment) {
         //Lấy thông tin cần thiết để tạo thông báo
         String sqlSelect = "SELECT va.VolunteerID, va.EventID, e.EventName, e.Location "
                 + "FROM VolunteerApplications va "
                 + "JOIN Event e ON va.EventID = e.EventID "
                 + "JOIN Volunteer v ON va.VolunteerID = v.VolunteerID "
                 + "JOIN Users u ON v.UserID = u.UserID "
-                + "WHERE va.ApplicationID = ?";
+                + "WHERE va.ApplicationID = ? AND e.ManagerID = ?"; // enforce same manager
         //Cập nhật trạng thái đơn
         String sqlUpdate = "UPDATE VolunteerApplications SET Status = ?, ApprovalDate = ?, ApprovedByStaffID = ?, StaffComment = ? WHERE ApplicationID = ?";
         //Tạo thông báo
@@ -122,6 +123,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
             con.setAutoCommit(false);
 
             psSel.setInt(1, applicationId);
+            psSel.setInt(2, managerId);
             ResultSet rs = psSel.executeQuery();
             if (!rs.next()) {
                 con.rollback();
@@ -135,7 +137,7 @@ public class VolunteerApplicationsDAO extends DBUtils {
             String newStatus = approve ? "Approved" : "Rejected";
             psUpd.setString(1, newStatus);
             psUpd.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            psUpd.setInt(3, staffUserId);
+            psUpd.setInt(3, approvedByStaffId);
             psUpd.setString(4, staffComment);
             psUpd.setInt(5, applicationId);
             int updated = psUpd.executeUpdate();

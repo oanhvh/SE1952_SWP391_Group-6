@@ -126,8 +126,10 @@
                 <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
                     <hr>
                     <div class="event-info"><span>Created By:</span>${staffName}</div>
-                    <c:if test="${not empty event.managerID}">
-                        <div class="event-info d-none"><span>Manager ID:</span>${managerName}</div>
+                    <c:if test="${not empty managerName}">
+                        <div class="event-info"><span>Organization:</span>${managerName}</div>
+                        <div class="event-info"><span>Contact Info:</span>${managerContact}</div>
+                        <div class="event-info"><span>Address:</span>${managerAddress}</div>
                     </c:if>
                     <div class="event-info"><span>Created At:</span>${event.createdAt}</div>
                 </c:if>

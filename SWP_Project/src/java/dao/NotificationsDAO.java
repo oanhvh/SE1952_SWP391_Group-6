@@ -26,9 +26,10 @@ public class NotificationsDAO extends DBUtils {
         return null;
     }
 
-    //Lấy limit thông báo mới nhất gửi cho volunteer
+    //Lấy limit thông báo mới nhất gửi cho volunteer (ReceiverRole NULL hoặc 'Volunteer')
     public List<Notifications> listForVolunteer(int volunteerId, int limit) {
-        String sql = "SELECT TOP (?) NotificationID, Title, Message, CreatedAt, IsRead, Type, EventID FROM Notifications WHERE ReceiverID = ? ORDER BY CreatedAt DESC";
+        String sql = "SELECT TOP (?) NotificationID, Title, Message, CreatedAt, IsRead, Type, EventID "
+                + "FROM Notifications WHERE ReceiverID = ? AND (ReceiverRole IS NULL OR ReceiverRole = 'Volunteer') ORDER BY CreatedAt DESC";
         List<Notifications> list = new ArrayList<>();
         try (Connection cn = DBUtils.getConnection1(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, limit);
@@ -53,11 +54,55 @@ public class NotificationsDAO extends DBUtils {
         return list;
     }
 
-    //Đếm số thông báo chưa đọc
+    //Đếm số thông báo chưa đọc cho volunteer (không tính thông báo của Staff)
     public int getUnreadCountForVolunteer(int volunteerId) {
-        String sql = "SELECT COUNT(*) FROM Notifications WHERE ReceiverID = ? AND IsRead = 0";
+        String sql = "SELECT COUNT(*) FROM Notifications WHERE ReceiverID = ? AND (ReceiverRole IS NULL OR ReceiverRole = 'Volunteer') AND IsRead = 0";
         try (Connection cn = DBUtils.getConnection1(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setInt(1, volunteerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    //Lấy limit thông báo mới nhất gửi cho staff (ReceiverRole = 'Staff')
+    public List<Notifications> listForStaff(int staffId, int limit) {
+        String sql = "SELECT TOP (?) NotificationID, Title, Message, CreatedAt, IsRead, Type, EventID "
+                + "FROM Notifications WHERE ReceiverID = ? AND ReceiverRole = 'Staff' ORDER BY CreatedAt DESC";
+        List<Notifications> list = new ArrayList<>();
+        try (Connection cn = DBUtils.getConnection1(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            ps.setInt(2, staffId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Notifications it = new Notifications();
+                    it.setNotificationId(rs.getInt("NotificationID"));
+                    it.setTitle(rs.getString("Title"));
+                    it.setMessage(rs.getString("Message"));
+                    Timestamp t = rs.getTimestamp("CreatedAt");
+                    it.setCreatedAt(t != null ? t.toInstant().toString() : null);
+                    it.setRead(rs.getBoolean("IsRead"));
+                    it.setType(rs.getString("Type"));
+                    it.setEventId(rs.getObject("EventID") == null ? null : rs.getInt("EventID"));
+                    list.add(it);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    //Đếm số thông báo chưa đọc cho staff (ReceiverRole = 'Staff')
+    public int getUnreadCountForStaff(int staffId) {
+        String sql = "SELECT COUNT(*) FROM Notifications WHERE ReceiverID = ? AND ReceiverRole = 'Staff' AND IsRead = 0";
+        try (Connection cn = DBUtils.getConnection1(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -127,5 +172,19 @@ public class NotificationsDAO extends DBUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // Kiểm tra sự kiện đã từng bị từ chối (đã có ít nhất 1 notification EventDenied cho event này) hay chưa
+    public boolean hasEventBeenDeniedBefore(int eventId) {
+        String sql = "SELECT TOP 1 1 FROM Notifications WHERE EventID = ? AND Type = 'EventDenied'";
+        try (Connection cn = DBUtils.getConnection1(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, eventId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

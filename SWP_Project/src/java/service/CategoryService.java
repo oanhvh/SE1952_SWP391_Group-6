@@ -23,8 +23,9 @@ public class CategoryService {
     // =============================
     // CRUD
     // =============================
-    public List<Category> getAllCategories() {
-        return categoryDAO.getAllCategory();
+    // Lấy category cho một manager cụ thể
+    public List<Category> getCategoriesForManager(int managerId) {
+        return categoryDAO.getCategoriesByManager(managerId);
     }
 
     public Category getCategoryById(int categoryID) {
@@ -37,19 +38,18 @@ public class CategoryService {
         return null;
     }
 
-    public String addCategory(Category category) {
+    public String addCategoryForManager(Category category, int managerId) {
         String error = validateCategory(category);
         if (error != null) {
             return error;
         }
 
-        for (Category c : categoryDAO.getAllCategory()) {
-            if (c.getCategoryName().equalsIgnoreCase(category.getCategoryName())) {
-                return "Category name already exists.";
-            }
+        // Kiểm tra trùng tên trong phạm vi một manager
+        if (categoryDAO.existsByNameForManager(category.getCategoryName(), managerId)) {
+            return "Category name already exists.";
         }
 
-        categoryDAO.addCategory(category);
+        categoryDAO.addCategory(category, managerId);
         return null;
     }
 
@@ -68,12 +68,15 @@ public class CategoryService {
         return null;
     }
 
-    public String deleteCategory(int categoryID) {
+    public String deleteCategoryForManager(int categoryID, int managerId) {
         Category existing = getCategoryById(categoryID);
         if (existing == null) {
             return "Category not found.";
         }
-        categoryDAO.deleteCategory(categoryID);
+        boolean ok = categoryDAO.deleteCategoryForManager(categoryID, managerId);
+        if (!ok) {
+            return "Category not found or does not belong to this manager.";
+        }
         return null;
     }
 

@@ -10,6 +10,7 @@ import dao.StaffDAO;
 import entity.Category;
 import entity.Event;
 import entity.Staff;
+import entity.Manager;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -168,18 +169,30 @@ public class EventController extends HttpServlet {
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
-//        request.setAttribute("event", event);
         if (event != null) {
             Category category = categoryDAO.getCategoryById(event.getCategoryID());
             String categoryName = (category != null) ? category.getCategoryName() : "Unknown";
 
             String staffName = staffDAO.getUserNameByStaffId(event.getCreatedByStaffID());
-            String managerName = managerDAO.getFullNameByManagerId(event.getManagerID());
+            String managerName = null;
+            String managerContact = null;
+            String managerAddress = null;
+
+            if (event.getManagerID() > 0) {
+                Manager manager = managerDAO.getManagerById(event.getManagerID());
+                if (manager != null) {
+                    managerName = manager.getManagerName();
+                    managerContact = manager.getContactInfo();
+                    managerAddress = manager.getAddress();
+                }
+            }
 
             request.setAttribute("event", event);
             request.setAttribute("categoryName", categoryName);
             request.setAttribute("staffName", staffName);
             request.setAttribute("managerName", managerName);
+            request.setAttribute("managerContact", managerContact);
+            request.setAttribute("managerAddress", managerAddress);
         }
 
         request.getRequestDispatcher("/staff/viewEvent.jsp").forward(request, response);
@@ -245,7 +258,8 @@ public class EventController extends HttpServlet {
             event.setCreatedAt(LocalDateTime.now());
 
             eventService.addEvent(event);
-            response.sendRedirect(request.getContextPath() + "/staff/event?action=list");
+            // Sau khi tạo event xong, chuyển sang trang danh sách Pending của manager
+            response.sendRedirect(request.getContextPath() + "/staff/pendEvent?action=list");
 
         } catch (IllegalArgumentException e) {
             List<Category> categoryList = categoryDAO.getAllCategory();
@@ -301,8 +315,36 @@ public class EventController extends HttpServlet {
                 event.setCreatedAt(existingEvent.getCreatedAt());
             }
 
+            // Chỉ khi có thay đổi nội dung thì mới đưa event về trạng thái Pending, ngược lại giữ nguyên status cũ
+            boolean changed = false;
+            if (!event.getEventName().equals(existingEvent.getEventName())
+                    || !event.getDescription().equals(existingEvent.getDescription())
+                    || !event.getLocation().equals(existingEvent.getLocation())
+                    || !event.getStartDate().equals(existingEvent.getStartDate())
+                    || !event.getEndDate().equals(existingEvent.getEndDate())
+                    || event.getCapacity() != existingEvent.getCapacity()
+                    || event.getCategoryID() != existingEvent.getCategoryID()
+                    || !event.getImage().equals(existingEvent.getImage())) {
+                changed = true;
+            }
+
+            if (changed) {
+                event.setStatus("Pending"); // có thay đổi → Pending
+            } else {
+                event.setStatus(existingEvent.getStatus()); // không thay đổi → giữ nguyên
+            }
+
+            // Nếu event hiện đang bị Denied/Cancelled thì sau khi sửa sẽ quay lại danh sách Pending để chờ duyệt lại
+            boolean wasDenied = "Cancelled".equalsIgnoreCase(existingEvent.getStatus());
+
             eventService.updateEvent(event);
-            response.sendRedirect(request.getContextPath() + "/staff/event?action=list");
+
+            if (wasDenied) {
+                // Sửa từ danh sách Denied → sau khi update chuyển sang danh sách Pending
+                response.sendRedirect(request.getContextPath() + "/staff/pendEvent?action=list");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/staff/event?action=list");
+            }
         } catch (IllegalArgumentException e) {
             // Nếu build thất bại, lấy event cũ từ DB
             if (event == null || event.getEventID() == 0) {

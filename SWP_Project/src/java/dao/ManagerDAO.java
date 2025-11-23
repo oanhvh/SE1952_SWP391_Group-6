@@ -8,7 +8,6 @@ package dao;
  *
  * @author NHThanh
  */
-
 import entity.Manager;
 import entity.Users;
 import java.sql.SQLException;
@@ -34,6 +33,31 @@ public class ManagerDAO {
             }
         }
         return null;
+    }
+
+    // Lấy thông tin Manager theo ManagerID (không join Users)
+    public Manager getManagerById(int managerId) {
+        Manager manager = null;
+        String sql = "SELECT ManagerID, ManagerName, ContactInfo, Address, RegistrationDate FROM Manager WHERE ManagerID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, managerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    manager = new Manager();
+                    manager.setManagerID(rs.getInt("ManagerID"));
+                    manager.setManagerName(rs.getString("ManagerName"));
+                    manager.setContactInfo(rs.getString("ContactInfo"));
+                    manager.setAddress(rs.getString("Address"));
+                    Date reg = rs.getDate("RegistrationDate");
+                    if (reg != null) {
+                        manager.setRegistrationDate(reg.toLocalDate());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return manager;
     }
 
     public int addManager(Manager manager) {
@@ -102,10 +126,9 @@ public class ManagerDAO {
 
     public Manager getManagerByUserId(int userId) {
         Manager manager = null;
-        String sql = "SELECT m.*, u.* FROM Manager m " +
-                "JOIN Users u ON m.UserID = u.UserID WHERE u.UserID = ?";
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT m.*, u.* FROM Manager m "
+                + "JOIN Users u ON m.UserID = u.UserID WHERE u.UserID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -117,16 +140,16 @@ public class ManagerDAO {
                 user.setPhone(rs.getString("Phone"));
                 user.setRole(rs.getString("Role"));
                 user.setStatus(rs.getString("Status"));
-                user.setDateOfBirth(rs.getDate("DateOfBirth") != null ?
-                        rs.getDate("DateOfBirth").toLocalDate() : null);
+                user.setDateOfBirth(rs.getDate("DateOfBirth") != null
+                        ? rs.getDate("DateOfBirth").toLocalDate() : null);
 
                 manager = new Manager();
                 manager.setManagerID(rs.getInt("ManagerID"));
                 manager.setManagerName(rs.getString("ManagerName"));
                 manager.setContactInfo(rs.getString("ContactInfo"));
                 manager.setAddress(rs.getString("Address"));
-                manager.setRegistrationDate(rs.getDate("RegistrationDate") != null ?
-                        rs.getDate("RegistrationDate").toLocalDate() : null);
+                manager.setRegistrationDate(rs.getDate("RegistrationDate") != null
+                        ? rs.getDate("RegistrationDate").toLocalDate() : null);
                 manager.setUser(user);
             }
         } catch (Exception e) {
@@ -135,12 +158,11 @@ public class ManagerDAO {
         return manager;
     }
 
-
     public List<Manager> searchManagers(String managerName, String phone, String status) {
         List<Manager> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "SELECT m.*, u.* FROM Manager m " +
-                        "JOIN Users u ON m.UserID = u.UserID WHERE 1=1");
+                "SELECT m.*, u.* FROM Manager m "
+                + "JOIN Users u ON m.UserID = u.UserID WHERE 1=1");
 
         if (managerName != null && !managerName.trim().isEmpty()) {
             sql.append(" AND m.ManagerName LIKE ?");
@@ -152,8 +174,7 @@ public class ManagerDAO {
             sql.append(" AND u.Status = ?");
         }
 
-        try (Connection conn = DBUtils.getConnection1();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
             int index = 1;
             if (managerName != null && !managerName.trim().isEmpty()) {

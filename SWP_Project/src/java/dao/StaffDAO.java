@@ -27,7 +27,7 @@ public class StaffDAO extends DBUtils {
             ps.executeUpdate();
         }
     }
-    
+
     //Tìm StaffID từ UserID - để biết user này có phải là Staff không (Thanhcocodo)
     public Integer getStaffIdByUserId(int userId) {
         String sql = "SELECT StaffID FROM Staff WHERE UserID = ?";
@@ -74,5 +74,71 @@ public class StaffDAO extends DBUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    //Chuyển từ ResultSet sang Java Objects (Thanhcocodo)
+    public java.util.List<entity.Users> getStaffUsersByManager(int managerId, String name, String phone, String status) {
+        java.util.List<entity.Users> list = new java.util.ArrayList<>();
+        try (Connection conn = DBUtils.getConnection1(); ResultSet rs = getStaffUsersByManagerRaw(conn, managerId, name, phone, status)) {
+            while (rs.next()) {
+                try {
+                    entity.Users u = new entity.Users();
+                    u.setUserID(rs.getInt("UserID"));
+                    u.setUsername(rs.getString("Username"));
+                    u.setPasswordHash(rs.getString("PasswordHash"));
+                    u.setRole(rs.getString("Role"));
+                    u.setStatus(rs.getString("Status"));
+                    u.setFullName(rs.getString("FullName"));
+                    u.setEmail(rs.getString("Email"));
+                    u.setPhone(rs.getString("Phone"));
+
+                    //Chuyển từ DATETIME sang LocalDateTime
+                    java.sql.Timestamp created = rs.getTimestamp("CreatedAt");
+                    if (created != null) {
+                        u.setCreatedAt(created.toLocalDateTime());
+                    }
+                    java.sql.Timestamp updated = rs.getTimestamp("UpdatedAt");
+                    if (updated != null) {
+                        u.setUpdatedAt(updated.toLocalDateTime());
+                    }
+                    list.add(u);
+                } catch (Exception ignore) {
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    //Lấy tất cả thông tin user của các staff thuộc manager này (Thanhcocodo)
+    public ResultSet getStaffUsersByManagerRaw(Connection conn, int managerId, String name, String phone, String status) throws SQLException {
+        StringBuilder sql = new StringBuilder(
+                "SELECT u.* FROM Staff s JOIN Users u ON s.UserID = u.UserID WHERE s.ManagerID = ?");
+        
+        //Thêm điều kiện tìm kiếm
+        if (name != null && !name.trim().isEmpty()) {
+            sql.append(" AND u.FullName LIKE ?"); // Tìm theo tên
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            sql.append(" AND u.Phone LIKE ?"); // Tìm theo số điện thoại
+        }
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND u.Status = ?"); // Lọc theo trạng thái
+        }
+
+        PreparedStatement ps = conn.prepareStatement(sql.toString());
+        int idx = 1;
+        ps.setInt(idx++, managerId);
+        if (name != null && !name.trim().isEmpty()) {
+            ps.setString(idx++, "%" + name + "%");
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            ps.setString(idx++, "%" + phone + "%");
+        }
+        if (status != null && !status.trim().isEmpty()) {
+            ps.setString(idx++, status);
+        }
+        return ps.executeQuery();
     }
 }

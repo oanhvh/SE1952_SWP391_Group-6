@@ -47,6 +47,8 @@
         <li><a href="activation.jsp">Create activation code</a></li>
         <li><a href="addCategory.jsp">Add Category</a></li>
         <li><a href="${pageContext.request.contextPath}/manager/category?action=list">List Category</a></li>
+        <li><a href="${pageContext.request.contextPath}/manager/staffs">List Staff</a></li>
+        <li><a href="${pageContext.request.contextPath}/manager/events">List Events</a></li>
         <li><a href="${pageContext.request.contextPath}/manager/event?action=list">List Pending Event</a></li>
     </ul>
 </div>

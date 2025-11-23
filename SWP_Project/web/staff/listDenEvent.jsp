@@ -176,14 +176,7 @@
                         <div class="col-12">
                             <div class="alert alert-info text-center" role="alert">
                                 <i class="fa fa-info-circle fa-3x mb-3"></i>
-                                <h4>No events available at the moment.</h4>
-                                <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff')}">
-                                    <p class="mt-3">
-                                        <a href="${pageContext.request.contextPath}/event?action=create" class="btn btn-success">
-                                            Create Your First Event
-                                        </a>
-                                    </p>
-                                </c:if>
+                                <h4>No events available at the moment.</h4>                              
                             </div>
                         </div>
                     </div>

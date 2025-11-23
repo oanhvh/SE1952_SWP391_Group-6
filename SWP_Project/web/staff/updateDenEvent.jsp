@@ -178,7 +178,7 @@
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Update Event</button>
-                    <a href="${pageContext.request.contextPath}/staff/densEvent?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
+                    <a href="${pageContext.request.contextPath}/staff/denEvent?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
                 </div>
             </form>
         </div>

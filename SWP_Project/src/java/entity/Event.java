@@ -25,11 +25,12 @@ public class Event {
     private String image;
     private int categoryID;
     private LocalDateTime createdAt;
+    private int denyCount;
 
     public Event() {
     }
 
-    public Event(int eventID, int managerID, Integer createdByStaffID, String eventName, String description, String location, LocalDateTime startDate, LocalDateTime endDate, String status, int capacity, String image, int categoryID, LocalDateTime createdAt) {
+    public Event(int eventID, int managerID, Integer createdByStaffID, String eventName, String description, String location, LocalDateTime startDate, LocalDateTime endDate, String status, int capacity, String image, int categoryID, LocalDateTime createdAt, int denyCount) {
         this.eventID = eventID;
         this.managerID = managerID;
         this.createdByStaffID = createdByStaffID;
@@ -43,6 +44,7 @@ public class Event {
         this.image = image;
         this.categoryID = categoryID;
         this.createdAt = createdAt;
+        this.denyCount = denyCount;
     }
 
     public int getEventID() {
@@ -97,6 +99,10 @@ public class Event {
         return createdAt;
     }
 
+    public int getDenyCount() {
+        return denyCount;
+    }
+
     public void setEventID(int eventID) {
         this.eventID = eventID;
     }
@@ -147,6 +153,10 @@ public class Event {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setDenyCount(int denyCount) {
+        this.denyCount = denyCount;
     }
 
 }

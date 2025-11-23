@@ -6,6 +6,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Created on : Oct 30, 2025, 2:45:59 PM
     Author     : NHThanh
 */
+
+/* Ensure navbar and dropdown appear above page content */
+.navbar { position: sticky; top: 0; z-index: 9999; pointer-events: auto; }
+.navbar .dropdown, .navbar .btn, .navbar .dropdown-menu { pointer-events: auto; z-index: 10000; }
+
 /* ===== Topbar ===== */
 .hidden{display:none !important}
 .topbar {

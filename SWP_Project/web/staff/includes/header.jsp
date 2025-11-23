@@ -23,7 +23,108 @@
             <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/staff/contact.jsp">Contact Us</a></li>
             <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/staff/mission.jsp">Our Mission</a></li>
         </ul>
-        <div class="ml-auto">
+        <div class="ml-auto d-flex align-items-center">
+            <div class="dropdown mr-3" style="margin-right:12px;">
+                <button id="staffNotiBell" class="btn btn-light position-relative" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Notifications">
+                    <span style="font-size:18px;">🔔</span>
+                    <span id="staffNotiBadge" class="badge badge-danger" style="position:absolute; top:-5px; right:-5px; display:none;">0</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="staffNotiBell" style="width:360px; max-height:420px; overflow:auto;">
+                    <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                        <strong>Notifications</strong>
+                        <a class="small" href="<%= request.getContextPath() %>/notifications/mark-all">Mark all as read</a>
+                    </div>
+                    <div id="staffNotiList"></div>
+                    <script>
+                        (function () {
+                            var ctx = '<%= request.getContextPath() %>';
+                            var bell = document.getElementById('staffNotiBell');
+                            var badge = document.getElementById('staffNotiBadge');
+                            var list = document.getElementById('staffNotiList');
+
+                            function htmlItem(n) {
+                                var readCls = n.read ? '' : 'font-weight-bold';
+                                var time = n.createdAt ? new Date(n.createdAt).toLocaleString() : '';
+                                return '<div class="p-2 ' + readCls + '" style="cursor:default;">'
+                                        + '<div>' + escapeHtml(n.title || '') + '</div>'
+                                        + '<div class="text-muted small">' + escapeHtml(n.message || '') + '</div>'
+                                        + '<div class="text-muted small">' + time + '</div>'
+                                        + '</div>';
+                            }
+
+                            function render(items) {
+                                if (!list) return;
+                                if (!items || items.length === 0) {
+                                    list.innerHTML = '<div class="p-3 text-center text-muted">No notifications</div>';
+                                    return;
+                                }
+                                list.innerHTML = items.map(htmlItem).join('');
+                            }
+
+                            function updateBadge(unread) {
+                                if (!badge) return;
+                                if (unread > 0) {
+                                    badge.style.display = 'inline-block';
+                                    badge.textContent = unread;
+                                } else {
+                                    badge.style.display = 'none';
+                                }
+                            }
+
+                            function fetchUnread() {
+                                fetch(ctx + '/notifications/unread', {credentials: 'same-origin'})
+                                        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+                                        .then(function (d) { updateBadge(d.unread || 0); })
+                                        .catch(function () {});
+                            }
+
+                            function fetchList() {
+                                if (list) list.innerHTML = '<div class="p-3 text-center text-muted">Loading...</div>';
+                                fetch(ctx + '/notifications/api', {credentials: 'same-origin'})
+                                        .then(function (r) {
+                                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                                            return r.json();
+                                        })
+                                        .then(function (d) {
+                                            updateBadge(d.unread || 0);
+                                            render(d.items || []);
+                                        })
+                                        .catch(function () {
+                                            if (list)
+                                                list.innerHTML = '<div class="p-3 text-center text-danger">Failed to load. <a href="' + ctx + '/notifications' + '">View all</a></div>';
+                                        });
+                            }
+
+                            if (bell) {
+                                bell.addEventListener('click', function () { fetchList(); });
+                                try {
+                                    bell.addEventListener('shown.bs.dropdown', function () { fetchList(); });
+                                } catch (e) {}
+                            }
+
+                            try {
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    fetchUnread();
+                                    fetchList();
+                                });
+                            } catch (e) {
+                                fetchUnread();
+                                fetchList();
+                            }
+
+                            setInterval(fetchUnread, 15000);
+
+                            function escapeHtml(s) {
+                                return String(s).replace(/[&<>"']/g, function (c) {
+                                    var map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;'};
+                                    return map[c] || c;
+                                });
+                            }
+                        })();
+                    </script>
+                    <div class="border-top p-2 text-center"><a href="<%= request.getContextPath() %>/notifications">View all</a></div>
+                </div>
+            </div>
             <div class="dropdown">
                 <button class="btn btn-light dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span style="font-weight:600;"><%= displayName %></span>

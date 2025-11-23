@@ -179,26 +179,12 @@ public class DeniedEventController extends HttpServlet {
                 event.setCreatedAt(existingEvent.getCreatedAt());
             }
 
-            boolean changed = false;
-            if (!event.getEventName().equals(existingEvent.getEventName())
-                    || !event.getDescription().equals(existingEvent.getDescription())
-                    || !event.getLocation().equals(existingEvent.getLocation())
-                    || !event.getStartDate().equals(existingEvent.getStartDate())
-                    || !event.getEndDate().equals(existingEvent.getEndDate())
-                    || event.getCapacity() != existingEvent.getCapacity()
-                    || event.getCategoryID() != existingEvent.getCategoryID()
-                    || !event.getImage().equals(existingEvent.getImage())) {
-                changed = true;
-            }
-
-            if (changed) {
-                event.setStatus("Pending"); // có thay đổi → Pending
-            } else {
-                event.setStatus(existingEvent.getStatus()); // giữ nguyên
-            }
+            // Bất cứ khi nào staff chỉnh sửa Denied Event -> đưa về trạng thái Pending để chờ duyệt lại
+            event.setStatus("Pending");
 
             eventService.updateEvent(event);
-            response.sendRedirect(request.getContextPath() + "/staff/denEvent?action=list");
+            // Sau khi sửa Denied Event xong, chuyển sang danh sách Pending
+            response.sendRedirect(request.getContextPath() + "/staff/pendEvent?action=list");
         } catch (IllegalArgumentException e) {
             // Nếu build thất bại, lấy event cũ từ DB
             if (event == null || event.getEventID() == 0) {

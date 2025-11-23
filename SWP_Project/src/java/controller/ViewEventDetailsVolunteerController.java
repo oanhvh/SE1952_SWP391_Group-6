@@ -10,6 +10,7 @@ import dao.ManagerDAO;
 import dao.StaffDAO;
 import entity.Category;
 import entity.Event;
+import entity.Manager;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -29,12 +30,16 @@ public class ViewEventDetailsVolunteerController extends HttpServlet {
 
     private EventService eventService;
     private CategoryDAO categoryDAO;
+    private StaffDAO staffDAO;
+    private ManagerDAO managerDAO;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     @Override
     public void init() throws ServletException {
         eventService = new EventService();
         categoryDAO = new CategoryDAO();
+        staffDAO = new StaffDAO();
+        managerDAO = new ManagerDAO();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -97,8 +102,27 @@ public class ViewEventDetailsVolunteerController extends HttpServlet {
             }
 
             Category category = categoryDAO.getCategoryById(event.getCategoryID());
+
+            String staffName = staffDAO.getUserNameByStaffId(event.getCreatedByStaffID());
+            String managerName = null;
+            String managerContact = null;
+            String managerAddress = null;
+
+            if (event.getManagerID() > 0) {
+                Manager manager = managerDAO.getManagerById(event.getManagerID());
+                if (manager != null) {
+                    managerName = manager.getManagerName();
+                    managerContact = manager.getContactInfo();
+                    managerAddress = manager.getAddress();
+                }
+            }
+
             request.setAttribute("event", event);
             request.setAttribute("categoryName", category != null ? category.getCategoryName() : "Unknown");
+            request.setAttribute("staffName", staffName);
+            request.setAttribute("managerName", managerName);
+            request.setAttribute("managerContact", managerContact);
+            request.setAttribute("managerAddress", managerAddress);
 
             request.getRequestDispatcher("/volunteer/viewEvent.jsp").forward(request, response);
 

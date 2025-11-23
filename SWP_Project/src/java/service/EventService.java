@@ -72,13 +72,32 @@ public class EventService {
         eventDAO.updateEventStatus(eventID, status);
     }
 
+    // Dùng riêng cho deny lần 1: tăng denyCount và chuyển status sang Cancelled
+    public void denyOnceAndCancel(int eventID) {
+        if (eventID <= 0) {
+            throw new IllegalArgumentException("Invalid Event ID");
+        }
+        eventDAO.incrementDenyCountAndCancel(eventID);
+    }
+
     public List<Event> getEventsByStatus(String status) {
         if (status == null || status.isBlank()) {
             throw new IllegalArgumentException("Status cannot be empty");
         }
         return eventDAO.getEventsByStatus(status);
     }
-    
+
+    // Lấy sự kiện theo ManagerID và Status (dùng cho danh sách Pending theo từng manager)
+    public List<Event> getEventsByManagerAndStatus(int managerId, String status) {
+        if (managerId <= 0) {
+            throw new IllegalArgumentException("Invalid Manager ID");
+        }
+        if (status == null || status.isBlank()) {
+            throw new IllegalArgumentException("Status cannot be empty");
+        }
+        return eventDAO.getEventsByManagerAndStatus(managerId, status);
+    }
+
     // Lấy tất cả sự kiện có trạng thái "Active"
     public List<Event> getActiveEvents() throws Exception {
         List<Event> allEvents = eventDAO.getAllEvents1();
@@ -86,6 +105,7 @@ public class EventService {
                 .filter(event -> "Active".equalsIgnoreCase(event.getStatus()))
                 .collect(Collectors.toList());
     }
+
     // =============================
     // VALIDATION
     // =============================

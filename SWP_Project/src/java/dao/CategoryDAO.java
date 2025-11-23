@@ -24,9 +24,10 @@ public class CategoryDAO extends DBUtils {
         return category;
     }
 
+    // Lấy tất cả category (cũ) – vẫn giữ để tránh phá vỡ chỗ khác
     public List<Category> getAllCategory() {
         List<Category> categoryList = new ArrayList<>();
-        String sql = "SELECT * FROM Category";
+        String sql = "SELECT CategoryID, CategoryName FROM Category";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 Category category = extractCategory(rs);
@@ -38,10 +39,30 @@ public class CategoryDAO extends DBUtils {
         return categoryList;
     }
 
-    public void addCategory(Category category) {
-        String sql = "INSERT INTO Category (CategoryName) VALUES (?)";
+    // Lấy category theo ManagerID (dùng cho màn manager)
+    public List<Category> getCategoriesByManager(int managerId) {
+        List<Category> categoryList = new ArrayList<>();
+        String sql = "SELECT CategoryID, CategoryName FROM Category WHERE ManagerID = ? ORDER BY CategoryName";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, managerId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Category category = extractCategory(rs);
+                    categoryList.add(category);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return categoryList;
+    }
+
+    // Thêm category cho một manager cụ thể
+    public void addCategory(Category category, int managerId) {
+        String sql = "INSERT INTO Category (CategoryName, ManagerID) VALUES (?, ?)";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, category.getCategoryName());
+            pstmt.setInt(2, managerId);
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,20 +90,47 @@ public class CategoryDAO extends DBUtils {
         }
     }
 
+    // Xoá category theo ID và ManagerID để đảm bảo đúng tenant
+    public boolean deleteCategoryForManager(int categoryID, int managerId) {
+        String sql = "DELETE FROM Category WHERE CategoryID = ? AND ManagerID = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, categoryID);
+            pstmt.setInt(2, managerId);
+            int rows = pstmt.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public Category getCategoryById(int categoryId) {
         Category category = null;
-        String sql = "SELECT * FROM Category WHERE CategoryID = ?";
+        String sql = "SELECT CategoryID, CategoryName FROM Category WHERE CategoryID = ?";
         try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, categoryId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                category = new Category();
-                category.setCategoryID(rs.getInt("CategoryID"));
-                category.setCategoryName(rs.getString("CategoryName"));
+                category = extractCategory(rs);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return category;
+    }
+
+    // Kiểm tra trùng tên category trong phạm vi một manager
+    public boolean existsByNameForManager(String categoryName, int managerId) {
+        String sql = "SELECT 1 FROM Category WHERE ManagerID = ? AND CategoryName = ?";
+        try (Connection conn = DBUtils.getConnection1(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, managerId);
+            ps.setString(2, categoryName);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

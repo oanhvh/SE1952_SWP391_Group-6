@@ -32,7 +32,7 @@
                 padding: 0;
             }
 
-            
+
 
             /* Trên màn hình nhỏ, không đẩy nội dung để giữ không gian */
             @media (max-width: 992px) {
@@ -321,14 +321,14 @@
         <jsp:include page="includes/footer.jsp" />
 
         <script src="<%= request.getContextPath() %>/js/jquery.min.js"></script>
-<script src="<%= request.getContextPath() %>/js/popper.min.js"></script>
-<script src="<%= request.getContextPath() %>/js/bootstrap.bundle.min.js"></script>
-<script src="<%= request.getContextPath() %>/js/plugin.js"></script>
-<script src="<%= request.getContextPath() %>/js/jquery.mCustomScrollbar.concat.min.js"></script>
-<script src="<%= request.getContextPath() %>/js/custom.js"></script>
-<script src="<%= request.getContextPath() %>/js/owl.carousel.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
-<script src="<%= request.getContextPath() %>/js/role.js?v=2"></script>
+        <script src="<%= request.getContextPath() %>/js/popper.min.js"></script>
+        <script src="<%= request.getContextPath() %>/js/bootstrap.bundle.min.js"></script>
+        <script src="<%= request.getContextPath() %>/js/plugin.js"></script>
+        <script src="<%= request.getContextPath() %>/js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="<%= request.getContextPath() %>/js/custom.js"></script>
+        <script src="<%= request.getContextPath() %>/js/owl.carousel.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script src="<%= request.getContextPath() %>/js/role.js?v=2"></script>
 
     </body>
 </html>

@@ -7,11 +7,13 @@ package service;
 import dao.SkillsDAO;
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  *
  * @author NHThanh
  */
 public class SkillsService {
+
     private final SkillsDAO skillsDAO = new SkillsDAO();
 
     public Map<String, String> validateCreate(String name, String description) {

@@ -455,6 +455,16 @@ public class UserDao extends DBUtils {
         }
     }
 
+    // Update user status using provided connection and string status (e.g., "Active"/"Inactive")
+    public boolean updateUserStatus(Connection conn, int userId, String status) throws SQLException {
+        String sql = "UPDATE Users SET Status = ?, UpdatedAt = SYSUTCDATETIME() WHERE UserID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     public List<Users> searchUser(String name, String role, String phone) {
         List<Users> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM Users WHERE 1=1");

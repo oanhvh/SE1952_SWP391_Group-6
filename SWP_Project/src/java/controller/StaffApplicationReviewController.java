@@ -53,13 +53,18 @@ public class StaffApplicationReviewController extends HttpServlet {
         //Ánh xạ từ User sang Staff
         StaffDAO staffDAO = new StaffDAO();
         Integer staffId = staffDAO.getStaffIdByUserId(user.getUserID());
+        Integer managerId = staffDAO.getManagerIdByUserId(user.getUserID());
         if (staffId == null) {
             resp.sendRedirect(req.getContextPath() + "/staff/applications?status=Pending&error=no_staff_id");
             return;
         }
+        if (managerId == null) {
+            resp.sendRedirect(req.getContextPath() + "/staff/applications?status=Pending&error=no_manager_scope");
+            return;
+        }
         
         //Gọi DAO để cập nhật trạng thái đơn
-        boolean ok = applicationsDAO.reviewApplication(applicationId, staffId, approve, staffComment);
+        boolean ok = applicationsDAO.reviewApplication(applicationId, staffId, managerId, approve, staffComment);
 
         //Chuyển hướng về danh sách + thông báo
         String next = req.getContextPath() + "/staff/applications?status=Pending";

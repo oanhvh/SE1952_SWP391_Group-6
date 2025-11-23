@@ -44,6 +44,13 @@ public class LoginController extends HttpServlet {
             return;
         }
 
+        // Block login for deactivated accounts
+        if ("Inactive".equalsIgnoreCase(user.getStatus())) {
+            request.setAttribute("error", "This account has been deactivated. Please contact support.");
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            return;
+        }
+
         //Nếu tài khoản có mật khẩu là null, yêu cầu đăng nhập bằng Google
         if (user.getPasswordHash() == null || user.getPasswordHash().trim().isEmpty()) {
             String provider = user.getLoginProvider();

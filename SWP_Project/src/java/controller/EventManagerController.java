@@ -5,10 +5,14 @@
 package controller;
 
 import dao.CategoryDAO;
+import dao.DBUtils;
+import dao.ManagerDAO;
 import dao.NotificationsDAO;
 import dao.StaffDAO;
 import entity.Category;
 import entity.Event;
+import entity.Manager;
+import entity.Users;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,6 +20,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.sql.Connection;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +37,7 @@ public class EventManagerController extends HttpServlet {
     private EventService eventService;
     private StaffDAO staffDAO;
     private CategoryDAO categoryDAO;
+    private ManagerDAO managerDAO;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     @Override
@@ -38,6 +45,7 @@ public class EventManagerController extends HttpServlet {
         eventService = new EventService();
         staffDAO = new StaffDAO();
         categoryDAO = new CategoryDAO();
+        managerDAO = new ManagerDAO();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -79,6 +87,10 @@ public class EventManagerController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
+        if (action == null || action.isBlank()) {
+            response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
+            return;
+        }
 
         switch (action) {
             case "approve":
@@ -88,7 +100,7 @@ public class EventManagerController extends HttpServlet {
                 denyEvent(request, response);
                 break;
             default:
-                response.sendRedirect("/manager/event?action=list");
+                response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
         }
     }
 
@@ -102,10 +114,49 @@ public class EventManagerController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    // Lấy managerId từ session; nếu chưa có thì tra từ DB dựa vào authUser và lưu lại (Hàm đảm bảo mọi hoạt động đều gắn với đúng Manager hiện tại) (Thanhcocodo)
+    private Integer resolveManagerId(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session is missing");
+            return null;
+        }
+
+        Integer managerId = (Integer) session.getAttribute("managerId");
+        if (managerId != null && managerId > 0) {
+            return managerId;
+        }
+
+        Users auth = (Users) session.getAttribute("authUser");
+        if (auth == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
+            return null;
+        }
+
+        try (Connection conn = DBUtils.getConnection1()) {
+            ManagerDAO mdao = new ManagerDAO();
+            managerId = mdao.getManagerIdByUserId(conn, auth.getUserID());
+            if (managerId == null || managerId <= 0) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Manager profile not found");
+                return null;
+            }
+            session.setAttribute("managerId", managerId);
+            return managerId;
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to resolve managerId");
+            return null;
+        }
+    }
+       
     private void listEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        List<Event> eventList = new ArrayList<>(eventService.getAllEvents());
-        List<Event> eventList = eventService.getEventsByStatus("Pending");
+        Integer managerId = resolveManagerId(request, response);
+        if (managerId == null) {
+            return;
+        }
+
+        List<Event> eventList = eventService.getEventsByManagerAndStatus(managerId, "Pending");
         request.setAttribute("eventList", eventList);
         request.getRequestDispatcher("/manager/listEvent.jsp").forward(request, response);
     }
@@ -120,9 +171,24 @@ public class EventManagerController extends HttpServlet {
 
             String staffName = staffDAO.getUserNameByStaffId(event.getCreatedByStaffID());
 
+            String managerName = null;
+            String managerContact = null;
+            String managerAddress = null;
+            if (event.getManagerID() > 0) {
+                Manager manager = managerDAO.getManagerById(event.getManagerID());
+                if (manager != null) {
+                    managerName = manager.getManagerName();
+                    managerContact = manager.getContactInfo();
+                    managerAddress = manager.getAddress();
+                }
+            }
+
             request.setAttribute("event", event);
             request.setAttribute("categoryName", categoryName);
             request.setAttribute("staffName", staffName);
+            request.setAttribute("managerName", managerName);
+            request.setAttribute("managerContact", managerContact);
+            request.setAttribute("managerAddress", managerAddress);
         }
 
         request.getRequestDispatcher("/manager/viewEvent.jsp").forward(request, response);
@@ -131,45 +197,122 @@ public class EventManagerController extends HttpServlet {
     private void approveEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
+        Event event = eventService.getEventById(id);
+        if (event == null) {
+            response.sendRedirect(request.getContextPath() + "/manager/event?action=list&error=Event not found");
+            return;
+        }
+
         eventService.updateEventStatus(id, "Active");
+
+        // Gửi thông báo cho Staff khi event được duyệt
+        if (event.getCreatedByStaffID() != null) {
+            int staffId = event.getCreatedByStaffID();
+            Integer managerId = (Integer) request.getSession().getAttribute("managerId");
+
+            if (managerId != null && managerId > 0) {
+                NotificationsDAO notificationsDAO = new NotificationsDAO();
+                String type = "EventApproved";
+                String title = "Event Approved";
+                String message = "Your event has been approved and is now active.";
+
+                notificationsDAO.addNotificationForStaff(
+                        staffId,
+                        managerId,
+                        type,
+                        title,
+                        message,
+                        id
+                );
+            }
+        }
+
         response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
     }
 
     private void denyEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        int eventId = Integer.parseInt(request.getParameter("id"));
-        String reason = request.getParameter("reason"); // Lý do từ form
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String reason = request.getParameter("reason");
 
-        Event event = eventService.getEventById(eventId);
+            Event event = eventService.getEventById(id);
+            if (event == null) {
+                response.sendRedirect(request.getContextPath() + "/manager/event?action=list&error=Event not found");
+                return;
+            }
 
-        if (event == null) {
-            response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
-            return;
+            // Nếu đã từng bị deny trước đó (denyCount >= 1) → coi như xoá hẳn khỏi REVIEW LIST
+            if (event.getDenyCount() >= 1) {
+                // Đảm bảo không còn nằm trong Pending
+                eventService.updateEventStatus(id, "Cancelled");
+
+                // Thử xóa cứng, nếu bị FK chặn thì chỉ log lỗi
+                try {
+                    eventService.deleteEvent(id);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                if (event.getCreatedByStaffID() != null) {
+                    int staffId = event.getCreatedByStaffID();
+                    Integer managerId = (Integer) request.getSession().getAttribute("managerId");
+
+                    if (managerId != null && managerId > 0) {
+                        NotificationsDAO notificationsDAO = new NotificationsDAO();
+                        String finalMsg = (reason != null && !reason.trim().isEmpty())
+                                ? "Your event has been permanently deleted. Reason: " + reason
+                                : "Your event has been permanently deleted after multiple denials.";
+
+                        notificationsDAO.addNotificationForStaff(
+                                staffId,
+                                managerId,
+                                "EventDenied",
+                                "Event Deleted",
+                                finalMsg,
+                                id
+                        );
+                    }
+                }
+
+                response.sendRedirect(request.getContextPath() + "/manager/event?action=list&success=Event deleted successfully");
+                return;
+            }
+
+            // LẦN 1: tăng denyCount + chuyển sang Cancelled
+            eventService.denyOnceAndCancel(id);
+
+            if (event.getCreatedByStaffID() != null) {
+                int staffId = event.getCreatedByStaffID();
+                Integer managerId = (Integer) request.getSession().getAttribute("managerId");
+
+                if (managerId == null || managerId <= 0) {
+                    response.sendRedirect(request.getContextPath() + "/manager/event?action=list&error=Manager not found");
+                    return;
+                }
+
+                NotificationsDAO notificationsDAO = new NotificationsDAO();
+                String message = (reason != null && !reason.trim().isEmpty())
+                        ? "Your event has been denied. Reason: " + reason
+                        : "Your event has been denied. Please review and resubmit.";
+
+                notificationsDAO.addNotificationForStaff(
+                        staffId,
+                        managerId,
+                        "EventDenied",
+                        "Event Denied",
+                        message,
+                        id
+                );
+            }
+
+            response.sendRedirect(request.getContextPath() + "/manager/event?action=list&success=Event denied successfully");
+
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/manager/event?action=list&error=Invalid event ID");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/manager/event?action=list&error=An error occurred while processing your request");
         }
-
-        // === LẦN 2 BỊ DENY → XOÁ HOÀN TOÀN ===
-        if ("Cancelled".equals(event.getStatus())) {
-            eventService.deleteEvent(eventId);
-            response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
-            return;
-        }
-
-        // === LẦN 1 BỊ DENY → UPDATE STATUS + GỬI NOTI ===
-        eventService.updateEventStatus(eventId, "Cancelled");
-
-        if (event.getCreatedByStaffID() != null) {
-            int staffId = event.getCreatedByStaffID();
-            int managerId = (Integer) request.getSession().getAttribute("managerId");
-
-            NotificationsDAO notificationsDAO = new NotificationsDAO();
-            String type = "EventDenied";
-            String title = "Event Denied";
-            String message = (reason != null && !reason.isBlank())
-                    ? reason
-                    : "Your event has been denied.";
-            notificationsDAO.addNotificationForStaff(staffId, managerId, type, title, message, eventId);
-        }
-
-        response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
     }
 }
