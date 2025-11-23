@@ -139,12 +139,18 @@ public class EventController extends HttpServlet {
 
     private void listEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Event> eventList = new ArrayList<>(eventService.getAllEvents());
-        List<Event> pending = eventService.getEventsByStatus("Pending");
-        List<Event> active = eventService.getEventsByStatus("Active");
-
-        eventList.addAll(pending);
-        eventList.addAll(active);
+        List<Event> activeList = eventService.getEventsByStatus("Active");
+        request.setAttribute("eventList", activeList);
+        request.getRequestDispatcher("/staff/listEvent.jsp").forward(request, response);
+    }
+//    private void listEvents(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        List<Event> eventList = new ArrayList<>(eventService.getAllEvents());
+//        List<Event> pending = eventService.getEventsByStatus("Pending");
+//        List<Event> active = eventService.getEventsByStatus("Active");
+//
+//        eventList.addAll(pending);
+//        eventList.addAll(active);
 //        String status = request.getParameter("status");
 //        List<Event> eventList = (status == null || status.isBlank())
 //                ? eventService.getAllEvents()
@@ -155,10 +161,9 @@ public class EventController extends HttpServlet {
 //            request.setAttribute("filterStatus", status);
 //        }
 //        List<Event> eventList = eventService.getEventsByStatus("Active");
-        request.setAttribute("eventList", eventList);
-        request.getRequestDispatcher("/staff/listEvent.jsp").forward(request, response);
-    }
-
+//        request.setAttribute("eventList", eventList);
+//        request.getRequestDispatcher("/staff/listEvent.jsp").forward(request, response);
+//    }
     private void showDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));

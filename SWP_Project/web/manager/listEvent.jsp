@@ -11,7 +11,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Event List</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="../css/style.css" />
         <link rel="stylesheet" href="../css/responsive.css" />
         <link rel="icon" href="../images/fevicon.png" type="image/gif" />
@@ -82,6 +81,75 @@
             #searchEvent:focus {
                 box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
             }
+            
+            /* CUSTOM MODAL - NOT USING BOOTSTRAP MODAL */
+            .custom-modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 9999;
+                overflow-y: auto;
+            }
+            
+            .custom-modal-overlay.active {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .custom-modal-content {
+                background: white;
+                border-radius: 8px;
+                width: 90%;
+                max-width: 500px;
+                margin: 20px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            }
+            
+            .custom-modal-header {
+                padding: 15px 20px;
+                border-bottom: 1px solid #dee2e6;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .custom-modal-header h5 {
+                margin: 0;
+                font-size: 1.25rem;
+            }
+            
+            .custom-modal-close {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0;
+                width: 30px;
+                height: 30px;
+                line-height: 1;
+                opacity: 0.5;
+            }
+            
+            .custom-modal-close:hover {
+                opacity: 1;
+            }
+            
+            .custom-modal-body {
+                padding: 20px;
+            }
+            
+            .custom-modal-footer {
+                padding: 15px 20px;
+                border-top: 1px solid #dee2e6;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
         </style>
     </head>
     <body>
@@ -145,45 +213,19 @@
                                         </a>
 
                                         <c:if test="${not empty sessionScope.role && sessionScope.role == 'Manager'}">
-                                            <form method="post" action="${pageContext.request.contextPath}/manager/event" style="display:inline;">
+                                            <form method="post" action="${pageContext.request.contextPath}/manager/event" style="display:inline;" onsubmit="return confirm('Are you sure you want to approve this event?');">
                                                 <input type="hidden" name="action" value="approve"/>
                                                 <input type="hidden" name="id" value="${event.eventID}"/>
                                                 <button type="submit" class="btn btn-warning btn-sm">
                                                     <i class="fa fa-check"></i> Approve
                                                 </button>
                                             </form>
-                                            <!-- Nút Deny mở modal -->
-                                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#denyModal${event.eventID}">
+                                            <!-- Nút Deny mở CUSTOM modal -->
+                                            <button type="button" class="btn btn-danger btn-sm btn-deny-custom" 
+                                                    data-event-id="${event.eventID}" 
+                                                    data-event-name="${event.eventName}">
                                                 <i class="fa fa-times"></i> Deny
                                             </button>
-
-                                            <!-- Modal Deny -->
-                                            <div class="modal fade" id="denyModal${event.eventID}" tabindex="-1" role="dialog" aria-labelledby="denyModalLabel${event.eventID}" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <form method="post" action="${pageContext.request.contextPath}/manager/event">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="denyModalLabel${event.eventID}">Deny Event: ${event.eventName}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <input type="hidden" name="action" value="deny"/>
-                                                                <input type="hidden" name="id" value="${event.eventID}"/>
-                                                                <div class="form-group">
-                                                                    <label for="reason${event.eventID}">Reason for denial:</label>
-                                                                    <textarea class="form-control" name="reason" id="reason${event.eventID}" rows="3" required></textarea>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                                <button type="submit" class="btn btn-danger">Submit Denial</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </c:if>
                                     </div>
                                 </div>
@@ -205,28 +247,93 @@
             </div>
         </div>
 
+        <!-- CUSTOM MODAL (NOT BOOTSTRAP) -->
+        <div id="customDenyModal" class="custom-modal-overlay">
+            <div class="custom-modal-content">
+                <form method="post" action="${pageContext.request.contextPath}/manager/event" id="denyForm">
+                    <div class="custom-modal-header">
+                        <h5 id="modalEventName">Deny Event</h5>
+                        <button type="button" class="custom-modal-close" onclick="closeDenyModal()">&times;</button>
+                    </div>
+                    <div class="custom-modal-body">
+                        <input type="hidden" name="action" value="deny"/>
+                        <input type="hidden" name="id" id="modalEventId"/>
+                        <div class="form-group">
+                            <label for="denyReason">Reason for denial:</label>
+                            <textarea class="form-control" name="reason" id="denyReason" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <div class="custom-modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeDenyModal()">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Submit Denial</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <jsp:include page="includes/footer.jsp" />
 
-        <script src="../js/jquery.min.js"></script>
-        <script src="../js/popper.min.js"></script>
-        <script src="../js/bootstrap.bundle.min.js"></script>
-        <script src="../js/jquery-3.0.0.min.js"></script>
+        <!-- Scripts - Load jQuery ONCE -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="../js/plugin.js"></script>
         <script src="../js/role.js?v=2"></script>
         <script src="../js/owl.carousel.js"></script>
-        <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
         <script src="../js/login.js"></script>
         <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
         <script src="../js/custom.js"></script>
-        <script src="../js/owl.carousel.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+        
         <script>
-            document.getElementById('searchEvent').addEventListener('keyup', function () {
-                let keyword = this.value.toLowerCase();
-                let cards = document.querySelectorAll('.card');
-                cards.forEach(card => {
-                    let name = card.querySelector('.card-title').textContent.toLowerCase();
-                    card.parentElement.style.display = name.includes(keyword) ? '' : 'none';
+            // CUSTOM MODAL FUNCTIONS - NO BOOTSTRAP MODAL
+            function openDenyModal(eventId, eventName) {
+                document.getElementById('modalEventId').value = eventId;
+                document.getElementById('modalEventName').textContent = 'Deny Event: ' + eventName;
+                document.getElementById('denyReason').value = '';
+                document.getElementById('customDenyModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeDenyModal() {
+                document.getElementById('customDenyModal').classList.remove('active');
+                document.body.style.overflow = '';
+                document.getElementById('denyReason').value = '';
+            }
+            
+            // Event listeners
+            document.addEventListener('DOMContentLoaded', function() {
+                // Deny buttons
+                document.querySelectorAll('.btn-deny-custom').forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var eventId = this.getAttribute('data-event-id');
+                        var eventName = this.getAttribute('data-event-name');
+                        openDenyModal(eventId, eventName);
+                    });
+                });
+                
+                // Close on overlay click
+                document.getElementById('customDenyModal').addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeDenyModal();
+                    }
+                });
+                
+                // Close on ESC key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        closeDenyModal();
+                    }
+                });
+                
+                // Search functionality
+                document.getElementById('searchEvent').addEventListener('keyup', function() {
+                    var keyword = this.value.toLowerCase();
+                    document.querySelectorAll('.card').forEach(function(card) {
+                        var name = card.querySelector('.card-title').textContent.toLowerCase();
+                        card.parentElement.style.display = name.includes(keyword) ? '' : 'none';
+                    });
                 });
             });
         </script>

@@ -47,6 +47,7 @@
         <li><a href="<%= request.getContextPath() %>/staff/event?action=create">Add Event</a></li>
         <!--<li><a href="<%= request.getContextPath() %>/staff/event?action //=list">Update Event</a></li>-->
         <li><a href="<%= request.getContextPath() %>/staff/event?action=list">List Event</a></li>
+        <li><a href="<%= request.getContextPath() %>/staff/pendEvent?action=list">List Pending Event</a></li>
         <li><a href="<%= request.getContextPath() %>/staff/delEvent?action=list">List Inactive Event</a></li>
         <li><a href="<%= request.getContextPath() %>/staff/applications">View Applications</a></li>
     </ul>
