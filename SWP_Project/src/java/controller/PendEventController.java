@@ -32,12 +32,12 @@ import service.EventService;
  *
  * @author DucNM
  */
-@WebServlet(name = "DelEventController", urlPatterns = {"/staff/delEvent"})
-public class DelEventController extends HttpServlet {
+@WebServlet(name = "PendEventController", urlPatterns = {"/staff/pendEvent"})
+public class PendEventController extends HttpServlet {
 
     private EventService eventService;
-    private StaffDAO staffDAO;
     private CategoryDAO categoryDAO;
+    private StaffDAO staffDAO;
     private ManagerDAO managerDAO;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
@@ -61,24 +61,16 @@ public class DelEventController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         String action = request.getParameter("action");
         if (action == null) {
             action = "";
         }
-
         switch (action) {
             case "detail":
-                showDelDetail(request, response);
-                break;
-            case "restore":
-                restoreEvent(request, response);
-                break;
-            case "delete":
-                deleteEvent(request, response);
+                showPendDetail(request, response);
                 break;
             default:
-                listDelEvents(request, response);
+                listPendEvents(request, response);
                 break;
         }
     }
@@ -106,14 +98,14 @@ public class DelEventController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void listDelEvents(HttpServletRequest request, HttpServletResponse response)
+    private void listPendEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Event> eventList = eventService.getEventsByStatus("Inactive");
+        List<Event> eventList = eventService.getEventsByStatus("Pending");
         request.setAttribute("eventList", eventList);
-        request.getRequestDispatcher("/staff/listDelEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("/staff/listPendEvent.jsp").forward(request, response);
     }
 
-    private void showDelDetail(HttpServletRequest request, HttpServletResponse response)
+    private void showPendDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
@@ -130,20 +122,6 @@ public class DelEventController extends HttpServlet {
             request.setAttribute("staffName", staffName);
             request.setAttribute("managerName", managerName);
         }
-        request.getRequestDispatcher("/staff/viewDelEvent.jsp").forward(request, response);
-    }
-
-    private void restoreEvent(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        eventService.updateEventStatus(id, "Active");
-        response.sendRedirect(request.getContextPath() + "/staff/delEvent");
-    }
-
-    private void deleteEvent(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        eventService.deleteEvent(id);
-        response.sendRedirect(request.getContextPath() + "/staff/delEvent");
+        request.getRequestDispatcher("/staff/viewPendEvent.jsp").forward(request, response);
     }
 }

@@ -73,8 +73,8 @@
                 background: #6c757d;
                 color: #fff;
             }
-            .status-Inactive {
-                background: #6c757d;
+            .status-Cancelled {
+                background-color: #dc3545;
                 color: #fff;
             }
             .no-image {
@@ -127,7 +127,7 @@
                     <span class="status-badge status-${event.status}">${event.status}</span>
                 </div>
 
-                <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
+                <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff')}">
                     <hr>
                     <div class="event-info"><span>Created By:</span>${staffName}</div>
                     <c:if test="${not empty event.managerID}">
@@ -138,31 +138,20 @@
 
 
                 <div class="action-buttons">
-                    <a href="${pageContext.request.contextPath}/staff/delEvent?action=list" class="btn btn-secondary">
+                    <a href="${pageContext.request.contextPath}/staff/denEvent?action=list" class="btn btn-secondary">
                         <i class="fa fa-arrow-left"></i> Back
                     </a>
-                    <c:if test="${sessionScope.role == 'Staff' || sessionScope.role == 'Manager'}">
-                        <%--<a href="${pageContext.request.contextPath}/staff/event?action=edit&id=${event.eventID}" class="btn btn-warning">
+                    <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff')}">
+                        <a href="${pageContext.request.contextPath}/staff/denEvent?action=edit&id=${event.eventID}" 
+                           class="btn btn-warning btn-sm">
                             <i class="fa fa-edit"></i> Edit
                         </a>
-                        <a href="${pageContext.request.contextPath}/staff/event?action=delete&id=${event.eventID}" 
-                           class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this event?');">
-                            <i class="fa fa-trash"></i> Delete
-                        </a>--%>
-                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" class="btn btn-success btn-sm"
-                           onclick="return confirm('Restore this event?');">
-                            <i class="fa fa-undo"></i> Restore
-                        </a>
-                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=delete&id=${event.eventID}" 
+                        <%--<a href="${pageContext.request.contextPath}/staff/denEvent?action=resubmit&id=${event.eventID}" 
                            class="btn btn-danger btn-sm"
-                           onclick="return confirm('Are you sure you want to delete this event completely?');">
-                            <i class="fa fa-trash"></i> Delete
-                        </a>
-                        <%--                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" 
-                                                   class="btn btn-danger" onclick="return confirm('Are you sure you want to restore this event?');">
-                                                    <i class="fa fa-undo"></i> Restore
-                                                </a>--%>
-                    </c:if>
+                           onclick="return confirm('Are you sure you want to re-submit this event?');">
+                            <i class="fa fa-trash"></i> Re-submit
+                        </a>--%>
+                    </c:if> 
                 </div>
             </div>
         </div>

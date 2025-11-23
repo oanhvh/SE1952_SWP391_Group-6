@@ -5,40 +5,32 @@
 package controller;
 
 import dao.CategoryDAO;
-import dao.ManagerDAO;
+import dao.NotificationsDAO;
 import dao.StaffDAO;
 import entity.Category;
 import entity.Event;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
-import java.io.File;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import service.EventService;
 
-@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-        maxFileSize = 1024 * 1024 * 10, // 10MB
-        maxRequestSize = 1024 * 1024 * 50)   // 50MB
 /**
  *
  * @author DucNM
  */
-@WebServlet(name = "DelEventController", urlPatterns = {"/staff/delEvent"})
-public class DelEventController extends HttpServlet {
+@WebServlet(name = "EventManagerController", urlPatterns = {"/manager/event"})
+public class EventManagerController extends HttpServlet {
 
     private EventService eventService;
     private StaffDAO staffDAO;
     private CategoryDAO categoryDAO;
-    private ManagerDAO managerDAO;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     @Override
@@ -46,7 +38,6 @@ public class DelEventController extends HttpServlet {
         eventService = new EventService();
         staffDAO = new StaffDAO();
         categoryDAO = new CategoryDAO();
-        managerDAO = new ManagerDAO();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -61,24 +52,17 @@ public class DelEventController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         String action = request.getParameter("action");
         if (action == null) {
-            action = "";
+            action = "list";
         }
 
         switch (action) {
             case "detail":
-                showDelDetail(request, response);
-                break;
-            case "restore":
-                restoreEvent(request, response);
-                break;
-            case "delete":
-                deleteEvent(request, response);
+                showDetail(request, response);
                 break;
             default:
-                listDelEvents(request, response);
+                listEvents(request, response);
                 break;
         }
     }
@@ -94,6 +78,18 @@ public class DelEventController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        switch (action) {
+            case "approve":
+                approveEvent(request, response);
+                break;
+            case "deny":
+                denyEvent(request, response);
+                break;
+            default:
+                response.sendRedirect("/manager/event?action=list");
+        }
     }
 
     /**
@@ -106,44 +102,74 @@ public class DelEventController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void listDelEvents(HttpServletRequest request, HttpServletResponse response)
+    private void listEvents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Event> eventList = eventService.getEventsByStatus("Inactive");
+//        List<Event> eventList = new ArrayList<>(eventService.getAllEvents());
+        List<Event> eventList = eventService.getEventsByStatus("Pending");
         request.setAttribute("eventList", eventList);
-        request.getRequestDispatcher("/staff/listDelEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("/manager/listEvent.jsp").forward(request, response);
     }
 
-    private void showDelDetail(HttpServletRequest request, HttpServletResponse response)
+    private void showDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Event event = eventService.getEventById(id);
-//        request.setAttribute("event", event);
         if (event != null) {
             Category category = categoryDAO.getCategoryById(event.getCategoryID());
             String categoryName = (category != null) ? category.getCategoryName() : "Unknown";
 
             String staffName = staffDAO.getUserNameByStaffId(event.getCreatedByStaffID());
-            String managerName = managerDAO.getFullNameByManagerId(event.getManagerID());
 
             request.setAttribute("event", event);
             request.setAttribute("categoryName", categoryName);
             request.setAttribute("staffName", staffName);
-            request.setAttribute("managerName", managerName);
         }
-        request.getRequestDispatcher("/staff/viewDelEvent.jsp").forward(request, response);
+
+        request.getRequestDispatcher("/manager/viewEvent.jsp").forward(request, response);
     }
 
-    private void restoreEvent(HttpServletRequest request, HttpServletResponse response)
+    private void approveEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         eventService.updateEventStatus(id, "Active");
-        response.sendRedirect(request.getContextPath() + "/staff/delEvent");
+        response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
     }
 
-    private void deleteEvent(HttpServletRequest request, HttpServletResponse response)
+    private void denyEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        eventService.deleteEvent(id);
-        response.sendRedirect(request.getContextPath() + "/staff/delEvent");
+        int eventId = Integer.parseInt(request.getParameter("id"));
+        String reason = request.getParameter("reason"); // Lý do từ form
+
+        Event event = eventService.getEventById(eventId);
+
+        if (event == null) {
+            response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
+            return;
+        }
+
+        // === LẦN 2 BỊ DENY → XOÁ HOÀN TOÀN ===
+        if ("Cancelled".equals(event.getStatus())) {
+            eventService.deleteEvent(eventId);
+            response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
+            return;
+        }
+
+        // === LẦN 1 BỊ DENY → UPDATE STATUS + GỬI NOTI ===
+        eventService.updateEventStatus(eventId, "Cancelled");
+
+        if (event.getCreatedByStaffID() != null) {
+            int staffId = event.getCreatedByStaffID();
+            int managerId = (Integer) request.getSession().getAttribute("managerId");
+
+            NotificationsDAO notificationsDAO = new NotificationsDAO();
+            String type = "EventDenied";
+            String title = "Event Denied";
+            String message = (reason != null && !reason.isBlank())
+                    ? reason
+                    : "Your event has been denied.";
+            notificationsDAO.addNotificationForStaff(staffId, managerId, type, title, message, eventId);
+        }
+
+        response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
     }
 }

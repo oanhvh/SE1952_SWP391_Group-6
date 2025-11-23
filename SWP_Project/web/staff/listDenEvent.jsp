@@ -53,6 +53,10 @@
                 background-color: #6c757d;
                 color: #fff;
             }
+            .status-Cancelled {
+                background-color: #dc3545;
+                color: #fff;
+            }
             .card-text {
                 display: -webkit-box;
                 -webkit-line-clamp: 3;
@@ -91,8 +95,8 @@
             <div class="container">
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-8">
-                        <h1 class="news_taital mb-0">EVENT LIST</h1>
-                        <p class="news_text mb-0">View and manage all upcoming, ongoing events within the system.</p>
+                        <h1 class="news_taital mb-0">DENIED EVENTS</h1>
+                        <p class="news_text mb-0">Events listed here require changes before they can be resubmitted to the manager for review.</p>
                     </div>
                     <div class="col-md-4 text-right">
                         <div class="input-group">
@@ -103,11 +107,6 @@
 
                 <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
                     <div class="row mb-3">
-                        <div class="col-sm-12 text-end">
-                            <a href="${pageContext.request.contextPath}/staff/event?action=create" class="btn btn-success">
-                                <i class="fa fa-plus"></i> Create New Event
-                            </a>
-                        </div>
                     </div>
                 </c:if>
 
@@ -149,22 +148,22 @@
                                     </div>
 
                                     <div class="btn-actions">
-                                        <a href="${pageContext.request.contextPath}/staff/event?action=detail&id=${event.eventID}" 
+                                        <a href="${pageContext.request.contextPath}/staff/denEvent?action=detail&id=${event.eventID}" 
                                            class="btn btn-primary btn-sm flex-fill">
                                             <i class="fa fa-eye"></i> View Details
                                         </a>
 
-                                        <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
-                                            <a href="${pageContext.request.contextPath}/staff/event?action=edit&id=${event.eventID}" 
+                                        <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff')}">
+                                            <a href="${pageContext.request.contextPath}/staff/denEvent?action=edit&id=${event.eventID}" 
                                                class="btn btn-warning btn-sm">
                                                 <i class="fa fa-edit"></i> Edit
                                             </a>
-                                            <a href="${pageContext.request.contextPath}/staff/event?action=delete&id=${event.eventID}" 
+                                            <%--<a href="${pageContext.request.contextPath}/staff/denEvent?action=resubmit&id=${event.eventID}" 
                                                class="btn btn-danger btn-sm"
-                                               onclick="return confirm('Are you sure you want to remove this event?');">
-                                                <i class="fa fa-trash"></i> Delete
-                                            </a>
-                                        </c:if>
+                                               onclick="return confirm('Are you sure you want to re-submit this event?');">
+                                                <i class="fa fa-trash"></i> Re-submit
+                                            </a>--%>
+                                        </c:if>                                    
                                     </div>
                                 </div>
                             </div>
@@ -178,7 +177,7 @@
                             <div class="alert alert-info text-center" role="alert">
                                 <i class="fa fa-info-circle fa-3x mb-3"></i>
                                 <h4>No events available at the moment.</h4>
-                                <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff' || sessionScope.role == 'Manager')}">
+                                <c:if test="${not empty sessionScope.role && (sessionScope.role == 'Staff')}">
                                     <p class="mt-3">
                                         <a href="${pageContext.request.contextPath}/event?action=create" class="btn btn-success">
                                             Create Your First Event
@@ -208,14 +207,14 @@
         <script src="../js/owl.carousel.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
         <script>
-                                                   document.getElementById('searchEvent').addEventListener('keyup', function () {
-                                                       let keyword = this.value.toLowerCase();
-                                                       let cards = document.querySelectorAll('.card');
-                                                       cards.forEach(card => {
-                                                           let name = card.querySelector('.card-title').textContent.toLowerCase();
-                                                           card.parentElement.style.display = name.includes(keyword) ? '' : 'none';
-                                                       });
-                                                   });
+            document.getElementById('searchEvent').addEventListener('keyup', function () {
+                let keyword = this.value.toLowerCase();
+                let cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    let name = card.querySelector('.card-title').textContent.toLowerCase();
+                    card.parentElement.style.display = name.includes(keyword) ? '' : 'none';
+                });
+            });
         </script>
     </body>
 </html>

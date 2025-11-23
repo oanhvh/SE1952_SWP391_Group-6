@@ -1,73 +1,92 @@
 <%-- 
-    Document   : createEvent
-    Created on : Nov 4, 2025, 4:28:11 AM
+    Document   : updateEvent
+    Created on : Nov 4, 2025, 5:15:43 AM
     Author     : DucNM
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Create Event</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/responsive.css" />
-        <link rel="icon" href="${pageContext.request.contextPath}/images/fevicon.png" type="image/gif" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.mCustomScrollbar.min.css" />
+        <title>Update Event</title>
+        <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/responsive.css" />
+        <link rel="icon" href="../images/fevicon.png" type="image/gif" />
+        <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css" />
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.carousel.min.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/owl.theme.default.min.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/createEvent.css" />
-        <%-- <style>
-     .form-container {
-         max-width: 700px;
-         margin: 50px auto;
-         background: #fff;
-         padding: 35px;
-         border-radius: 12px;
-         box-shadow: 0 0 15px rgba(0,0,0,0.1);
-     }
-     .error-msg {
-         color: red;
-         font-size: 0.9rem;
-         margin-top: 5px;
-     }
-     .form-group label {
-         font-weight: 600;
-     }
-     .image-preview {
-         margin-top: 10px;
-         max-width: 200px;
-         max-height: 200px;
-         display: none;
-     }
-     .image-preview img {
-         width: 100%;
-         height: auto;
-         border: 1px solid #28a745;
-         border-radius: 4px;
-         padding: 5px;
-     }
- </style>--%>
+        <link rel="stylesheet" href="../css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="../css/owl.theme.default.min.css" />
+        <link rel="stylesheet" href="../css/sidebar.css" />
+        <style>
+            .form-container {
+                max-width: 700px;
+                margin: 50px auto;
+                background: #fff;
+                padding: 35px;
+                border-radius: 12px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            }
+            .error-msg {
+                color: red;
+                font-size: 0.9rem;
+                margin-top: 5px;
+            }
+            .form-group label {
+                font-weight: 600;
+            }
+            .current-image {
+                margin-top: 10px;
+                max-width: 200px;
+                max-height: 200px;
+            }
+            .current-image img {
+                width: 100%;
+                height: auto;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 5px;
+            }
+            .image-preview {
+                margin-top: 10px;
+                max-width: 200px;
+                max-height: 200px;
+                display: none;
+            }
+            .image-preview img {
+                width: 100%;
+                height: auto;
+                border: 1px solid #28a745;
+                border-radius: 4px;
+                padding: 5px;
+            }
+        </style>
     </head>
     <body>
         <jsp:include page="includes/header.jsp" />
-
         <div class="form-container">
-            <h3 class="text-center mb-4">Create New Event</h3>
+            <h3 class="text-center mb-4">Update Denied Event</h3>
 
             <c:if test="${not empty error}">
                 <div class="alert alert-danger">${error}</div>
             </c:if>
 
             <form action="${pageContext.request.contextPath}/staff/event" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="eventID" value="${event.eventID}">
+                <input type="hidden" name="oldImage" value="${event.image}">
+
+                <%--<c:if test="${not empty event.createdAt}">
+                    <input type="hidden" name="createdAt" value="<fmt:formatDate value='${event.createdAt}' pattern='dd-MM-yyyy HH:mm' />">
+                </c:if>--%>
+                <c:if test="${not empty event.createdAt}">
+                    <input type="hidden" name="createdAt" value="${formattedCreatedAt}">
+                </c:if>
 
                 <div class="form-group mb-3">
                     <label>Event Name <span class="text-danger">*</span></label>
@@ -100,11 +119,21 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label>Event Image <span class="text-danger">*</span></label>
-                    <input type="file" class="form-control" name="image" id="imageFile" accept="image/*" required onchange="previewImage(this)">
-                    <small class="form-text text-muted">Supported formats: JPG, PNG, GIF (Max 10MB)</small>
+                    <label>Event Image</label>
+
+                    <c:if test="${not empty event.image}">
+                        <div class="current-image">
+                            <p class="mb-1"><strong>Current Image:</strong></p>
+                            <img src="${pageContext.request.contextPath}/${event.image}" alt="Current Event Image">
+                        </div>
+                    </c:if>
+
+                    <input type="file" class="form-control mt-2" name="image" id="imageFile" accept="image/*" onchange="previewImage(this)">
+                    <small class="form-text text-muted">Leave empty to keep current image. Supported formats: JPG, PNG, GIF (Max 10MB)</small>
+
                     <div class="image-preview" id="imagePreview">
-                        <img id="preview" src="" alt="Image Preview">
+                        <p class="mb-1"><strong>New Image Preview:</strong></p>
+                        <img id="preview" src="" alt="New Image Preview">
                     </div>
                 </div>
 
@@ -127,9 +156,17 @@
 
                 <div class="form-group mb-3">
                     <label>Status <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" value="Pending" readonly>
-                    <input type="hidden" name="status" value="Pending">
+                    <input type="text" class="form-control" value="${event.status}" readonly>
+                    <input type="hidden" name="status" value="${event.status}">
                 </div>
+                <%--<div class="form-group mb-3">
+                    <label>Status <span class="text-danger">*</span></label>
+                    <select class="form-control" name="status" required>
+                        <option value="Active" <c:if test="${event.status eq 'Active'}">selected</c:if>>Active</option>
+                        <option value="Inactive" <c:if test="${event.status eq 'Inactive'}">selected</c:if>>Inactive</option>
+                        </select>
+                    </div>--%>
+
                 <%--<div class="form-group mb-3">
                     <label>Status <span class="text-danger">*</span></label>
                     <select class="form-control" name="status" required>
@@ -140,14 +177,41 @@
                 </div>--%>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary px-4">Create Event</button>
-                    <a href="${pageContext.request.contextPath}/staff/event?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4">Update Event</button>
+                    <a href="${pageContext.request.contextPath}/staff/densEvent?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
                 </div>
             </form>
         </div>
 
-
         <script>
+            // Load existing dates into datetime-local inputs
+            window.onload = function () {
+                // Parse dates from server (assuming they're available)
+                const startDateStr = '${event.startDate}'; // Format: yyyy-MM-ddTHH:mm:ss
+                const endDateStr = '${event.endDate}';
+
+                if (startDateStr && startDateStr !== '') {
+                    // Convert from LocalDateTime format to datetime-local format
+                    const startDate = new Date(startDateStr);
+                    document.getElementById('startDate').value = formatDateTimeLocal(startDate);
+                }
+
+                if (endDateStr && endDateStr !== '') {
+                    const endDate = new Date(endDateStr);
+                    document.getElementById('endDate').value = formatDateTimeLocal(endDate);
+                }
+            };
+
+            // Format Date to datetime-local input format (yyyy-MM-ddTHH:mm)
+            function formatDateTimeLocal(date) {
+                const pad = (n) => n < 10 ? '0' + n : n;
+                return date.getFullYear() + '-' +
+                        pad(date.getMonth() + 1) + '-' +
+                        pad(date.getDate()) + 'T' +
+                        pad(date.getHours()) + ':' +
+                        pad(date.getMinutes());
+            }
+
             // Preview image before upload
             function previewImage(input) {
                 const preview = document.getElementById('preview');
@@ -187,7 +251,6 @@
             function validateForm() {
                 const startEl = document.getElementById("startDate");
                 const endEl = document.getElementById("endDate");
-                const imageFile = document.getElementById("imageFile");
                 const startVal = startEl.value;
                 const endVal = endEl.value;
 
@@ -205,36 +268,26 @@
                     return false;
                 }
 
-                // Validate current date
-                const now = new Date();
-                if (start < now) {
-                    if (!confirm("Start date is in the past. Do you want to continue?")) {
-                        return false;
-                    }
-                }
+                // Convert datetime-local -> dd-MM-yyyy HH:mm
+            <%--const formatDate = (d) => {
+                const pad = (n) => n < 10 ? '0' + n : n;
+                return pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear() + ' ' +
+                        pad(d.getHours()) + ':' + pad(d.getMinutes());
+            };
 
-                // Validate image file
-                if (!imageFile.files || imageFile.files.length === 0) {
-                    alert("Please select an image file.");
-                    return false;
-                }
+                startEl.value = formatDate(start);
+                endEl.value = formatDate(end);--%>
+                // Convert format to dd-MM-yyyy HH:mm
+            <%--const formatDate = (d) => {
+                const pad = (n) => n < 10 ? '0' + n : n;
+                return pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+            };
 
-                // Do not convert values; submit ISO from datetime-local for backend parsing
+                startEl.value = formatDate(start);
+                endEl.value = formatDate(end);--%>
                 return true;
             }
         </script>
-        <jsp:include page="includes/footer.jsp" />
-
-        <%--        <script src="../js/role.js?v=2"></script>
-                <script src="../js/jquery.min.js"></script>
-                <script src="../js/popper.min.js"></script>
-                <script src="../js/bootstrap.bundle.min.js"></script>
-                <script src="../js/jquery-3.0.0.min.js"></script>
-                <script src="../js/plugin.js"></script>
-                <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
-                <script src="../js/custom.js"></script>
-                <script src="../js/owl.carousel.js"></script>
-                <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>--%>
         <script src="../js/jquery.min.js"></script>
         <script src="../js/popper.min.js"></script>
         <script src="../js/bootstrap.bundle.min.js"></script>
