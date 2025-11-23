@@ -29,7 +29,7 @@
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-8">
                         <h1 class="news_taital mb-0">INACTIVE EVENTS</h1>
-                        <p class="news_text mb-0">List of events that have been removed. You can review or restore them below.</p>
+                        <p class="news_text mb-0">List of events that have been removed. You can restore or delete them below.</p>
                     </div>
                     <div class="col-md-4 text-right">
                         <div class="input-group">
@@ -71,14 +71,19 @@
                                         <a href="${pageContext.request.contextPath}/staff/delEvent?action=detail&id=${event.eventID}" class="btn btn-primary btn-sm flex-fill">
                                             <i class="fa fa-eye"></i> View Details
                                         </a>
-                                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=edit&id=${event.eventID}" 
+                                        <%--<a href="${pageContext.request.contextPath}/staff/delEvent?action=edit&id=${event.eventID}" 
                                            class="btn btn-warning btn-sm">
                                             <i class="fa fa-edit"></i> Edit
-                                        </a>
-<!--                                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" class="btn btn-success btn-sm"
-                                           onclick="return confirm('Restore this event?');">
+                                        </a>--%>
+                                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" class="btn btn-success btn-sm"
+                                           onclick="return confirm('Are you sure you want to restore this event?');">
                                             <i class="fa fa-undo"></i> Restore
-                                        </a>-->
+                                        </a>
+                                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=delete&id=${event.eventID}" 
+                                           class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Are you sure you want to delete this event completely?');">
+                                            <i class="fa fa-trash"></i> Delete
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -115,14 +120,14 @@
         <script src="../js/owl.carousel.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
         <script>
-                                               document.getElementById('searchEvent').addEventListener('keyup', function () {
-                                                   let keyword = this.value.toLowerCase();
-                                                   let cards = document.querySelectorAll('.card');
-                                                   cards.forEach(card => {
-                                                       let name = card.querySelector('.card-title').textContent.toLowerCase();
-                                                       card.parentElement.style.display = name.includes(keyword) ? '' : 'none';
+                                                   document.getElementById('searchEvent').addEventListener('keyup', function () {
+                                                       let keyword = this.value.toLowerCase();
+                                                       let cards = document.querySelectorAll('.card');
+                                                       cards.forEach(card => {
+                                                           let name = card.querySelector('.card-title').textContent.toLowerCase();
+                                                           card.parentElement.style.display = name.includes(keyword) ? '' : 'none';
+                                                       });
                                                    });
-                                               });
         </script>
     </body>
 </html>

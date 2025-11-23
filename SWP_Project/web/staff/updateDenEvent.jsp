@@ -70,13 +70,13 @@
     <body>
         <jsp:include page="includes/header.jsp" />
         <div class="form-container">
-            <h3 class="text-center mb-4">Update Event</h3>
+            <h3 class="text-center mb-4">Update Denied Event</h3>
 
             <c:if test="${not empty error}">
                 <div class="alert alert-danger">${error}</div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/staff/delEvent" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <form action="${pageContext.request.contextPath}/staff/event" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                 <input type="hidden" name="action" value="update">
                 <input type="hidden" name="eventID" value="${event.eventID}">
                 <input type="hidden" name="oldImage" value="${event.image}">
@@ -178,7 +178,7 @@
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Update Event</button>
-                    <a href="${pageContext.request.contextPath}/staff/delEvent?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
+                    <a href="${pageContext.request.contextPath}/staff/densEvent?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
                 </div>
             </form>
         </div>

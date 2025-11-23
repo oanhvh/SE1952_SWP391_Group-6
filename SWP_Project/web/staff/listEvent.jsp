@@ -92,7 +92,7 @@
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-8">
                         <h1 class="news_taital mb-0">EVENT LIST</h1>
-                        <p class="news_text mb-0">Explore our upcoming and ongoing events below.</p>
+                        <p class="news_text mb-0">View and manage all upcoming, ongoing events within the system.</p>
                     </div>
                     <div class="col-md-4 text-right">
                         <div class="input-group">
@@ -161,7 +161,7 @@
                                             </a>
                                             <a href="${pageContext.request.contextPath}/staff/event?action=delete&id=${event.eventID}" 
                                                class="btn btn-danger btn-sm"
-                                               onclick="return confirm('Are you sure you want to delete this event?');">
+                                               onclick="return confirm('Are you sure you want to remove this event?');">
                                                 <i class="fa fa-trash"></i> Delete
                                             </a>
                                         </c:if>

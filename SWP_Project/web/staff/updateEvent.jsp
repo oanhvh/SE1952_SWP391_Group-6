@@ -76,110 +76,99 @@
                 <div class="alert alert-danger">${error}</div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/staff/event" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <form action="${pageContext.request.contextPath}/staff/event" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="update">
                 <input type="hidden" name="eventID" value="${event.eventID}">
                 <input type="hidden" name="oldImage" value="${event.image}">
+                <input type="hidden" name="createdAt" value="${formattedCreatedAt}">
 
-                <%--<c:if test="${not empty event.createdAt}">
-                    <input type="hidden" name="createdAt" value="<fmt:formatDate value='${event.createdAt}' pattern='dd-MM-yyyy HH:mm' />">
-                </c:if>--%>
-                <c:if test="${not empty event.createdAt}">
-                    <input type="hidden" name="createdAt" value="${formattedCreatedAt}">
-                </c:if>
-
+                <!-- Event Name (READONLY) -->
                 <div class="form-group mb-3">
-                    <label>Event Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="eventName" value="${event.eventName}" required>
+                    <label>Event Name</label>
+                    <input type="text" class="form-control" value="${event.eventName}" readonly>
+                    <input type="hidden" name="eventName" value="${event.eventName}">
                 </div>
 
+                <!-- Description (EDITABLE) -->
                 <div class="form-group mb-3">
                     <label>Description <span class="text-danger">*</span></label>
                     <textarea class="form-control" name="description" rows="3" required>${event.description}</textarea>
                 </div>
 
+                <!-- Location (READONLY) -->
                 <div class="form-group mb-3">
-                    <label>Location <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="location" value="${event.location}" required>
+                    <label>Location</label>
+                    <input type="text" class="form-control" value="${event.location}" readonly>
+                    <input type="hidden" name="location" value="${event.location}">
                 </div>
 
+                <!-- Start Date (DISABLED + HIDDEN) -->
                 <div class="form-group mb-3">
-                    <label>Start Date & Time <span class="text-danger">*</span></label>
-                    <input type="datetime-local" class="form-control" name="startDate" id="startDate" required>
+                    <label>Start Date & Time</label>
+                    <input type="datetime-local" class="form-control" id="startDate" disabled>
+                    <input type="hidden" name="startDate" value="${event.startDate}">
                 </div>
 
+                <!-- End Date (DISABLED + HIDDEN) -->
                 <div class="form-group mb-3">
-                    <label>End Date & Time <span class="text-danger">*</span></label>
-                    <input type="datetime-local" class="form-control" name="endDate" id="endDate" required>
+                    <label>End Date & Time</label>
+                    <input type="datetime-local" class="form-control" id="endDate" disabled>
+                    <input type="hidden" name="endDate" value="${event.endDate}">
                 </div>
 
+                <!-- Capacity (READONLY) -->
                 <div class="form-group mb-3">
-                    <label>Capacity <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" name="capacity" value="${event.capacity}" min="1" required>
+                    <label>Capacity</label>
+                    <input type="number" class="form-control" value="${event.capacity}" readonly>
+                    <input type="hidden" name="capacity" value="${event.capacity}">
                 </div>
 
+                <!-- Image (EDITABLE) -->
                 <div class="form-group mb-3">
                     <label>Event Image</label>
 
                     <c:if test="${not empty event.image}">
                         <div class="current-image">
                             <p class="mb-1"><strong>Current Image:</strong></p>
-                            <img src="${pageContext.request.contextPath}/${event.image}" alt="Current Event Image">
+                            <img src="${pageContext.request.contextPath}/${event.image}">
                         </div>
                     </c:if>
 
-                    <input type="file" class="form-control mt-2" name="image" id="imageFile" accept="image/*" onchange="previewImage(this)">
-                    <small class="form-text text-muted">Leave empty to keep current image. Supported formats: JPG, PNG, GIF (Max 10MB)</small>
+                    <input type="file" class="form-control mt-2" name="image" accept="image/*" onchange="previewImage(this)">
+                    <small class="form-text text-muted">Leave empty to keep current image</small>
 
                     <div class="image-preview" id="imagePreview">
                         <p class="mb-1"><strong>New Image Preview:</strong></p>
-                        <img id="preview" src="" alt="New Image Preview">
+                        <img id="preview" src="">
                     </div>
                 </div>
 
-                <%--<div class="form-group mb-3">
-                    <label>Category ID <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" name="categoryID" value="${event.categoryID}" min="1" required>
-                </div>--%>
+                <!-- Category (DISABLED + HIDDEN) -->
                 <div class="form-group mb-3">
-                    <label>Category <span class="text-danger">*</span></label>
-                    <select class="form-control" name="categoryID" required>
-                        <option value="">-- Select Category --</option>
+                    <label>Category</label>
+                    <select class="form-control" disabled>
                         <c:forEach var="cat" items="${categoryList}">
                             <option value="${cat.categoryID}" 
-                                    <c:if test="${event != null && event.categoryID == cat.categoryID}">selected</c:if>>
+                                <c:if test="${event.categoryID == cat.categoryID}">selected</c:if>>
                                 ${cat.categoryName}
                             </option>
                         </c:forEach>
                     </select>
+                    <input type="hidden" name="categoryID" value="${event.categoryID}">
                 </div>
 
+                <!-- Status (READONLY) -->
                 <div class="form-group mb-3">
-                    <label>Status <span class="text-danger">*</span></label>
+                    <label>Status</label>
                     <input type="text" class="form-control" value="${event.status}" readonly>
                     <input type="hidden" name="status" value="${event.status}">
                 </div>
-                <%--<div class="form-group mb-3">
-                    <label>Status <span class="text-danger">*</span></label>
-                    <select class="form-control" name="status" required>
-                        <option value="Active" <c:if test="${event.status eq 'Active'}">selected</c:if>>Active</option>
-                        <option value="Inactive" <c:if test="${event.status eq 'Inactive'}">selected</c:if>>Inactive</option>
-                        </select>
-                    </div>--%>
-
-                <%--<div class="form-group mb-3">
-                    <label>Status <span class="text-danger">*</span></label>
-                    <select class="form-control" name="status" required>
-                        <option value="Pending" ${event.status == 'Pending' ? 'selected' : ''}>Pending</option>
-                        <option value="Active" ${event.status == 'Active' ? 'selected' : ''}>Active</option>
-                        <option value="Completed" ${event.status == 'Completed' ? 'selected' : ''}>Completed</option>
-                    </select>
-                </div>--%>
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary px-4">Update Event</button>
                     <a href="${pageContext.request.contextPath}/staff/event?action=list" class="btn btn-secondary px-4 ms-2">Cancel</a>
                 </div>
+
             </form>
         </div>
 

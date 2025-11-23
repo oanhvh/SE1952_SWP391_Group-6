@@ -115,7 +115,7 @@
 
                 <div class="event-info"><span><i class="fa fa-map-marker"></i> Location:</span>${event.location}</div>
                 <div class="event-info"><span><i class="fa fa-calendar"></i> Start:</span>${event.startDate}</div>
-                <div class="event-info"><span><i class="fa fa-calendar-check-o"></i> End:</span>${event.endDate}</div>
+                <div class="event-info"><span><i class="fa fa-calendar"></i> End:</span>${event.endDate}</div>
                 <div class="event-info"><span><i class="fa fa-users"></i> Capacity:</span>${event.capacity} participants</div>
                 <div class="event-info"><span><i class="fa fa-tag"></i> Category:</span>${categoryName}</div>
                 <div class="event-info">
@@ -127,7 +127,7 @@
                     <hr>
                     <div class="event-info"><span>Created By:</span>${staffName}</div>
                     <c:if test="${not empty event.managerID}">
-                        <div class="event-info"><span>Manager ID:</span>${managerName}</div>
+                        <div class="event-info d-none"><span>Manager ID:</span>${managerName}</div>
                     </c:if>
                     <div class="event-info"><span>Created At:</span>${event.createdAt}</div>
                 </c:if>

@@ -71,11 +71,11 @@ public class DelEventController extends HttpServlet {
             case "detail":
                 showDelDetail(request, response);
                 break;
-//            case "restore":
-//                restoreEvent(request, response);
-//                break;
-            case "edit":
-                showEditForm(request, response);
+            case "restore":
+                restoreEvent(request, response);
+                break;
+            case "delete":
+                deleteEvent(request, response);
                 break;
             default:
                 listDelEvents(request, response);
@@ -94,19 +94,6 @@ public class DelEventController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "";
-        }
-
-        switch (action) {
-            case "update":
-                updateEvent(request, response);
-                break;
-            default:
-                response.sendRedirect("/staff/delEvent?action=list");
-                break;
-        }
     }
 
     /**
@@ -146,216 +133,17 @@ public class DelEventController extends HttpServlet {
         request.getRequestDispatcher("/staff/viewDelEvent.jsp").forward(request, response);
     }
 
-//    private void restoreEvent(HttpServletRequest request, HttpServletResponse response)
-//            throws IOException {
-//        int id = Integer.parseInt(request.getParameter("id"));
-//        eventService.updateEventStatus(id, "Active");
-//        response.sendRedirect(request.getContextPath() + "/staff/delEvent");
-//    }
-
-    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void restoreEvent(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        Event event = eventService.getEventById(id);
-        List<Category> categoryList = categoryDAO.getAllCategory();
-
-        String formattedCreatedAt = "";
-        if (event.getCreatedAt() != null) {
-            formattedCreatedAt = event.getCreatedAt().format(FORMATTER);
-        }
-
-        request.setAttribute("event", event);
-        request.setAttribute("categoryList", categoryList);
-        request.setAttribute("formattedCreatedAt", formattedCreatedAt);
-        request.getRequestDispatcher("/staff/updateDelEvent.jsp").forward(request, response);
+        eventService.updateEventStatus(id, "Active");
+        response.sendRedirect(request.getContextPath() + "/staff/delEvent");
     }
 
-    private void updateEvent(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        Event event = null;
-        List<Category> categoryList = categoryDAO.getAllCategory();
-        request.setAttribute("categoryList", categoryList);
-
-        try {
-            int eventId = Integer.parseInt(request.getParameter("eventID"));
-            Event existingEvent = eventService.getEventById(eventId);
-
-            if (existingEvent == null) {
-                throw new IllegalArgumentException("Event not found");
-            }
-
-            // Build event từ request
-            event = buildEventFromRequest(request, true);
-
-            // GIỮ LẠI các giá trị không thay đổi từ DB
-            event.setCreatedByStaffID(existingEvent.getCreatedByStaffID());
-            event.setManagerID(existingEvent.getManagerID());
-
-            // Nếu createdAt không có trong request, giữ lại giá trị cũ
-            if (event.getCreatedAt() == null) {
-                event.setCreatedAt(existingEvent.getCreatedAt());
-            }
-
-            boolean changed = false;
-            if (!event.getEventName().equals(existingEvent.getEventName())
-                    || !event.getDescription().equals(existingEvent.getDescription())
-                    || !event.getLocation().equals(existingEvent.getLocation())
-                    || !event.getStartDate().equals(existingEvent.getStartDate())
-                    || !event.getEndDate().equals(existingEvent.getEndDate())
-                    || event.getCapacity() != existingEvent.getCapacity()
-                    || event.getCategoryID() != existingEvent.getCategoryID()
-                    || !event.getImage().equals(existingEvent.getImage())) {
-                changed = true;
-            }
-
-            if (changed) {
-                event.setStatus("Pending"); // có thay đổi → Pending
-            } else {
-                event.setStatus(existingEvent.getStatus()); // giữ nguyên
-            }
-
-            eventService.updateEvent(event);
-            response.sendRedirect(request.getContextPath() + "/staff/delEvent?action=list");
-        } catch (IllegalArgumentException e) {
-            // Nếu build thất bại, lấy event cũ từ DB
-            if (event == null || event.getEventID() == 0) {
-                try {
-                    int eventId = Integer.parseInt(request.getParameter("eventID"));
-                    event = eventService.getEventById(eventId);
-                } catch (Exception ex) {
-                    event = new Event();
-                }
-            }
-
-            // Format lại createdAt để hiển thị
-            String formattedCreatedAt = "";
-            if (event != null && event.getCreatedAt() != null) {
-                formattedCreatedAt = event.getCreatedAt().format(FORMATTER);
-            }
-
-            request.setAttribute("event", event);
-            request.setAttribute("formattedCreatedAt", formattedCreatedAt);
-            request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("/staff/updateDelEvent.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            // Tương tự xử lý cho exception khác
-            if (event == null || event.getEventID() == 0) {
-                try {
-                    int eventId = Integer.parseInt(request.getParameter("eventID"));
-                    event = eventService.getEventById(eventId);
-                } catch (Exception ex) {
-                    event = new Event();
-                }
-            }
-
-            String formattedCreatedAt = "";
-            if (event != null && event.getCreatedAt() != null) {
-                formattedCreatedAt = event.getCreatedAt().format(FORMATTER);
-            }
-
-            request.setAttribute("event", event);
-            request.setAttribute("formattedCreatedAt", formattedCreatedAt);
-            request.setAttribute("error", "Unexpected error while updating event: " + e.getMessage());
-            request.getRequestDispatcher("/staff/updateDelEvent.jsp").forward(request, response);
-        }
-    }
-
-    private Event buildEventFromRequest(HttpServletRequest request, boolean isUpdate) throws ServletException, IOException {
-        Event event = new Event();
-        if (isUpdate) {
-            event.setEventID(Integer.parseInt(request.getParameter("eventID")));
-        }
-
-        event.setEventName(request.getParameter("eventName"));
-        event.setDescription(request.getParameter("description"));
-        event.setLocation(request.getParameter("location"));
-
-        String startRaw = request.getParameter("startDate");
-        String endRaw = request.getParameter("endDate");
-        if (startRaw == null || startRaw.isBlank()) {
-            Part p = request.getPart("startDate");
-            if (p != null) {
-                byte[] bytes = p.getInputStream().readAllBytes();
-                startRaw = new String(bytes, java.nio.charset.StandardCharsets.UTF_8).trim();
-            }
-        }
-        if (endRaw == null || endRaw.isBlank()) {
-            Part p = request.getPart("endDate");
-            if (p != null) {
-                byte[] bytes = p.getInputStream().readAllBytes();
-                endRaw = new String(bytes, java.nio.charset.StandardCharsets.UTF_8).trim();
-            }
-        }
-        if (startRaw == null || startRaw.isBlank()) {
-            throw new IllegalArgumentException("Start date is required");
-        }
-        if (endRaw == null || endRaw.isBlank()) {
-            throw new IllegalArgumentException("End date is required");
-        }
-        LocalDateTime startDt;
-        LocalDateTime endDt;
-        if (startRaw.contains("T")) {
-            startDt = LocalDateTime.parse(startRaw);
-        } else {
-            startDt = LocalDateTime.parse(startRaw, FORMATTER);
-        }
-        if (endRaw.contains("T")) {
-            endDt = LocalDateTime.parse(endRaw);
-        } else {
-            endDt = LocalDateTime.parse(endRaw, FORMATTER);
-        }
-        event.setStartDate(startDt);
-        event.setEndDate(endDt);
-        event.setStatus(request.getParameter("status"));
-//        event.setStatus("Pending");
-        event.setCapacity(Integer.parseInt(request.getParameter("capacity")));
-//        event.setImage(request.getParameter("image"));
-        event.setCategoryID(Integer.parseInt(request.getParameter("categoryID")));
-
-        Part filePart = request.getPart("image");
-        if (filePart != null && filePart.getSize() > 0) {
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-
-            fileName = fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
-
-            String timeStamp = String.valueOf(System.currentTimeMillis());
-            String fileExtension = "";
-            int dotIndex = fileName.lastIndexOf('.');
-            if (dotIndex > 0) {
-                fileExtension = fileName.substring(dotIndex);
-                fileName = fileName.substring(0, dotIndex) + "_" + timeStamp + fileExtension;
-            } else {
-                fileName = fileName + "_" + timeStamp;
-            }
-
-            String uploadPath = request.getServletContext().getRealPath("") + File.separator + "images";
-
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            String savePath = uploadPath + File.separator + fileName;
-            filePart.write(savePath);
-
-            event.setImage("images/" + fileName);
-        } else if (isUpdate) {
-            String oldImage = request.getParameter("oldImage");
-            if (oldImage != null && !oldImage.isEmpty()) {
-                event.setImage(oldImage);
-            }
-        }
-
-        if (isUpdate && request.getParameter("createdAt") != null && !request.getParameter("createdAt").isBlank()) {
-            String createdRaw = request.getParameter("createdAt");
-            if (createdRaw.contains("T")) {
-                event.setCreatedAt(LocalDateTime.parse(createdRaw));
-            } else {
-                event.setCreatedAt(LocalDateTime.parse(createdRaw, FORMATTER));
-            }
-        }
-        return event;
+    private void deleteEvent(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        eventService.deleteEvent(id);
+        response.sendRedirect(request.getContextPath() + "/staff/delEvent");
     }
 }

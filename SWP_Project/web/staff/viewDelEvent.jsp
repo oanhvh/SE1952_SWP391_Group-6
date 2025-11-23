@@ -73,6 +73,10 @@
                 background: #6c757d;
                 color: #fff;
             }
+            .status-Inactive {
+                background: #6c757d;
+                color: #fff;
+            }
             .no-image {
                 background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
                 height: 300px;
@@ -115,7 +119,7 @@
 
                 <div class="event-info"><span><i class="fa fa-map-marker"></i> Location:</span>${event.location}</div>
                 <div class="event-info"><span><i class="fa fa-calendar"></i> Start:</span>${event.startDate}</div>
-                <div class="event-info"><span><i class="fa fa-calendar-check-o"></i> End:</span>${event.endDate}</div>
+                <div class="event-info"><span><i class="fa fa-calendar"></i> End:</span>${event.endDate}</div>
                 <div class="event-info"><span><i class="fa fa-users"></i> Capacity:</span>${event.capacity} participants</div>
                 <div class="event-info"><span><i class="fa fa-tag"></i> Category:</span>${categoryName}</div>
                 <div class="event-info">
@@ -127,7 +131,7 @@
                     <hr>
                     <div class="event-info"><span>Created By:</span>${staffName}</div>
                     <c:if test="${not empty event.managerID}">
-                        <div class="event-info"><span>Manager ID:</span>${managerName}</div>
+                        <div class="event-info d-none"><span>Manager ID:</span>${managerName}</div>
                     </c:if>
                     <div class="event-info"><span>Created At:</span>${event.createdAt}</div>
                 </c:if>
@@ -145,14 +149,19 @@
                            class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this event?');">
                             <i class="fa fa-trash"></i> Delete
                         </a>--%>
-                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=edit&id=${event.eventID}" 
-                           class="btn btn-warning btn-sm">
-                            <i class="fa fa-edit"></i> Edit
-                        </a>
-<%--                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" 
-                           class="btn btn-danger" onclick="return confirm('Are you sure you want to restore this event?');">
+                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" class="btn btn-success btn-sm"
+                           onclick="return confirm('Restore this event?');">
                             <i class="fa fa-undo"></i> Restore
-                        </a>--%>
+                        </a>
+                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=delete&id=${event.eventID}" 
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure you want to delete this event completely?');">
+                            <i class="fa fa-trash"></i> Delete
+                        </a>
+                        <%--                        <a href="${pageContext.request.contextPath}/staff/delEvent?action=restore&id=${event.eventID}" 
+                                                   class="btn btn-danger" onclick="return confirm('Are you sure you want to restore this event?');">
+                                                    <i class="fa fa-undo"></i> Restore
+                                                </a>--%>
                     </c:if>
                 </div>
             </div>

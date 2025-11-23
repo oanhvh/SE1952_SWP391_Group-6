@@ -131,7 +131,7 @@ public class EventManagerController extends HttpServlet {
     private void approveEvent(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        eventService.updateEventStatus(id, "Active"); // null = không cần reason
+        eventService.updateEventStatus(id, "Active");
         response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
     }
 
@@ -140,19 +140,33 @@ public class EventManagerController extends HttpServlet {
         int eventId = Integer.parseInt(request.getParameter("id"));
         String reason = request.getParameter("reason"); // Lý do từ form
 
-        eventService.updateEventStatus(eventId, "Inactive");
-
         Event event = eventService.getEventById(eventId);
-        if (event != null && event.getCreatedByStaffID() != null) {
-            int staffId = event.getCreatedByStaffID();
 
+        if (event == null) {
+            response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
+            return;
+        }
+
+        // === LẦN 2 BỊ DENY → XOÁ HOÀN TOÀN ===
+        if ("Cancelled".equals(event.getStatus())) {
+            eventService.deleteEvent(eventId);
+            response.sendRedirect(request.getContextPath() + "/manager/event?action=list");
+            return;
+        }
+
+        // === LẦN 1 BỊ DENY → UPDATE STATUS + GỬI NOTI ===
+        eventService.updateEventStatus(eventId, "Cancelled");
+
+        if (event.getCreatedByStaffID() != null) {
+            int staffId = event.getCreatedByStaffID();
             int managerId = (Integer) request.getSession().getAttribute("managerId");
 
-            // Send noti to staff
             NotificationsDAO notificationsDAO = new NotificationsDAO();
             String type = "EventDenied";
             String title = "Event Denied";
-            String message = reason != null && !reason.isBlank() ? reason : "Your event has been denied.";
+            String message = (reason != null && !reason.isBlank())
+                    ? reason
+                    : "Your event has been denied.";
             notificationsDAO.addNotificationForStaff(staffId, managerId, type, title, message, eventId);
         }
 
