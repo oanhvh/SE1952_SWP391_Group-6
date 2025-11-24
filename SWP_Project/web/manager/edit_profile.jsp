@@ -63,7 +63,7 @@
                 java.time.LocalDate today = java.time.LocalDate.now();
 
                 // Giới hạn ngày sinh tối thiểu: không quá 130 tuổi
-                java.time.LocalDate minDate = today.minusYears(130);
+                java.time.LocalDate minDate = today.minusYears(65);
 
                 java.time.LocalDate dob = user.getDateOfBirth();
                 %>

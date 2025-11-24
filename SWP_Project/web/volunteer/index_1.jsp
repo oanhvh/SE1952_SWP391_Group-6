@@ -137,10 +137,7 @@
 %>
     <% if(allEvents.size() > 3) { %>
 <div style="text-align:center;">
-    <a id="showMoreBtn" href="news.html" 
-       >
-        More Events
-    </a>
+    <a id="showMoreBtn" href="<%= request.getContextPath() %>/volunteer/events">More</a>
 </div>
     <% } %>
 <%

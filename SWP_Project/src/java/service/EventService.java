@@ -141,6 +141,8 @@ public class EventService {
 
         if (event.getCapacity() <= 0) {
             throw new IllegalArgumentException("Capacity must be greater than zero");
+        }else if (event.getCapacity() >= 300){
+            throw new IllegalArgumentException("Capacity must be less than 300");
         }
         if (event.getCategoryID() <= 0) {
             throw new IllegalArgumentException("Invalid Category ID");

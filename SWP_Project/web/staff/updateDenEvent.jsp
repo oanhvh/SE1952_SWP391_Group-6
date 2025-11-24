@@ -89,9 +89,14 @@
                 </c:if>
 
                 <div class="form-group mb-3">
-                    <label>Event Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="eventName" value="${event.eventName}" required>
+                    <label>Event Name</label>
+                    <input type="text" class="form-control" value="${event.eventName}" readonly>
+                    <input type="hidden" name="eventName" value="${event.eventName}">
                 </div>
+                <%--                <div class="form-group mb-3">
+                                    <label>Event Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="eventName" value="${event.eventName}" required>
+                                </div>--%>
 
                 <div class="form-group mb-3">
                     <label>Description <span class="text-danger">*</span></label>
@@ -142,17 +147,29 @@
                     <input type="number" class="form-control" name="categoryID" value="${event.categoryID}" min="1" required>
                 </div>--%>
                 <div class="form-group mb-3">
-                    <label>Category <span class="text-danger">*</span></label>
-                    <select class="form-control" name="categoryID" required>
-                        <option value="">-- Select Category --</option>
+                    <label>Category</label>
+                    <select class="form-control" disabled>
                         <c:forEach var="cat" items="${categoryList}">
                             <option value="${cat.categoryID}" 
-                                    <c:if test="${event != null && event.categoryID == cat.categoryID}">selected</c:if>>
+                                    <c:if test="${event.categoryID == cat.categoryID}">selected</c:if>>
                                 ${cat.categoryName}
                             </option>
                         </c:forEach>
                     </select>
+                    <input type="hidden" name="categoryID" value="${event.categoryID}">
                 </div>
+                <%--                <div class="form-group mb-3">
+                                    <label>Category <span class="text-danger">*</span></label>
+                                    <select class="form-control" name="categoryID" required>
+                                        <option value="">-- Select Category --</option>
+                                        <c:forEach var="cat" items="${categoryList}">
+                                            <option value="${cat.categoryID}" 
+                                                    <c:if test="${event != null && event.categoryID == cat.categoryID}">selected</c:if>>
+                                                ${cat.categoryName}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>--%>
 
                 <div class="form-group mb-3">
                     <label>Status <span class="text-danger">*</span></label>
